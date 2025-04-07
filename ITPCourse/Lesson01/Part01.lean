@@ -1,8 +1,8 @@
 /-
   Welcome to the Interactive Theorem Proving course!
 
-  In this course we will learn how to use Lean 4, a software for assisting
-  a human prover with formalizing mathematics and proving theorems.
+  In this course we will learn how to use Lean 4, a software for assisting a
+  human prover with formalizing mathematics and proving theorems.
 
   Let's start!
 -/
@@ -15,7 +15,7 @@ section Getting_started_with_Lean4
 
     https://live.lean-lang.org/
 
-    Warning: remember to save/download your files before closing the browser!
+    Warning: remember to download your files before closing the browser!
 
   - For a more thorough experience, install Lean 4 on your computer.
 
@@ -49,8 +49,8 @@ end Name
   As you can see above, sections can be nested.
 
   __Exercise__: try clicking on the `v` symbol on the left of the `section`
-  keyword above. You probably need to hover your mouse pointer over it
-  to see it. This should "fold" the section, hiding it temporarily.
+  keyword above. You probably need to hover your mouse pointer over it to
+  see it. This should "fold" the section, hiding it temporarily.
 
     43 v   section Name
        ↑
@@ -80,16 +80,16 @@ section Symbols
     ∂ ∫ ∩ ∪ ⋃ ⋂ ∈
     x₁ x₂ ... xᵢ ... xₙ y¹ y² ... yⁱ ... yⁿ
 
-  To enter these in the editor, type `\` followed by the name of the
-  symbol. For instance, here is some symbol and how it is typed:
+  To enter these in the editor, type `\` followed by the name of the symbol.
+  For instance, here is some symbol and how it is typed:
 
     α \alpha or \a
     β \beta or \b
     ⟨ \langle or \<
     ⟩ \rangle or \>
 
-  Useful tip: if you hover your mouse pointer over a special symbol, Lean will
-  suggest the \name to type it.
+  Useful tip: if you hover your mouse pointer over a special symbol, Lean
+  will suggest the \name to type it.
 
   Another tip: most names are taken from LaTeX.
 -/
@@ -118,21 +118,21 @@ def n: Nat := 42
 
   Lean is based on Type Theory, and associates every valid identifier,
   variable, and expression with a "type". Informally speaking, types
-  describe how their values can be produced and consumed, ensuring that
-  all the operations we perform on those values are meaningful.
+  describe how their values can be produced and consumed, ensuring that all
+  the operations we perform on those values are meaningful.
 -/
 
 def m: Nat := n + 1
 
 /-
-  Since `n` is a `Nat`, the expression `n + 1` is valid since addition
-  can be performed on a `Nat`.
+  Since `n` is a `Nat`, the expression `n + 1` is valid since addition can
+  be performed on a `Nat`.
 -/
 
 section Queries
 /-
-  We can query Lean about the definitions above. Put you editor cursor
-  over the following lines and observe the "Infoview" pane on your right.
+  We can query Lean about the definitions above. Put you editor cursor over
+  the following lines and observe the "Infoview" pane on your right.
 -/
 
 #print m   -- Prints how m was defined (`n + 1`)
@@ -142,9 +142,9 @@ section Queries
 /-
   Hovering your mouse pointer over `m` can also provide some information.
 
-  Note 1: `#print` can only be used on identifiers. We can not
-  `#print n+m` since `n+m` has no definition. (At best, we could ask
-  for the definition of `Nat.add` instead.)
+  Note 1: `#print` can only be used on identifiers. We can not `#print n+m`
+  since `n+m` has no definition. (At best, we could ask for the definition
+  of the addition function `Nat.add` instead.)
 
   Note 2: `#eval` does not work on all Lean types. Consider trying `#reduce`
   when it does not.
@@ -165,36 +165,36 @@ def p: Nat × String := (14, "hello")
 /-
   The above code should be mostly self-explanatory.
 
-  The type `String` denotes finite (possibly empty) sequences
-  of characters (letters, digits, symbols, spaces, ...).
+  The type `String` denotes finite (possibly empty) sequences of characters
+  (letters, digits, symbols, spaces, ...).
 
   The type `Bool` denotes the values `true` and `false`.
 
-  The type `Nat × String` is a product type, denoting the pairs
-  `(y, z)` where `y` is a `Nat` and `z` is a `String`.
+  The type `Nat × String` is a product type, denoting the pairs `(y, z)`
+  where `y` is a `Nat` and `z` is a `String`.
 -/
 
 section Type_errors
 /-
-  __Exercise__: try combining the above values in a nonsensical way
-  and observe the resulting Lean errors. For that, exploit the
-  `Nat.succ` function that maps a natural to its successor.
+  __Exercise__: try combining the above values in a nonsensical way and
+  observe the resulting Lean errors. For that, exploit the `Nat.succ`
+  function that maps a natural to its successor.
 -/
 #eval Nat.succ m  -- Result: `44`
 /-
-  Note how function application in Lean is written `f arg₁ arg₂ ...`
-  instead of `f (arg₁, arg₂, ...)`. (We will return to this in the future.)
+  Note how function application in Lean is written `f arg₁ arg₂ ...` instead
+  of `f (arg₁, arg₂, ...)`. (We will return to this in the future.)
 
-  Try to use `Nat.succ` on non-naturals, like strings, booleans,
-  pairs. Note how the error message reports what type was
-  _found_ and what type was _expected_.
+  Try to use `Nat.succ` on non-naturals, like strings, booleans, pairs. Note
+  how the error message reports what type was _found_ and what type was
+  _expected_.
 -/
 end Type_errors
 
 section Incomplete_definitions
 /-
-  When writing a possibly large definition it is very useful to leave
-  some parts of it unfinished for the time being.
+  When writing a possibly large definition it is very useful to leave some
+  parts of it unfinished for the time being.
 
   To do that, mark the unfinished part with `sorry`.
 -/
