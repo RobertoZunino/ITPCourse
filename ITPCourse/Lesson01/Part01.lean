@@ -127,6 +127,8 @@ def m: Nat := n + 1
 /-
   Since `n` is a `Nat`, the expression `n + 1` is valid since addition can
   be performed on a `Nat`.
+
+  Lean expressions are also called _terms_.
 -/
 
 section Queries
@@ -209,8 +211,8 @@ def incomplete₂: Nat × String := (Nat.succ sorry, sorry)
   of an _error_.
 
   Second, when putting the cursor over each occurrence of `sorry`, Lean
-  reports what is the expected type of the expression that should be
-  written at that point.
+  reports what is the expected type of the term that should be written at
+  that point.
 -/
 end Incomplete_definitions
 

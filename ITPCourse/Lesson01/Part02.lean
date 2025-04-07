@@ -1,0 +1,255 @@
+
+section Functions_basics
+/-
+  Simple types -- Function types
+
+  In Lean, we can define a function in several different ways.
+
+  All the definitions below are equivalent:
+-/
+
+def double₁ : Nat → Nat
+  := λ n => n + n
+
+def double₂ : Nat → Nat
+  := fun n => n + n
+
+def double₃ : Nat → Nat
+  | n => n + n
+
+def double₄ (n: Nat): Nat
+  := n + n
+
+/-
+  Above we can see the _function type_: `A → B` represents the type of
+  functions from `A` to `B`. (It can also be written `A -> B`)
+
+  The arrow symbol `→` can be typed as `\to` or `\->`.
+
+  The term `λ n => …` denotes the function mapping `n` to `…`. Here, `λ` is
+  not a variable but just a notation, similar to the integral symbol `∫` or
+  the derivative symbol `∂`. We used `λ` in `double₁` above.
+
+  The notation `λ` is widely used in computer science. In Lean, it can also
+  be written as `fun` (see `double₂` above).
+
+  The combination `def … := λ x => …` is so common that it can be shortened
+  as in `double₃`. Note now the `:=` is missing there. (This notation will
+  also be used together with _pattern matching_, as we will see in the
+  future.)
+
+  Finally, in `double₄` we can see a more familiar notational style: to
+  define a function we can simply take some argument like `(n: Nat)` and
+  return a result (`def … : Nat`). Here we already named the argument as `n`
+  so there is no need to use a `λ`.
+-/
+
+/-
+  To apply a function to its argument we can simply write `f x`.
+-/
+
+def eight: Nat := double₁ 4
+
+/-
+  __Exercise__: verify the result above.
+-/
+
+/-
+  Note how function application `f x` has a very high precedence:
+-/
+def ten₁: Nat := double₁ 4 + 2
+/-
+  is parsed as
+-/
+def ten₂: Nat := (double₁ 4) + 2
+/-
+  and _not_ as
+-/
+def twelve: Nat := double₁ (4 + 2)
+
+end Functions_basics
+
+section Higher_order_functions
+/-
+  In Lean, functions values can be passed to other functions as parameters:
+-/
+
+def apply10 (f: Nat → Nat): Nat
+  := f 10
+
+#eval apply10 double₁   -- Result: `20`
+
+/-
+  Functions can also be returned by functions as results:
+-/
+
+def constant_fun (k: Nat): Nat → Nat
+  := λ _n => k
+  -- Note, we use `_n` here instead of `n` since otherwise Lean will
+  -- warn that `n` is an unused variable. Using just `_` as in `λ _ => …`
+  -- is also very common for this.
+
+def constant_10: Nat → Nat := constant_fun 10
+
+def ten₃: Nat := constant_10 42
+
+/-
+  __Exercise__: verify `ten₃` is indeed `10`.
+-/
+
+/-
+  Since functions-returning-functions are common in Lean, we can also use a
+  more convenient notation.
+-/
+
+def constant_fun₂ (k: Nat) (_n: Nat): Nat := k
+
+/-
+  The above is equivalent to the previous definition.
+
+  We can call `constant_fun₂ 10` and obtain the constant-10 function.
+  We can also call `(constant_fun₂ 10) 42` or even `constant_fun₂ 10 42`
+  and obtain `10` as the final result.
+
+  __Exercise__: try it.
+-/
+
+/-
+  Here are some more examples. All of these are equivalent
+-/
+
+def compose₁ (f: Nat → Nat) (g: Nat → Nat): Nat → Nat
+  := λ n => f (g n)
+
+def compose₂ (f: Nat → Nat) (g: Nat → Nat) (n: Nat): Nat
+  := f (g n)
+
+def compose₃: (Nat → Nat) → (Nat → Nat) → (Nat → Nat)
+  := λ f => λ g => λ n => f (g n)
+
+def compose₄: (Nat → Nat) → (Nat → Nat) → (Nat → Nat)
+  := λ f g n => f (g n)
+
+def compose₅: (Nat → Nat) → (Nat → Nat) → Nat → Nat
+  := λ f g n => f (g n)
+
+/-
+  __Exercise__: complete the definition below.
+  You can do it with or without calling the functions above.
+  Try both alternatives.
+-/
+def compose₆ (f: Nat → Nat): (Nat → Nat) → Nat → Nat
+  := sorry
+
+/-
+  Important notes:
+
+  In terms, a repeated application like `a b c d e` implicitly associates
+  to the _left_.
+
+  I.e., it means `(((a b) c) d) e`: the result of the application `a b`
+  (which must be a function) is applied to `c`, and the result of that
+  (which must be a function) is applied to `d`, and the result of that
+  (which must be a function) is applied to `e`.
+
+  In types, a repeated arrow like `α → β → γ → δ`  implicitly associates
+  to the _right_.
+
+  I.e., it means `α → (β → (γ → δ))`: the type of functions having domain
+  `α` returning a function having domain `β` returning a function having
+  domain `γ` returning a value of type `δ`.
+
+  We also write `λ a b … => …` for `λ a => λ b => …` as we did for
+  `compose₅` above.
+-/
+
+section Multiple_arguments_in_functions
+/-
+  Thanks to the convention above, we can express multiple arguments in
+  functions.
+-/
+
+def weird (a: Nat) (b: Nat) (c: Nat): Nat
+  := a + 2*b + 3*c
+
+#check weird
+#check weird 10
+#check weird 10 20
+#check weird 10 20 30
+
+end Multiple_arguments_in_functions
+
+end Higher_order_functions
+
+
+section The_fundamentals_of_types
+/-
+  Now it is a good time to describe types in more detail. In type theory,
+  a type is characterized by the following rules.
+
+  - __Type formation__
+
+    This rule explains how to form a type: what requirements must be met and
+    what syntax to use.
+
+    For instance, to form a function type one must choose the domain type
+    `A`, the codomain type `B`, and finally write `A → B`.
+
+  - __Introduction__
+
+    This rule explains how to construct a value inside the type we just
+    formed.
+
+    For instance, to create a value of type `A → B`, we can use the
+    term `λ a => …`. Therefore, `λ` represents the introduction rule for
+    function types.
+
+  - __Elimination__
+
+    This rule explain how to use a previously constructed value inside
+    the type we just formed.
+
+    For instance, to use a function value `f: A → B` we need to choose a
+    value `a: A` and then apply it to obtain `f a : B`. Therefore, function
+    application is the elimination rule for function types.
+
+  - __Computation__ (or β rule)
+
+    This rule explains how to reduce (simplify) an introduction followed by
+    an elimination.
+
+    For instance, the term `(λ n => n+n) 5` introduces a functions and then
+    eliminates it. It β-reduces to `5+5`.
+
+    In general, the term `(λ x => e) t` β-reduces to `e` where all* the
+    occurrences of `x` have been replaced with `e`.
+
+    [ (*): Technically, we should say "all the free occurrences". ]
+
+  - __Uniqueness__ (or η rule)
+
+    This rule explains how to reduce (simplify) an elimination followed by
+    an introduction.
+
+    For instance `(λ x => f x)` eliminates a function and then reintroduces
+    it. It η-reduces to `f`.
+
+    This requires the term `f` not to depend on `x`.
+
+
+  The actual theory of Lean is a bit more complicated, but these notions are
+  enough to understand its basics.
+-/
+
+/-
+  __Exercise__: we have not yet seen the product type `A × B` in detail, but
+  you can probably guess how it should work.
+  Try to sketch, in an informal way, the
+    - introduction
+    - elimination
+    - computation / β
+    - uniqueness / η
+  rules for the product type.
+-/
+
+end The_fundamentals_of_types
