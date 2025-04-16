@@ -1,5 +1,5 @@
 
-section Functions_basics
+section The_function_type
 /-
   Simple types -- Function types
 
@@ -8,17 +8,21 @@ section Functions_basics
   All the definitions below are equivalent:
 -/
 
-def double₁ : Nat → Nat
+def double₁: Nat → Nat
   := λ n => n + n
 
-def double₂ : Nat → Nat
+def double₂: Nat → Nat
   := fun n => n + n
 
-def double₃ : Nat → Nat
+def double₃: Nat → Nat
+  := λ n: Nat => n + n
+
+def double₄: Nat → Nat
   | n => n + n
 
-def double₄ (n: Nat): Nat
+def double₅ (n: Nat): Nat
   := n + n
+
 
 /-
   Above we can see the _function type_: `A → B` represents the type of
@@ -33,15 +37,27 @@ def double₄ (n: Nat): Nat
   The notation `λ` is widely used in computer science. In Lean, it can also
   be written as `fun` (see `double₂` above).
 
+  When using `λ` (or `fun`), we can provide the type of the argument
+  variable as in `double₃`, i.e. `λ n: Nat => …`. If we omit that type, Lean
+  tries to _infer_ the type from the rest of the definition. When we defined
+  `double₁` we wrote the type for the function, `Nat → Nat`, so Lean can
+  infer `n: Nat`. This process is known as _type inference_, and relieves us
+  from writing the type of variables as long there is no ambiguity, i.e.
+  there is a _unique_ type that can be assigned to each variable.
+
+  Note in passing that, even when inference makes writing types redundant,
+  it might still be a good idea to annotate some variables with their types,
+  to help _humans_ read the Lean code more fluently.
+
   The combination `def … := λ x => …` is so common that it can be shortened
-  as in `double₃`. Note now the `:=` is missing there. (This notation will
+  as in `double₄`. Note now the `:=` is missing there. (This notation will
   also be used together with _pattern matching_, as we will see in the
   future.)
 
-  Finally, in `double₄` we can see a more familiar notational style: to
-  define a function we can simply take some argument like `(n: Nat)` and
-  return a result (`def … : Nat`). Here we already named the argument as `n`
-  so there is no need to use a `λ`.
+  In `double₅` we can see a more familiar notational style: to define a
+  function we can simply take some argument like `(n: Nat)` and return a
+  result (`def … : Nat`). Here we already named the argument as `n` so there
+  is no need to use a `λ`.
 -/
 
 /-
@@ -51,7 +67,7 @@ def double₄ (n: Nat): Nat
 def eight: Nat := double₁ 4
 
 /-
-  __Exercise__: verify the result above.
+  __Exercise__: verify the result above using `#eval`.
 -/
 
 /-
@@ -67,7 +83,7 @@ def ten₂: Nat := (double₁ 4) + 2
 -/
 def twelve: Nat := double₁ (4 + 2)
 
-end Functions_basics
+end The_function_type
 
 section Higher_order_functions
 /-
@@ -163,6 +179,13 @@ def compose₆ (f: Nat → Nat): (Nat → Nat) → Nat → Nat
   `compose₅` above.
 -/
 
+/-
+  __Exercise__: Prove that the above composition operators are indeed the same.
+  Here is a first step:
+-/
+example: compose₁ = compose₂
+  := rfl
+
 section Multiple_arguments_in_functions
 /-
   Thanks to the convention above, we can express multiple arguments in
@@ -178,6 +201,51 @@ def weird (a: Nat) (b: Nat) (c: Nat): Nat
 #check weird 10 20 30
 
 end Multiple_arguments_in_functions
+
+/-
+  __Exercise__: Define the left-associative composition of three functions
+  `f, g, h`. Then define their right-associative composition.
+  Finally prove that the two coincide.
+-/
+def compose_left (f: Nat → Nat) (g: Nat → Nat) (h: Nat → Nat): Nat → Nat
+  := sorry
+def compose_right (f: Nat → Nat) (g: Nat → Nat) (h: Nat → Nat): Nat → Nat
+  := sorry
+
+example: compose_left = compose_right
+  := sorry
+
+/-
+  __Exercise__: Try to prove that the following functions are equal:
+    `λ n: Nat => n`
+    `λ n: Nat => n+0`
+    `λ n: Nat => 0+n`
+  You will see that `rfl` does not always succeed here.
+
+  This is because only one of the terms `n+0` and `0+n` is equal to `n`
+  _by definition_. The other equality also holds, of course, but does not
+  directly come from the definition of `+`.
+
+  (We will see the actual definition of `+` in the future.)
+-/
+example: (λ n: Nat => n) = sorry
+  := sorry
+
+/-
+  __Exercise__: In the same spirit of the previous exercise, experiment
+  with the following list of functions. Some pairs of functions (but not
+  all) are intuitively equal: see which pairs are also _definitionally_
+  equal by testing which pairs can be proved equal using `rfl`.
+  You can even try to prove a false statement, equating to distinct
+  functions.
+
+    `λ n: Nat => n`
+    `λ n: Nat => n*1`
+    `λ n: Nat => 1*n`
+    `λ n: Nat => n+n`
+    `λ n: Nat => n*2`
+    `λ n: Nat => 2*n`
+-/
 
 end Higher_order_functions
 
@@ -222,7 +290,7 @@ section The_fundamentals_of_types
     eliminates it. It β-reduces to `5+5`.
 
     In general, the term `(λ x => e) t` β-reduces to `e` where all* the
-    occurrences of `x` have been replaced with `e`.
+    occurrences of `x` have been replaced with `t`.
 
     [ (*): Technically, we should say "all the free occurrences". ]
 
@@ -234,8 +302,10 @@ section The_fundamentals_of_types
     For instance `(λ x => f x)` eliminates a function and then reintroduces
     it. It η-reduces to `f`.
 
-    This requires the term `f` not to depend on `x`.
+    This requires the term `f` not to depend on `x`. In other words, `f` can
+    be any expression with no occurrences of `x`.
 
+    *Note*: the uniqueness / η is not always applied by Lean.
 
   The actual theory of Lean is a bit more complicated, but these notions are
   enough to understand its basics.

@@ -33,6 +33,30 @@ section Getting_started_with_Lean4
 -/
 end Getting_started_with_Lean4
 
+section Overview
+/-
+  Fundamentally, working in Lean requires to learn the following two tasks:
+
+  - Defining mathematical "objects"
+  - Proving properties on those objects
+
+  These two tasks are intimately related. Extremely so, in fact.
+
+  Of course, proving properties on mathematical objects requires one to deal
+  with how such objects have been defined in the first place. Yet, the
+  relation between _defining_ and _proving_ goes much further in systems
+  like Lean, where -- as we will see -- the techniques used for defining can
+  also be used for proving, and vice versa.
+
+  Still, for the time being, it can be beneficial to keep these two tasks
+  completely distinct in our minds.
+
+  In the first part of our course we will mainly focus on the definitions,
+  only. Once we have a firm understanding of how Lean works in that field,
+  we will be able to quickly turn to proving.
+-/
+end Overview
+
 section Sections
 /-
   As you can see, Lean files can be separated into sections, providing some
@@ -217,3 +241,41 @@ def incomplete₂: Nat × String := (Nat.succ sorry, sorry)
 end Incomplete_definitions
 
 end First_definitions
+
+section First_theorems
+/-
+  For the moment, we will only prove basic equalities that are true simply
+  "by definition".
+
+  The proof for these properties will be `rfl`, claiming that the equation
+  results from the reflexivity of the equal relation (beyond a little
+  computation that Lean implicitly performs on our definitions).
+
+  Here is a simple example:
+-/
+theorem n_plus_n: n + n = 84
+  := rfl
+/-
+  The syntax is very similar to `def` definitions. We provide the name of
+  the theorem (`n_plus_n`), its statement (`n + n = 84`), and its proof
+  (`rfl`) after a `:=` sign.
+
+  About the proof: here `rfl` suffices because `n` was previously defined as
+  `42`, so Lean can use that to automatically compute `n + n` and observe
+  that the result is indeed `84`.
+
+  To perform this computation, Lean exploits the definition of addition
+  (`+`) on natural numbers that is found in its libraries. Effectively, the
+  definition of addition is an algorithm that will be automatically run when
+  possible. This is very convenient, since in this way we do not have to
+  manually invoke the axioms defining `+` to prove trivial facts like these.
+-/
+
+/-
+  If we do not wish to name a theorem, we can do so using `example`.
+  Note that we still need a colon (`:`).
+-/
+example: n = 42
+  := rfl
+
+end First_theorems
