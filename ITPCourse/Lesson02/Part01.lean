@@ -269,3 +269,104 @@ def uncurry:
 -/
 
 end Currying
+
+section Structures
+/-
+  When working with tuples, using a product type like `A₁ × ⋯ × Aₙ` can be
+  inconvenient. Indeed, accessing each component in a large tuple requires
+  one to memorize its exact position.
+
+  `structure` types can instead be used to give _names_ to each tuple
+  component.
+-/
+
+structure Person where
+  name: String
+  age: Nat
+  birthplace: String
+  scholar: Bool
+
+/-
+  Introduction is done through the following "record" syntax:
+-/
+
+def mario: Person :=
+  { name       := "Mario"
+  , age        := 20
+  , birthplace := "Florence"
+  , scholar    := false
+  }
+
+/-
+  If the type of the structure is not provided by the context, as in the
+  example above, it can be added at the end of the record:
+-/
+
+def luigi :=  -- No type provided here!
+  { name       := "Luigi"
+  , age        := 21
+  , birthplace := "Lucca"
+  , scholar    := false
+  : Person  -- The type is written directly in the record.
+  }
+
+/-
+  Elimination is done through the "field access syntax":
+-/
+
+def marioName: String := mario.name
+def marioAge: Nat := mario.age
+
+/-
+  Elimination can also be performed through pattern matching:
+-/
+
+def marioName₂: String :=
+  match mario with
+  | { name := x , .. } => x
+  -- We can pattern match as many fields as needed.
+  -- If we don't need all the fields, we can use `..` to discard the others.
+
+def marioName₃: String :=
+  match mario with
+  | { name , .. } => name
+  -- If we don't name the pattern variable `x`, `name` becomes its name.
+  -- Effectively, this is equivalent to `{ name := name , .. }`.
+
+/-
+  If we want to create a new record which is equal to an old one on almost
+  all fields, except for a few ones, using elimination and introduction can
+  be inconvenient:
+-/
+
+def makeOlder₁ (p: Person): Person :=
+  { name := p.name
+  , age := p.age + 1
+  , birthplace := p.birthplace
+  , scholar := p.scholar
+  }
+
+def makeOlder₂ (p: Person): Person :=
+  match p with
+  | { name , age , birthplace , scholar } =>
+    { name := name
+    , age := age + 1
+    , birthplace := birthplace
+    , scholar := scholar
+    }
+
+/-
+  Instead, we can use the _record update_ syntax.
+-/
+
+def makeOlder₃ (p: Person): Person :=
+  { p with            -- "like `p` except for the mentioned fields below"
+    age := p.age + 1
+  }
+
+/-
+  __Exercise__: Define an isomorphism between a structure and a product
+  type.
+-/
+
+end Structures
