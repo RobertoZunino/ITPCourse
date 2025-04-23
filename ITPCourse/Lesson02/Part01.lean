@@ -12,7 +12,7 @@ def myPair: String × Bool := ("hello", true)
 
 /-
   Here is how to exploit a (previously-constructed) pair to extract its
-  components.
+  components (elimination).
 -/
 
 def first_component: String := myPair.fst
