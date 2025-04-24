@@ -1,5 +1,5 @@
 {
-  "name": "LeanCourse dev container",
+  "name": "ITPCourse dev container",
 
   "build": {
     "dockerfile": "Dockerfile"
