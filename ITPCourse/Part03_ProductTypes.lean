@@ -369,4 +369,38 @@ def makeOlder₃ (p: Person): Person :=
   type.
 -/
 
+section Associated_functions
+/-
+  Above, we have seen how to define functions on a `structure`.
+
+  When doing so, we can opt to associate the function to the structure type
+  more tightly by using the `StructureName.functionName` syntax, as follows:
+-/
+
+def Person.older (p: Person): Person
+  := { p with age := p.age + 1 }
+
+/-
+  The function can then used with the usual syntax
+    `Person.older p`
+  but also with the "dot syntax"
+    `p.older`
+
+  This is very convenient in practice, because it allows one to see what
+  associated functions are available on a given value by typing `mario.`
+  and then looking at the suggestions from VS Code. The suggestions will
+  include both the fields and the associated functions.
+
+  __Exercise__: Try it. Also experiment with the "dot" after a
+  non-associated function call, using `(makeOlder₁ mario).`.
+  Pressing `Ctrl-SPACE` reopens the suggestion tooltip without having to
+  retype the dot.
+
+  __Esercise__: Define an associated function that adds (`n: Nat`) years
+  to the age of a person. Test your function.
+-/
+
+end Associated_functions
+
+
 end Structures
