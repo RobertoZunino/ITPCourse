@@ -23,7 +23,7 @@ example: Point = Pair Nat
   := rfl
 
 /-
-  There is much to digest here:
+  There is a lot to digest here:
 
   - The term `Nat × Nat` is indeed a term, very much like `2 + 2`.
 
@@ -139,16 +139,33 @@ end Girard's_paradox
 #check Nat ⊕ Type    -- `Type 1`
 #check Nat ⊕ Type 1  -- `Type 2`
 
+example: Nat × Type
+  := (42, String)
+
+example: Nat × Type 1
+  := (42, Type)
+
+example: Nat × Type 1
+  := (42, Type → Type)
+
+example: Nat ⊕ Type
+  := .inl 12
+
+example: Nat ⊕ Type
+  := .inr String
+
 end Predicative_universes
 
-section Another_universe
+section One_more_universe
 /-
   As a remark, note that Lean has just one more universe beyond the `Type u`
   ones we have seen above. It is the universe of logical _propositions_, and
   is named `Prop`.
 
-  `Prop` is special: crucially, it is _not_ predicative like `Type u`.
-  We will study it later. For now, just note that `Prop : Type 0`.
+  `Prop` is special: crucially, it is _not_ predicative like `Type u`, but
+  uses a very different type formation rule.
+  We will study it later. For now, just note that `Prop : Type 0`, so `Prop`
+  is a type just like `Bool`, `String`, and `Nat`.
 
   Finally, note that the Lean universe names in the hierarchy
     `Prop   : Type 0 : Type 1 : Type 2 : ⋯`
@@ -156,8 +173,8 @@ section Another_universe
     `Sort 0 : Sort 1 : Sort 2 : Sort 3 : ⋯`
   That is, `Sort 0` is `Prop`, and `Sort (u+1)` is `Type u`.
 
-  For now, just remember that if in the Lean library you find something
-  working on `Sort …`, that is something that can also work on `Type …` if
-  one shifts the index by one.
+  For now, just remember that sometimes in the Lean library we will find
+  some functions operating on `Sort …`: these can also work on `Type …` if
+  we shift the universe index by one.
 -/
-end Another_universe
+end One_more_universe
