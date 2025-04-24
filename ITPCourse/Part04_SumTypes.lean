@@ -214,3 +214,40 @@ section Type_isomorphisms
 -/
 
 end Type_isomorphisms
+
+section Dealing_with_partial_functions
+/-
+  Sometimes we need to formalize some operation whose result is not defined
+  in all possible cases. For instance, subtraction and division on natural
+  numbers can only work under some assumptions.
+
+  In Lean, we have a few options to deal with these _partial_ functions:
+
+  - Return a "bogus" value (like zero) when the operation would be
+    undefined.
+
+  - Restrict the domain accordingly. (We will see how using dependent types
+    later on.)
+
+  - Enlarge the codomain with a special value representing the "undefined"
+    value. This can be done using `… ⊕ Unit`.
+
+  Each approach has its own pros and conses.
+-/
+
+/-
+  __Exercise__: Complete the following definition, take two partial
+  functions and summing them. The sum function is defined when both the
+  argument functions are defined.
+
+  You need to eliminate both `f …` and `g …`, so you will need a nested
+  `match`.
+
+  This might be a little more challenging than usual.
+-/
+
+def partial_sum (f: Nat → Nat ⊕ Unit) (g: Nat → Nat ⊕ Unit)
+  : Nat → Nat ⊕ Unit
+  := sorry
+
+end Dealing_with_partial_functions
