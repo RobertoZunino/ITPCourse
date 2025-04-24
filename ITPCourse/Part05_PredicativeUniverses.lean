@@ -177,4 +177,34 @@ section One_more_universe
   some functions operating on `Sort …`: these can also work on `Type …` if
   we shift the universe index by one.
 -/
+
+/-
+  So far we have only seen simple equalities as propositions.
+-/
+example: Prop
+  := 2 + 2 = 4
+
+/-
+  Functions from a type like `Nat` to `Prop` can be understood as
+  "properties on `Nat`", or even as subsets of `Nat`.
+-/
+def equalToFive: Nat → Prop
+  := λ n => n = 5   -- Given `n`, return the proposition `n = 5`.
+
+/-
+  Indeed, we can define the "powerset" operator, or the "type of subsets" as
+  follows:
+-/
+def 𝒫 (τ: Type): Type
+  := τ → Prop
+
+/-
+  Here is a function that can construct singletons.
+
+  Note the function application `𝒫 Nat` that applies `𝒫` to `Nat`, resulting
+  in `Nat → Prop`.
+-/
+def singletonNat (n: Nat): 𝒫 Nat
+  := λ m => m = n
+
 end One_more_universe
