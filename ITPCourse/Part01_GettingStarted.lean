@@ -24,7 +24,20 @@ section Getting_started_with_Lean4
     Once Lean 4 is installed, to create an empty Lean project it should be
     enough to create a new folder and run `lake init` in it.
 
-  In both cases, you should now have at your disposal a Visual Studio Code
+  - As a further alternative to installing Lean 4 on your computer, you can
+    use _Github codespaces_, which effectively allow one to run Lean 4 on a
+    remote server, storing all your files on a remote repository as well.
+
+    https://github.com/codespaces/
+
+    Github (currently, in 2025) provides around 120 core-hours of usage for
+    free each month. If you choose a dual-core server, this is effectively
+    60 hours of actual usage per month.
+    Verified students can also require more free core-hours through the
+    Github education program (https://github.com/education).
+
+
+  In any case, you should now have at your disposal a Visual Studio Code
   editor configured for Lean 4.
 
   You should now be able to open a ".lean" file (usually Basic.lean) and see
@@ -64,7 +77,6 @@ section Sections
 
   The syntax is:
 -/
-
 section Name
 /- ... Contents of the section ... -/
 end Name
@@ -72,7 +84,7 @@ end Name
 /-
   As you can see above, sections can be nested.
 
-  __Exercise__: try clicking on the `v` symbol on the left of the `section`
+  __Exercise__: Try clicking on the `v` symbol on the left of the `section`
   keyword above. You probably need to hover your mouse pointer over it to
   see it. This should "fold" the section, hiding it temporarily.
 
@@ -90,7 +102,6 @@ section Comments
 -/
 
 -- For example, this is a single-line comment.
-
 end Comments
 
 section Symbols
@@ -119,7 +130,7 @@ section Symbols
 -/
 
 /-
-  __Exercise__: try typing a formula involving a few symbols in a comment.
+  __Exercise__: Type a formula involving a few symbols in a comment.
   Don't worry if it is not valid Lean syntax for now.
 -/
 end Symbols
@@ -203,8 +214,10 @@ def p: Nat × String := (14, "hello")
 section Type_errors
 /-
   __Exercise__: try combining the above values in a nonsensical way and
-  observe the resulting Lean errors. For that, exploit the `Nat.succ`
-  function that maps a natural to its successor.
+  observe the resulting Lean errors, in the following way:
+
+  Use the `Nat.succ` function from the Lean standard library that maps a
+  natural to its successor.
 -/
 #eval Nat.succ m  -- Result: `44`
 /-
@@ -224,7 +237,6 @@ section Incomplete_definitions
 
   To do that, mark the unfinished part with `sorry`.
 -/
-
 def incomplete₁: String := sorry
 def incomplete₂: Nat × String := (Nat.succ sorry, sorry)
 
@@ -277,5 +289,21 @@ theorem n_plus_n: n + n = 84
 -/
 example: n = 42
   := rfl
+
+/-
+  `example` can replace not only `theorem`, but also `def`.
+
+  Defining an unnamed object is not very useful in practice, but it can
+  still be convenient to do so when we want to show that a given term has
+  indeed the intended type.
+-/
+example: Nat
+  := m + m
+
+/-
+  We can even omit the type (and the colon `:`) if we only want to check
+  that the definition is well-formed without using a query like `#check`.
+-/
+example := m + m
 
 end First_theorems
