@@ -368,7 +368,7 @@ def Person.older (p: Person): Person
   Pressing `Ctrl-SPACE` reopens the suggestion tooltip without having to
   retype the dot.
 
-  __Esercise__: Define an associated function that adds (`n: Nat`) years
+  __Exercise__: Define an associated function that adds (`n: Nat`) years
   to the age of a person. Test your function.
 -/
 end Associated_functions
