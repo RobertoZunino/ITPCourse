@@ -1,6 +1,5 @@
 
 section The_sum_type
-
 /-
   A sum type, written `A ⊕ B`, intuitively represents the disjoint union
   of the types `A` and `B`.
@@ -30,7 +29,6 @@ section The_sum_type
 /-
   Introduction in a sum type can be performed using the two inclusions:
 -/
-
 def something₁: String ⊕ Nat := .inl "hello"
 def something₂: String ⊕ Nat := .inr 123456
 
@@ -38,30 +36,77 @@ def something₂: String ⊕ Nat := .inr 123456
   Elimination can instead be performed through _pattern matching_.
   Here, we must take _both_ cases into account.
 -/
-
 def hello: String
   := match something₁ with
   | .inl s  => s
   | .inr _n => "a Nat is not a String"
 
+section Simple_pattern_matching
 /-
-  __Exercise__: Try removing a case from the `match`.
+  We will describe pattern matching in detail in the future. For now, we
+  only discuss the basics of _simple pattern matching_, which mandates that
+  a `match` term like
+    ```
+    match e where
+    | pat₁ => e₁
+    ⋮
+    | patₙ => eₙ
+    ```
+  satisfies the following requirements:
+
+  - `e` must be a term having a type `τ` compatible with pattern matching.
+    Among others products, sums, structures, booleans are compatible.
+    Functions are not compatible, for instance.
+
+  - `patᵢ` must be _patterns_, terms involving only variables and
+    introduction forms (e.g., `.inl …`, `.inr …`, `(…,…)`, `()`,
+    `{ a := … , …}`). Other functions are disallowed.
+
+  - Each pattern must be _linear_: a variable can occur at most once in the
+    same pattern.
+
+  - The patterns must be _exhaustive_, covering all the possible forms a
+    value of type `τ` might have.
+
+  - Each term `eᵢ` can access the variables occurring in its own `patᵢ`.
+
+  - All the terms `eᵢ` must share a _common_ type `σ`. The whole `match`
+    term will then also have type `σ`.
+
+  (Some of these requirements will be relaxed later when we will deal with
+  _dependent pattern matching_.)
 -/
+
+/-
+  __Exercise__: Try breaking the rules in the definition below.
+  Be creative: you can remove a case from the `match`, or return values
+  having distinct types in the two cases, for instance.
+-/
+def hello₂: String
+  := match something₁ with
+  | .inl s  => s
+  | .inr _n => "a Nat is not a String"
+
+end Simple_pattern_matching
 
 /-
   The computation/β rule for sum types involves two distinct reductions.
 
   β₁: The expression
+    ```
     match .inl v with
     | .inl x₁ => e₁
     | .inr x₂ => e₂
+    ```
   reduces to `e₁` where the occurrences of the variable `x₁` have been
   replaced by `v`.
 
   β₂: Similarly, the expression
+    ```
     match .inr v with
     | .inl x₁ => e₁
     | .inr x₂ => e₂
+    ```
   reduces to `e₂` where the occurrences of the variable `x₂` have been
   replaced by `v`.
 -/
@@ -88,9 +133,11 @@ example:
   The uniqueness/η rule involves the following reduction.
 
   When `s` is a term having a sum type, then the expression
+    ```
     match s with
     | .inl x₁ => .inl x₁
     | .inr x₂ => .inr x₂
+    ```
   reduces to `s`.
 
   Note: this rule is not seen, in general, by Lean as a _definitional_
@@ -112,7 +159,6 @@ example:
   __Exercise__: Try experimenting with nested sums like
   `Nat ⊕ String ⊕ Bool`.
 -/
-
 end The_sum_type
 
 section The_boolean_type
@@ -121,14 +167,12 @@ section The_boolean_type
 
   The terms `true` and `false` therefore act as introduction forms.
 -/
-
 def aBoolean: Bool := true
 
 /-
   Elimination is done using the conditional:
     `if b then … else …`
 -/
-
 def negation (b: Bool)
   := if b then false else true
 
@@ -142,9 +186,7 @@ def negation (b: Bool)
   such type only admits values `.inl ()` and `.inr ()`.
   Try defining an explicit type isomorphism.
 -/
-
 end The_boolean_type
-
 
 section The_empty_sum
 /-
@@ -161,12 +203,10 @@ section The_empty_sum
   trivial. In Lean, this requires a special syntax: instead of using a
   `match … with` term with no cases, we must use its variant `nomatch …`.
 -/
-
 def fromEmpty (e: Empty): String
   := nomatch e
 
 end The_empty_sum
-
 
 section Type_isomorphisms
 /-
@@ -212,7 +252,6 @@ section Type_isomorphisms
   __Exercise__: Try once again to define some of these isomorphisms,
   after having replaced `A,B,C` with some concrete types .
 -/
-
 end Type_isomorphisms
 
 section Dealing_with_partial_functions
@@ -245,7 +284,6 @@ section Dealing_with_partial_functions
 
   This might be a little more challenging than usual.
 -/
-
 def partial_sum (f: Nat → Nat ⊕ Unit) (g: Nat → Nat ⊕ Unit)
   : Nat → Nat ⊕ Unit
   := sorry
