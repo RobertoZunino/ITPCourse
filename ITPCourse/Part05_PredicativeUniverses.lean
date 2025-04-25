@@ -208,3 +208,116 @@ def singletonNat (n: Nat): 𝒫 Nat
   := λ m => m = n
 
 end One_more_universe
+
+section Structures_in_a_given_universe
+/-
+  When defining a `structure`, we can explicitly state the universe where
+  the new structure type will be created.
+-/
+structure Struct₁: Type 2 where
+  a: String
+  b: Type
+  c: Type 1
+
+/-
+  The chosen universe must be "large enough" to account for all th field
+  types: when defining
+    ```
+    structure … : Type u where
+      a₁: α₁
+      ⋮
+      aₙ: αₙ
+    ```
+  then each `αᵢ` must have type `Type uᵢ` with `uᵢ ≤ u`.
+
+  __Exercise__: In the definition of `Struct₁`, try changing `Type 2` to
+  `Type 1`.
+
+  We can choose a larger universe level, if we want.
+-/
+structure Struct₂: Type 8 where
+                     -- ↑ --
+  a: String
+  b: Type
+  c: Type 1
+
+end Structures_in_a_given_universe
+
+
+section Structures_with_parameters
+/-
+  Structure types can be parametrized:
+-/
+structure FunctionChain (α₁: Type) (α₂: Type) (α₃: Type) (α₄: Type) where
+  f₁: α₁ → α₂
+  f₂: α₂ → α₃
+  f₃: α₃ → α₄
+
+/-
+  Note that this effectively makes `FunctionChain` a type-valued function.
+-/
+#check FunctionChain  -- Type → Type → Type → Type → Type
+
+/-
+  Another example: a type isomorphism without the associated laws.
+-/
+structure PreIsomorphism (α β: Type) where
+  forward: α → β
+  back: β → α
+
+/-
+  __Exercise__: Define a `structure` carrying the group operations on a
+  given type `τ`. Ignore the group laws for the moment.
+  Then answer:
+    - would it be any different if defined `MonoidOps`?
+    - `SemigroupOps`?
+    - `MagmaOps`?
+-/
+structure GroupOps (τ: Type) where
+  -- Add your fields here
+
+/-
+  __Exercise__: Define a `structure` carrying the ring operations.
+  Ignore the ring laws.
+-/
+structure Ring (τ: Type) where
+  -- Add your fields here
+end Structures_with_parameters
+
+section Universe_polymorphism
+/-
+  In the definition above, we always had to mention a _fixed_ universe
+  to work within. This can be inconvenient and lead to repeated code:
+-/
+def Endomorphism₀ (τ: Type 0): Type 0 := τ → τ
+def Endomorphism₁ (τ: Type 1): Type 1 := τ → τ
+def Endomorphism₂ (τ: Type 2): Type 2 := τ → τ
+
+/-
+  We can generalize this to an arbitrary universe:
+-/
+def Endomorphism.{u} (τ: Type u): Type u := τ → τ
+
+/-
+  Then `u` is aumatically inferred on use:
+-/
+#reduce (types:=true) Endomorphism String  -- `u = 0`
+#reduce (types:=true) Endomorphism Type    -- `u = 1`
+/-
+  Note: without `(types:=true)`, `#reduce` does not simplify types.
+-/
+
+/-
+  __Exercise__: `structure`s can be universe-polymophic too!
+  Try guessing the syntax to generalize `PreIsomorphism` to arbitrary
+  universes.
+-/
+
+/-
+  __Exercise__: The syntax `α × β` actually stands for `Prod α β` where
+  `Prod` is a structure defined in the Lean standard library. Check out its
+  definition.
+-/
+#print Prod
+
+end Universe_polymorphism
