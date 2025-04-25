@@ -64,7 +64,7 @@ def double₅ (n: Nat): Nat
 def eight: Nat := double₁ 4
 
 /-
-  __Exercise__: verify the result above using `#eval`.
+  __Exercise__: Verify the result above using `#eval`.
 -/
 
 /-
@@ -105,7 +105,7 @@ def constant_10: Nat → Nat := constant_fun 10
 def ten₃: Nat := constant_10 42
 
 /-
-  __Exercise__: verify `ten₃` is indeed `10`.
+  __Exercise__: Verify `ten₃` is indeed `10`.
 -/
 
 /-
@@ -121,7 +121,7 @@ def constant_fun₂ (k: Nat) (_n: Nat): Nat := k
   We can also call `(constant_fun₂ 10) 42` or even `constant_fun₂ 10 42`
   and obtain `10` as the final result.
 
-  __Exercise__: try it.
+  __Exercise__: Try it.
 -/
 
 /-
@@ -143,7 +143,7 @@ def compose₅: (Nat → Nat) → (Nat → Nat) → Nat → Nat
   := λ f g n => f (g n)
 
 /-
-  __Exercise__: complete the definition below.
+  __Exercise__: Complete the definition below.
   You can do it with or without calling the functions above.
   Try both alternatives.
 -/
@@ -314,7 +314,7 @@ section The_fundamentals_of_types
 -/
 
 /-
-  __Exercise__: we have not yet seen the product type `A × B` in detail, but
+  __Exercise__: We have not yet seen the product type `A × B` in detail, but
   you can probably guess how it should work.
   Try to sketch, in an informal way, the
     - introduction
