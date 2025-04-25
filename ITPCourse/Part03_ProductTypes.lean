@@ -1,33 +1,27 @@
 
 section The_product_type
-
 /-
   The product type `A × B` is the type of pairs carrying a component of
   type `A` and another of type `B`.
 
   Here is how to construct a value in a product type (introduction).
 -/
-
 def myPair: String × Bool := ("hello", true)
 
 /-
   Here is how to exploit a (previously-constructed) pair to extract its
   components (elimination).
 -/
-
 def first_component: String := myPair.fst
 def second_component: Bool  := myPair.snd
 
 -- Alternatively,
-
 def first_component₂: String := myPair.1
 def second_component₂: Bool  := myPair.2
 
 -- We can verify their values as follows:
-
 #eval first_component      -- `"hello"`
 #eval second_component     -- `true`
-
 
 section A_more_complex_example
 
@@ -53,7 +47,6 @@ end A_more_complex_example
 -/
 
 section Pattern_matching
-
 /-
   There is another very important elimination form that can be used on
   pairs: _pattern matching_.
@@ -61,7 +54,6 @@ section Pattern_matching
   The `match … with …` expression allows one to obtain both components of a
   pair.
 -/
-
 def sum_of_components: Nat
   := match pairFun 10 with
   | (a, b) => a + b
@@ -74,7 +66,6 @@ def sum_of_components: Nat
 
   We can use pattern matching even on nested pairs, like pairs-of-pairs:
 -/
-
 def pat_example₁ (x: (Nat × String) × Nat): Nat
   := match x with
   | ((a, _b), c) => a + c
@@ -83,7 +74,6 @@ def pat_example₁ (x: (Nat × String) × Nat): Nat
   Above, Lean warns that `b` is not used after the `=>`. Naming that
   component `_b` avoids the warning. We can even use `_`.
 -/
-
 def pat_example₂ (x: (Nat × String) × Nat): Nat
   := match x with
   | ((a, _), c) => a + c
@@ -98,7 +88,6 @@ def pat_example₂ (x: (Nat × String) × Nat): Nat
   By contrast, `_` can appear multiple times to discard multiple unneeded
   values.
 -/
-
 def pat_example₃ (x: (Nat × String) × Nat): Nat
   := match x with
   | ((a, _), _) => a
@@ -107,7 +96,6 @@ def pat_example₃ (x: (Nat × String) × Nat): Nat
   The following shorthand notation implicitly performs a `match`.
   Note how it avoids naming the argument `x`.
 -/
-
 def pat_example₄: (Nat × String) × Nat → Nat
   | ((a, _), c) => a + c
 
@@ -132,7 +120,6 @@ example: sorry = (λ x: String × Nat => x)
 end Pattern_matching
 
 section Tuples
-
 /-
   Tuples in Lean are modelled as nested pairs.
 
@@ -140,7 +127,6 @@ section Tuples
 
     `(a,b,c,d)` means `(a,(b,(c,d)))`
 -/
-
 #eval (1,(2,3))   -- Printed as `(1,2,3)`
 
 /-
@@ -148,7 +134,6 @@ section Tuples
   Then, test `identityᵢ` on a few cases.
   Finally, prove they are indeed the identity.
 -/
-
 def left_rot: Nat × Nat × Nat × Nat → Nat × Nat × Nat × Nat
   := sorry
 
@@ -166,12 +151,10 @@ end Tuples
 end The_product_type
 
 section The_empty_product
-
 /-
   The product of zero types is called `Unit` and allows only one value:
   the "zero-tuple" `()`.
 -/
-
 def uninteresting: Unit := ()
 
 /-
@@ -209,7 +192,6 @@ section Type_isomorphisms
 end Type_isomorphisms
 
 section Currying
-
 /-
   We saw that multiple-argument functions in Lean are usually represented
   with a type such as `A₁ → A₂→ ⋯ → Aₙ → B`.
@@ -224,7 +206,6 @@ section Currying
   __Exercise__: Convert functions between the two forms, completing the
   following definitions.
 -/
-
 def curry:
   (Bool × String → Nat)
   →
@@ -267,7 +248,6 @@ def uncurry:
   Find which compositions can be proved equal to the identity using `rfl`,
   and which ones instead would require a more complex proof.
 -/
-
 end Currying
 
 section Structures
@@ -279,7 +259,6 @@ section Structures
   `structure` types can instead be used to give _names_ to each tuple
   component.
 -/
-
 structure Person where
   name: String
   age: Nat
@@ -289,7 +268,6 @@ structure Person where
 /-
   Introduction is done through the following "record" syntax:
 -/
-
 def mario: Person :=
   { name       := "Mario"
   , age        := 20
@@ -301,7 +279,6 @@ def mario: Person :=
   If the type of the structure is not provided by the context, as in the
   example above, it can be added at the end of the record:
 -/
-
 def luigi :=  -- No type provided here!
   { name       := "Luigi"
   , age        := 21
@@ -313,14 +290,12 @@ def luigi :=  -- No type provided here!
 /-
   Elimination is done through the "field access syntax":
 -/
-
 def marioName: String := mario.name
 def marioAge: Nat := mario.age
 
 /-
   Elimination can also be performed through pattern matching:
 -/
-
 def marioName₂: String :=
   match mario with
   | { name := x , .. } => x
@@ -338,7 +313,6 @@ def marioName₃: String :=
   all fields, except for a few ones, using elimination and introduction can
   be inconvenient:
 -/
-
 def makeOlder₁ (p: Person): Person :=
   { name := p.name
   , age := p.age + 1
@@ -358,7 +332,6 @@ def makeOlder₂ (p: Person): Person :=
 /-
   Instead, we can use the _record update_ syntax.
 -/
-
 def makeOlder₃ (p: Person): Person :=
   { p with            -- "like `p` except for the mentioned fields below"
     age := p.age + 1
@@ -376,7 +349,6 @@ section Associated_functions
   When doing so, we can opt to associate the function to the structure type
   more tightly by using the `StructureName.functionName` syntax, as follows:
 -/
-
 def Person.older (p: Person): Person
   := { p with age := p.age + 1 }
 
@@ -399,8 +371,6 @@ def Person.older (p: Person): Person
   __Esercise__: Define an associated function that adds (`n: Nat`) years
   to the age of a person. Test your function.
 -/
-
 end Associated_functions
-
 
 end Structures
