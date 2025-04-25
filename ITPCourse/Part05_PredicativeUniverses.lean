@@ -156,6 +156,39 @@ example: Nat ⊕ Type
 
 end Predicative_universes
 
+section Discussion
+/-
+  You might wonder if this level of generality is actually needed in
+  practice. The answer to this question might vary, depending on what kind
+  of mathematics we want to work with.
+
+  In many cases `Type` (i.e., `Type 0`) is already large enough to formalize
+  the mathematical objects we want to study. There we find all the standard
+  numeric types (naturals, integers, reals, …), and --as we shall see-- we
+  can model sets, relations, functions, … on such types.
+
+  However, sometimes we want to go a little further. If we want to define
+  the application that maps any vector space to its dual, or any group `G`
+  to the direct product `G × G`, then we are essentially defining a
+  `Type → Type` map, and for that we need `Type 1`.
+
+  Needing much higher universes is arguably rather uncommon, but not
+  completely ruled out. Category theory, for instance, tends to involve
+  notions which can require moving up in the hierarchy.
+
+  As a general recommendation, do not worry too much about the existence of
+  higher universes. Just know that, when (and if) the need arises, they are
+  there.
+
+  A final remark: note that the Lean standard library tends to be as
+  general as possible, and that often involves advanced features of Lean
+  that can be puzzling to a newcomer. The pragmatic reason we are studying
+  universes in some detail is _not_ that we will use them often, but that
+  the library does so. Understanding the Lean foundations to a certain
+  extent is then crucial to be able to use the library.
+-/
+end Discussion
+
 section One_more_universe
 /-
   As a remark, note that Lean has just one more universe beyond the `Type u`
