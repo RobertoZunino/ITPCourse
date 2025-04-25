@@ -7,7 +7,6 @@ section The_function_type
 
   All the definitions below are equivalent:
 -/
-
 def double₁: Nat → Nat
   := λ n => n + n
 
@@ -22,7 +21,6 @@ def double₄: Nat → Nat
 
 def double₅ (n: Nat): Nat
   := n + n
-
 
 /-
   Above we can see the _function type_: `A → B` represents the type of
@@ -63,7 +61,6 @@ def double₅ (n: Nat): Nat
 /-
   To apply a function to its argument we can simply write `f x`.
 -/
-
 def eight: Nat := double₁ 4
 
 /-
@@ -89,7 +86,6 @@ section Higher_order_functions
 /-
   In Lean, functions values can be passed to other functions as parameters:
 -/
-
 def apply10 (f: Nat → Nat): Nat
   := f 10
 
@@ -98,7 +94,6 @@ def apply10 (f: Nat → Nat): Nat
 /-
   Functions can also be returned by functions as results:
 -/
-
 def constant_fun (k: Nat): Nat → Nat
   := λ _n => k
   -- Note, we use `_n` here instead of `n` since otherwise Lean will
@@ -117,7 +112,6 @@ def ten₃: Nat := constant_10 42
   Since functions-returning-functions are common in Lean, we can also use a
   more convenient notation.
 -/
-
 def constant_fun₂ (k: Nat) (_n: Nat): Nat := k
 
 /-
@@ -133,7 +127,6 @@ def constant_fun₂ (k: Nat) (_n: Nat): Nat := k
 /-
   Here are some more examples. All of these are equivalent
 -/
-
 def compose₁ (f: Nat → Nat) (g: Nat → Nat): Nat → Nat
   := λ n => f (g n)
 
@@ -191,14 +184,25 @@ section Multiple_arguments_in_functions
   Thanks to the convention above, we can express multiple arguments in
   functions.
 -/
-
-def weird (a: Nat) (b: Nat) (c: Nat): Nat
+def weird₁ (a: Nat) (b: Nat) (c: Nat): Nat
   := a + 2*b + 3*c
 
-#check weird
-#check weird 10
-#check weird 10 20
-#check weird 10 20 30
+#check weird₁
+#check weird₁ 10
+#check weird₁ 10 20
+#check weird₁ 10 20 30
+
+/-
+  When several consecutive arguments have the same exact type, we can
+  shorten the notation as follows:
+-/
+def weird₂ (a b c: Nat): Nat
+  := a + 2*b + 3*c
+
+#check weird₂
+#check weird₂ 10
+#check weird₂ 10 20
+#check weird₂ 10 20 30
 
 end Multiple_arguments_in_functions
 
@@ -246,9 +250,7 @@ example: (λ n: Nat => n) = sorry
     `λ n: Nat => n*2`
     `λ n: Nat => 2*n`
 -/
-
 end Higher_order_functions
-
 
 section The_fundamentals_of_types
 /-
@@ -321,5 +323,4 @@ section The_fundamentals_of_types
     - uniqueness / η
   rules for the product type.
 -/
-
 end The_fundamentals_of_types
