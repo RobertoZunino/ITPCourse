@@ -4,6 +4,8 @@
 -/
 
 section Dependent_products
+
+section First_examples
 /-
   Who said that the codomain of a function must be _fixed_?
 
@@ -51,6 +53,8 @@ def f₃ (b: Bool): codomain b
   := f₂ b
 
 #check f₃    -- `(b: Bool) → codomain b`
+
+end First_examples
 
 section Polymorphic_functions
 /-
@@ -114,6 +118,26 @@ example := @id Type Nat
 example := @id (Type 1) (Type × Bool)
 
 end Polymorphic_functions
+
+section Telescopes
+/-
+  Note that in the most extreme case, a function with multiple arguments
+  could have a type of the following form:
+    `(x₁: τ₁) → (x₂: τ₂ x₁) → (x₃: τ₃ x₁ x₂) → ⋯ → σ x₁ … xₙ`
+  There, the type of each `xᵢ` depends on _all_ the previous arguments.
+
+  Fortunately, it is rare to see such extreme level of dependency in types.
+
+  This is sometimes referred to as a telescope, since every piece connects
+  inside the next one in the sequence.
+
+  Finally, note that when defining a function we can normally reorder its
+  arguments as we please, but in the presence of dependent types, the non
+  dependent arguments must come earlier than the arguments whose type
+  depend on them. In an extreme case like the telescope above, no reordering
+  is possible at all.
+-/
+end Telescopes
 
 section Implicit_arguments
 /-
@@ -181,8 +205,124 @@ example := swapPair₂ (α:=Bool) (β:=String) (true, "hello")
 
 end Implicit_arguments
 
--- TODO dependent pattern match (in a simple case)?
+section Foundations_of_dependent_products
+/-
+  Let's review the rules for dependent product types:
 
--- TODO introduction elimination
+  - __Type Formation__: if
+      `α: Type u`
+      `β: α → Type v`
+    then `(a: α) → β a` is a type in the universe `Type (max u v)`.
+
+  - __Introduction__: to construct a function of type `(a: α) → β a`, we can
+    use the usual function syntax `λ a: α => t` (and its variants). For this
+    to be well-typed, we need the term `t` to have type `β a` where `a` is
+    indeed the variable denoting the function argument.
+
+  - __Elimination__: we can apply functions as usual, but now the involved
+    types are slightly more complex. If we have two terms
+      `f: (a: α) → β a`
+      `e: α`
+    then the application `f e` has type `β e`.
+    We stress that `e` can be an arbitrary term -- it does not have to be a
+    variable. This means that we now have types like `β e` which can mention
+    arbitrary terms inside their syntax. We no longer have a rigid "barrier"
+    between _terms_ and _types_: the syntax of types can include terms, and
+    vice versa.
+
+  - __Computation / β__: as for regular functions.
+
+  - __Uniqueness / η__: as for regular functions.
+-/
+
+/-
+  Note in passing that dependent products indeed generalize the notion of
+  function type `α → β`. In fact, function types are implemented in Lean as
+  dependent products with a constant codomain.
+-/
+example: (Nat → String) = ((_n:Nat) → String)
+  := rfl
+
+#check ((_n:Nat) → String)  -- This is printed as a function type!
+/-
+  This is easy to remember as the informal equation
+    `Π (a: A), B ≅ Bᴬ`
+  when `B` does not depend on the index `a`.
+-/
+end Foundations_of_dependent_products
+
+section A_glimpse_at_dependent_pattern_matching
+/-
+  Pattern matching in the presence of dependent types becomes much more
+  subtle and interesting.
+
+  We will study it later, but for now let's discuss an "appetizer" example:
+-/
+def extractString₁
+  (b: Bool)
+  (x: if b then String × Nat else Bool × String)
+  : String
+  := match b , x with
+  | true  , y => y.1
+  | false , z => z.2
+
+/-
+  First, this is a dependently-typed function: its first argument `b` occurs
+  in the type of the second argument `x`, which is given by an intricate
+  term `if b then …`. The result type is instead fixed to `String`.
+
+  Second, the `match` involves _two_ terms instead of just one. Terms `b`
+  and `x` are matched simultaneously. On its own matching two (or more)
+  values instead of just one might look like a simple generalization.
+
+  However, types play a subtle role here. Consider the first case of the
+  `match`. There, we have `b = true` and `x = y`. If we put our cursor right
+  before `y.1`, we can observe that at that point `x` and `y` have
+  _different_ types, in spite of them being equal!
+  Lean reports these types:
+    `x : if b    = true then String × Nat else Bool × String`
+    `y : if true = true then String × Nat else Bool × String`
+  Since we matched `b = true`, the type of `y` reflects that knowledge.
+  This makes Lean see that `y: String × Nat`, which is needed to accept the
+  term `y.1` as a `String`.
+
+  A similar subtle reasoning is needed for `z.2` in the second case.
+
+  __Exercise__: Try using `x.1` instead of `y.1` and observe what happens.
+-/
+
+/-
+  Lean sometimes performs some more "magic" to make `match` work even when
+  if we strictly follow the rules it should not.
+  For instance, the following code is silently rewritten as our code
+  above.
+-/
+def extractString₂
+  (b: Bool)
+  (x: if b then String × Nat else Bool × String)
+  : String
+  := match b with
+  | true  => x.1
+  | false => x.2
+
+#print extractString₂
+/-
+  A technical note: in the printed code, we can read
+    ```
+    fun b x ↦
+    match b, x with
+    | true, x => x.fst
+    | false, x => x.snd
+    ```
+  Note that the two variables named `x` in the patterns are distinct
+  variables from the one bound by the `fun b x ↦ …`, even if they share the
+  same name. This is similar to what happens in
+    `(λ x => … (λ x => x+x) … )`
+  Inside `x+x`, the identifier `x` names the argument variable for the
+  innermost `λ`, while the argument of the outermost variable is shadowed.
+  It is equivalent to:
+    `(λ x => … (λ y => y+y) … )`
+-/
+end A_glimpse_at_dependent_pattern_matching
 
 end Dependent_products
