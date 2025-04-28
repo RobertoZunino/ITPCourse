@@ -292,6 +292,10 @@ theorem double_negation (p: Prop)
   : ¬ ¬ p → p
   := sorry
 
+theorem contrapositive (p q: Prop)
+  : (p → q) ↔ (¬q → ¬p)
+  := sorry
+
 end Classical_logic
 
 section Impredicativity
@@ -313,6 +317,8 @@ section Impredicativity
   `Type (max u …)`. Having a codomain in `Prop` keeps the universe level
   down.
 -/
+
+section Why_impredicativity?
 /-
   Why is impredicativity important?
 
@@ -322,18 +328,57 @@ section Impredicativity
 def Leibniz_equality (τ: Type) (a b: τ): Prop
   := ∀ P: τ → Prop, P a → P b
 /-
-  If we only use predicative universes, we must use a higher universe.
+  If we only use predicative universes, we must use a higher universe, and
+  that can cause issues later on.
 -/
 def Leibniz_equality_in_type (τ: Type) (a b: τ): Type 1
   := ∀ P: τ → Type, P a → P b
 /-
   __Exercise__: (challenging)
-  Try proving reflexivity and symmetry of the above relations.
+  Try proving reflexivity and symmetry of these relations.
   Note that the impredicative relation can be exploited when choosing `P`,
   so symmetry can be proved by claiming that since `a` has the property of
   being equal to `a`, then `b` must satisfy the same property.
+  The predicative relation prevents the same proof to be used.
+  (It can still be proved symmetric, but we might not have seen enough Lean
+  to handle that at this time.)
 -/
+end Why_impredicativity?
 
+section Why_predicativity?
+/-
+  Counterpoint: if impredicativity is good to have, why don't we make `Type`
+  impredicative like `Prop`?
+
+  The issue is that impredicativity comes at a cost: in the presence of a
+  few axioms like excluded middle and choice, it causes _proof irrelevance_:
+  any two proofs `pr₁ pr₂: p` of the same theorem `p: Prop` are necessarily
+  equal: `pr₁ = pr₂`. This is known as the Barbanera-Berardi paradox.
+
+  This is not a significant issue in `Prop`, since when dealing with
+  propositions we care only about whether a proof exists or not -- whether
+  we have more than one proof, or whether two proofs are equal are legit
+  questions but they are not nearly as interesting.
+
+  Lean completely embraces proof irrelevance in `Prop`, making any two
+  proofs of the same theorem to always by considered _definitionally_ equal:
+-/
+theorem true_or_true₁: True ∨ True := .inl True.intro
+theorem true_or_true₂: True ∨ True := .inr True.intro
+example: true_or_true₁ = true_or_true₂ := rfl
+/-
+  Proof irrelevance is fine in `Prop`, but we can not accept it in `Type`.
+  If `Type` were impredicative, consequently causing proof irrelevance, we
+  would have `true = false` in `Bool`, and `0 = 1` in `Nat`, since they
+  would be proofs/terms of the same proposition/type.
+
+  For these reasons, the best choice is to have an impredicative universe
+  for propositions (`Prop`) and use predicative universes for everything
+  else (`Type u`).
+-/
+end Why_predicativity?
+
+section The_general_dependent_product_type_formation_rule
 /-
   If you are curious, the full general rule for dependent products, working
   in all universes is:
@@ -346,6 +391,8 @@ def Leibniz_equality_in_type (τ: Type) (a b: τ): Type 1
   You can then obtain the predicative and impredicative type formation rules
   from the above and by recalling `Prop = Sort 0` and `Type u = Sort (u+1)`.
 -/
+end The_general_dependent_product_type_formation_rule
+
 end Impredicativity
 
 -- TODO first tactics
