@@ -207,8 +207,9 @@ def weird₂ (a b c: Nat): Nat
 end Multiple_arguments_in_functions
 
 /-
-  __Exercise__: Define the left-associative composition of three functions
-  `f, g, h`. Then define their right-associative composition.
+  __Exercise__: Exploiting the previously defined composition operators,
+  define the left-associative composition of three functions `f, g, h`,
+  as well as their right-associative composition.
   Finally prove that the two coincide.
 -/
 def compose_left (f: Nat → Nat) (g: Nat → Nat) (h: Nat → Nat): Nat → Nat
@@ -251,6 +252,73 @@ example: (λ n: Nat => n) = sorry
     `λ n: Nat => 2*n`
 -/
 end Higher_order_functions
+
+section More_syntax
+/-
+  Recall `example` can be used as `def` when no name needs to be given.
+  This also allows function syntax.
+-/
+example: Nat := 42
+
+example (n: Nat): Nat := n+n
+
+example (f: Nat → Nat): Nat := f (f 9)
+
+/-
+  When dealing with large expressions, it might be beneficial to define a
+  few local variables to denote intermediate results. This can be done with
+  `let` or `where`, as follows:
+-/
+example (f: Nat → Nat) (n: Nat): Nat
+  :=
+  let m: Nat := 10*n*n + 2*n + 7       -- the local definition
+  m * f m                              -- the final result
+
+example (f: Nat → Nat) (n: Nat): Nat
+  :=
+  let m := 10*n*n + 2*n + 7  -- the type can be omitted in many cases
+  m * f m
+
+example (f: Nat → Nat) (n: Nat): Nat
+  := -- using a ; we can make a `let`-definition and use it on the same line
+  let m := 10*n*n + 2*n + 7 ; m * f m
+
+-- A definition can be local to a subexpression
+example: Nat
+  := (let m := 13 ; m*m) + 45
+
+-- A `where` allows defining local variables after their use
+example: Nat
+  := a + b
+  where
+  a: Nat := 12
+  b: Nat := 2*a
+
+/-
+  When nesting scopes, if the same variable is defined multiple times, the
+  innermost declaration _shadows_ all the others.
+-/
+def shadowing₁: Nat
+  :=
+  let n := 5
+  n + (let n := 10 ; n*n)  -- `5 + 10*10`
+
+example: shadowing₁ = 105 := rfl
+
+/-
+  Avoid mixing `let` and `where`, it can be confusing!
+-/
+def shadowing₂: Nat
+  :=
+  let n := 10
+  n*n + n  -- `10+10*10`, not `3+3*3`
+  where
+  n := 3
+
+example: shadowing₂ = 110 := rfl
+
+
+end More_syntax
 
 section The_fundamentals_of_types
 /-
