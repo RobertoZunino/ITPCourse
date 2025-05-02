@@ -395,6 +395,254 @@ end The_general_dependent_product_type_formation_rule
 
 end Impredicativity
 
--- TODO first tactics
+section Tactics
+/-
+  Proving theorems via plain Curry-Howard, i.e. by writing Lean terms, is
+  a task that while feasible, can easily feel tiresome, especially when the
+  propositions at hand become large. Even with the help of types and the
+  "Lean InfoView" messages, it is easy to get lost.
 
--- propext, funxext
+  To help the human prover, _tactics_ provide a more familiar proving
+  workflow, hiding the construction of the Lean term under a new vest.
+
+  We can enter tactic mode with the keyword `by`:
+-/
+theorem tac₁ (p: Prop): p → p
+  := by
+  intro h  -- assume `p`, name the hypothesis `h`
+  exact h  -- use term `h` to fill the goal type
+
+#print tac₁  -- The underlying term can be seen here
+
+/-
+  The `intro` tactic essentially introduces the implication, creating
+  an incomplete proof `λ h => …`, where the gap must still be filled.
+
+  The `exact` tactic fills that gap with a term.
+-/
+
+/-
+  We now see a few more tactics.
+
+  The `constructor` tactic introduces certain logical connectives such as
+  `∧` and `↔`. It might split the current goal in several sub-goals, all of
+  which must be proved.
+  The `case` tactic puts the focus on a single sub-goal, hiding all the
+  information that is not relevant for it.
+-/
+theorem and_idem (p: Prop): p → p ∧ p
+  := by
+  intro h
+  constructor -- Introduce the ∧
+  -- Here we have _two_ goals to prove
+  case left =>  -- First part of the goal
+    exact h
+  case right => -- Second part
+    exact h
+
+#print and_idem -- We can always see the underlying proof term
+
+/-
+  The `cases h` tactic performs pattern-matching on hypothesis `h`,
+  producing a sub-goal for each of the forms it might have.
+  For instance, on an `∨` it produces two sub-goals for the `inl` and `inr`
+  cases. On an `∧` only one case is produced. On `False`, no cases are
+  produced, effectively closing the current goal because the assumpions
+  contain a contradiction.
+
+  After `cases`, the `case` tactic can focus on each sub-goal, and add a few
+  new hypotheses relative to each case, as it happens in pattern matching.
+
+  When the goal is an `∨`, the tactics `left` and `right` correspond to the
+  two introduction rules for the disjunction.
+
+  Finally, when some of the hypothesis is an implication (or dependent
+  product)
+    `h: … → … → … → … → α`
+  such that `α` is the current goal (or can be made such by suitably
+  choosing the "dependent" variables) the tactic `apply h` proves the
+  goal and creates a sub-goal for each of the arguments/assumptions of `h`.
+  This is called _backward reasoning_, since it is driven by the goal.
+-/
+example (p q r: Prop)
+  (h1: p → r)
+  (h2: p ∨ q)
+  : q ∨ r
+  := by
+  cases h2
+  case inl h3 => -- `h3` is a new hypothesis
+    right
+    apply h1 -- backward reasoning
+    exact h3
+  case inr h3 => -- `h3` is a new hypothesis
+    left
+    exact h3
+
+/-
+  __Exercise__: The tactics `exact?` and `apply?` ask Lean to check if there
+  is a simple way to close the goal, or to reduce it to some sub-goals
+  through `apply`. These can suggest exploiting some assumption or some
+  previous theorems, often from the Lean libraries.
+  Try them!
+  Note that they can fail to find a proof even when there is one -- they do
+  not completely relieve the human prover from their task.
+  When a solution is found, clicking it in the Lean InfoView pastes it in
+  our code, which is quite convenient.
+-/
+
+/-
+  Beyond _backward reasoning_, we can also use _forward reasoning_, i.e.
+  proving intermediate results from the hypotheses at hand.
+  `have h : τ := …` can prove such lemmas.
+  Let's prove the transitivity of implication in both ways.
+-/
+example (p q r: Prop)
+  (h1: p → q)
+  (h2: q → r)
+  : p → r
+  := by
+  intro h3
+  apply h2  -- backward
+  apply h1  -- backward
+  exact h3
+
+example (p q r: Prop)
+  (h1: p → q)
+  (h2: q → r)
+  : p → r
+  := by
+  intro h3
+  have h4: q := h1 h3   -- forward
+  have h5: r := h2 h4   -- forward
+  exact h5
+
+/-
+  Mixing term-style and tactic-style is also allowed:
+-/
+example (p q r: Prop)
+  (h1: p → q)
+  (h2: q → r)
+  : p → r
+  := by
+  intro h3
+  have h4: q := h1 h3   -- forward
+  exact h2 h4
+
+example (p q r: Prop)
+  (h1: p → q)
+  (h2: q → r)
+  : p → r
+  := by
+  intro h3
+  exact h2 (h1 h3)
+
+example (p q r: Prop)
+  (h1: p → q)
+  (h2: q → r)
+  : p → r
+  := by
+  exact λ h3 => h2 (h1 h3)
+
+example (p q r: Prop)
+  (h1: p → q)
+  (h2: q → r)
+  : p → r
+  :=
+  λ h3 => h2 (h1 h3)
+
+/-
+  After  `have … :=` a term is expected, but we can also use `by` there and
+  exploit tactics.
+-/
+example (p q r: Prop)
+  (h1: p → q)
+  (h2: q → r)
+  : p → r
+  := by
+  intro h3
+  have h4: q := by
+    -- sub-proof using tactics
+    apply h1
+    exact h3
+  have h5: r := by
+    -- sub-proof using tactics
+    apply h2
+    exact h4
+  exact h5
+
+/-
+  Conjunction `∧` can be eliminated in several ways using tactics:
+-/
+example (p q: Prop): p ∧ q → q
+  := by
+  intro h
+  exact h.2 -- Projection
+
+example (p q: Prop): p ∧ q → q
+  := by
+  intro h
+  cases h
+  case intro h1 h2 => -- Pattern matching
+    exact h2
+
+example (p q: Prop): p ∧ q → q
+  := by
+  intro h
+  have ⟨ h1 , h2 ⟩ := h  -- Matching `have`
+  exact h2
+
+example (p q: Prop): p ∧ q → q
+  :=
+  -- Term-style
+  λ h => match h with
+  | .intro _h1 h2 => h2
+
+/-
+  A few examples with `∀`:
+-/
+example (τ: Type) (f: τ → τ) (P: τ → Prop)
+  (h1: ∀ x, P x → P (f x))
+  (h2: ∀ y, ¬ P (f (f y))) -- Recall `¬` means `… → False`.
+  : ∀ z, ¬ P z
+  := by
+  intro z h3 -- Introducing `∀` and `¬`
+  have h4: P (f (f z)) := by
+    apply h1 -- Uses x = f z
+    apply h1 -- Uses x = z
+    exact h3
+  exact h2 z h4  -- Uses y = z
+
+/-
+  __Exercise__: Prove the following by backward reasoning.
+  You only need `intro` and `apply`.
+-/
+example (τ: Type) (f g: τ → τ) (P: τ → Prop)
+  (h1: ∀ x, P x → P (f x))
+  (h2: ∀ y, P (f (g y)) → P (g (f y)))
+  (h3: ∀ z, P (g z))
+  : ∀ a, P (g (f a))
+  := by
+  sorry
+
+/-
+  __Exercise__: Prove the following.
+-/
+example (τ: Type) (P Q: τ → Prop)
+  (h1: ∀ x, P x → Q x)
+  (h2: ∀ y, P y)
+  : ∀ z, Q z
+  := by
+  sorry
+
+/-
+  __Exercise__: Prove the following.
+-/
+example (τ: Type) (P: τ → Prop)
+  (h1: ∀ x y, P x ∨ P y)
+  : ∀ z, P z
+  := by
+  sorry
+
+end Tactics
+
+-- TODO propext, funext
