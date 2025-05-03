@@ -14,7 +14,7 @@ section Not_really_inductive_inductive_types
 
 section Enumerated_types
 
-inductive Color where
+inductive Color
 | red: Color
 | green: Color
 | blue: Color
@@ -51,7 +51,7 @@ section Algebraic_types
 -/
 def Point: Type := Nat × Nat -- `Nat` coordinates
 
-inductive Shape where
+inductive Shape
   -- A segment given by its endpoints
 | segment: Point → Point → Shape
   -- A triangle given by its vertices
@@ -112,7 +112,7 @@ section Actually_inductive_inductive_types
 
   The most famous example inductive type is, of course, `ℕ`:
 -/
-inductive ℕ where
+inductive ℕ
 | zero: ℕ
 | succ: ℕ → ℕ
 
@@ -225,6 +225,248 @@ end The_recursor
 
 end Actually_inductive_inductive_types
 
--- TODO more examples: lists, trees, expressions
-
 end Inductive_types
+
+section List_example
+/-
+  A common inductive type is the list type, the type of finite sequences.
+
+  Here is how to define lists of naturals.
+-/
+inductive ListOfNat
+| nil: ListOfNat
+| cons: Nat → ListOfNat → ListOfNat
+/-
+  A list can either be empty (`.nil`) or start with a natural "head" and
+  continue with a list "tail" (`.cons head tail`).
+
+  Indeed, we have the isomorphism
+    `ListOfNat ≅ Unit ⊕ Nat × ListOfNat`
+
+  Here is a possible list:
+-/
+example: ListOfNat
+  := .cons 3 (.cons 4 (.cons 2 (.cons 10 .nil)))
+
+/-
+  A list type can easily be generalized by using a _parameter_, as follows:
+-/
+inductive ListOf (τ: Type)
+| nil: ListOf τ
+| cons: τ → ListOf τ → ListOf τ
+/-
+  Note that a parameter used in an inductive type definition must be fixed
+  throughout the whole definition. Above, all occurrences of `ListOf` are
+  mentioning `τ` as their argument, forming `ListOf τ`.
+
+  In general, a type `inductive T (x₁:…) ⋯ (xₙ:…)` must always use `T` as
+  in `T x₁ … xₙ` whenever `T` occurs in the constructors' types. We can
+  _not_ use `T e₁ … eₙ` with arbitrary expressions `e₁, …, eₙ`.
+
+  [ Note: This will be relaxed later on when we will use both _parameters_
+    and _indices_ ]
+
+  In the constructor types, parameters occur as implicit arguments.
+  We do not have to pass them explicitly.
+    `List.cons: {τ : Type} → τ → ListOf τ → ListOf τ`
+-/
+
+/-
+  Computing the length of a list is done recursively.
+-/
+def ListOf.length {τ}: ListOf τ → Nat
+| .nil       => .zero
+| .cons _ tl => tl.length.succ
+/-
+  Note that we do not have to write `τ: Type` since it is inferred.
+  (We can if we want to, though.)
+-/
+
+/-
+  Summing a list of naturals is easy to define.
+-/
+def ListOf.sum: ListOf Nat → Nat
+| .nil       => 0
+| .cons n ns => n + ns.sum
+
+/-
+  The `map` function applied the same operation `f` on all the list
+  elements.
+  Given
+    `.cons x₁ (.cons x₂ … .nil)`
+  we compute
+    `.cons (f x₁) (.cons (f x₂) … .nil)`
+-/
+def ListOf.map {τ σ} (f: τ → σ): ListOf τ → ListOf σ
+| .nil       => .nil
+| .cons x xs => .cons (f x) (xs.map f)
+
+/-
+  The `filter` function takes a predicate `p: τ → Bool` on the list elements
+  and removes from the list all the elements that do not satisfy `p`.
+-/
+def ListOf.filter {τ} (p: τ → Bool): ListOf τ → ListOf τ
+| .nil => .nil
+| .cons x xs =>
+  if p x
+  then .cons x (xs.filter p)
+  else xs.filter p
+
+/-
+  __Exercise__: Define a function to concatenate two lists.
+  Proceed by recursion on the first argument `xs`.
+-/
+def ListOf.append {τ} (xs ys: ListOf τ): ListOf τ
+  := sorry
+
+/-
+  __Exercise__: Define a function to reverse a list.
+  Exploit `append`.
+-/
+def ListOf.reverse {τ}: ListOf τ → ListOf τ
+  := sorry
+
+/-
+  __Exercise__: Define a function that takes a binary function `f` and a
+  value `a`, and maps the list
+    `.cons x₁ (.cons x₂ (.cons x₃ (.cons x₄ .nil)))`
+  to
+    `f x₁ (f x₂ (f x₃ (f x₄ a)))`
+  and behaves similarly on lists of other lengths as well.
+  (Note the exact types below.)
+-/
+def ListOf.foldr {τ σ} (f: τ → σ → σ): ListOf τ → σ
+  := sorry
+
+/-
+  __Exercise__: Define the sum of a `ListOf Nat` without recursion, using
+  `foldr` instead.
+-/
+
+/-
+  __Exercise__: Define a function that takes a binary function `f` and a
+  value `a`, and maps the list
+    `.cons x₁ (.cons x₂ (.cons x₃ (.cons x₄ … .nil)))`
+  to
+    `f (f (f (f a x₁) x₂) x₃) x₄)`
+  and behaves similarly on lists of other lengths as well.
+  (Note the exact types below.)
+-/
+def ListOf.foldl {τ σ} (f: σ → τ → σ): ListOf τ → σ
+  := sorry
+
+/-
+  __Exercise__: Read and understand the recursor type.
+-/
+#check ListOf.rec
+
+end List_example
+
+section Tree_example
+/-
+  A binary tree type can be defined similarly to the list one.
+-/
+inductive TreeOf (τ: Type)
+| leaf: τ → TreeOf τ
+| branch: TreeOf τ → TreeOf τ → TreeOf τ
+
+example: TreeOf String
+  := .branch
+  (.leaf "a")
+  (.leaf "b")
+
+example: TreeOf String
+  := .branch
+  (.leaf "a")
+  (.branch
+    (.leaf "b")
+    (.leaf "c"))
+
+/-
+  __Exercise__: Define `TreeOf.map` analogously to what we did for lists.
+  What type should it have?
+-/
+
+/-
+  __Exercise__: Define a function `TreeOf.mirror` that exchanges the left
+  subtrees with the right ones, in each point of the tree.
+  Test your function on a simple tree.
+-/
+def TreeOf.mirror {τ}: TreeOf τ → TreeOf τ
+  := sorry
+
+/-
+  __Exercise__: (challenging)
+  Define `TreeOf.fold` analogously to the `foldr` function on lists.
+  What type should it have?
+-/
+end Tree_example
+
+section Expression_example
+/-
+  The inductive type of arithmetic expressions.
+-/
+inductive Expr
+  -- Literal
+| lit: Nat → Expr
+  -- Addition
+| add: Expr → Expr → Expr
+  -- Multiplication
+| mul: Expr → Expr → Expr
+
+/-
+  The evaluation function (the "semantics").
+-/
+def Expr.semantics: Expr → Nat
+| lit n     => n
+| add e₁ e₂ => e₁.semantics + e₂.semantics
+| mul e₁ e₂ => e₁.semantics * e₂.semantics
+
+/-
+  __Exercise__: Add variables to expressions.
+    `| var: String → Expr`
+  Modify the semantics so that it now depends on an "environment" `ρ`
+  that provides the value of each variable.
+    `def Expr.semantics (ρ: String → Nat): Expr → Nat`
+-/
+
+/-
+  __Exercise__: (challenging)
+  Add subtraction to expressions.
+    `| sub: Expr → Expr → Expr`
+  The library `-` operator on `Nat` returns `0` where it should arguably be
+  undefined because the actual result would be negative.
+  Make our semantics avoid that case by making it return an "error" value
+  instead. More precisely, return `Unit ⊕ Nat` where
+    `.inl ()` is the "error" result value
+    `.inr n` is a "successful" result `n: Nat`
+
+  `def Expr.semantics: Expr → Unit ⊕ Nat`
+-/
+
+/-
+  __Exercise__: Check out the `Option` library type and use that in the
+  previous exercise.
+-/
+#print Option
+
+/-
+  __Exercise__: (challenging)
+  Our expressions always have a `Nat` result. How boring!
+  Add constructors for introducing and eliminating pairs.
+    `| cons: Expr → Expr → Expr`
+    `| π₁: Expr → Expr`
+    `| π₂: Expr → Expr`
+  Make the new semantics return a `Option Value`, as per the definition
+  below. Note that we are allowing nested pairs, as in pairs-of-pairs-of-…
+  so values are inductively defined too!
+-/
+inductive Value
+| nat: Nat → Value
+| pair: Value → Value → Value
+
+end Expression_example
+
+-- TODO more examples: propositions
+
+-- TODO type formation rule, etc.
