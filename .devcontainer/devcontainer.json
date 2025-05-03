@@ -9,7 +9,14 @@
 
   "customizations": {
     "vscode" : {
-      "extensions" : [ "leanprover.lean4" ]
+      "settings": {
+        "workbench.colorTheme": "GitHub Dark Default"
+      },
+      "extensions" : [
+        "leanprover.lean4",
+        "streetsidesoftware.code-spell-checker",
+        "streetsidesoftware.code-spell-checker-british-english"
+      ]
     }
   }
 }
