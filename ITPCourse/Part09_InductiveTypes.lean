@@ -467,6 +467,152 @@ inductive Value
 
 end Expression_example
 
--- TODO more examples: propositions
+section Foundations
+/-
+  The actual rules for type formation, introduction, elimination, and
+  computation are rather complex.
 
--- TODO type formation rule, etc.
+  Below, we only provide an semi-formal discussion.
+-/
+section Type_formation
+/-
+An inductive type with parameters `a₁ … aₙ` is formed with the syntax
+  ```
+  inductive T (a₁: τ₁) … (aₙ: τₙ): Sort u where
+  | cons₁: σ₁ → ⋯ → σₖ → T a₁ … aₙ
+  ⋮
+  | consₘ: σ₁' → ⋯ → σₗ' → T a₁ … aₙ
+  ```
+subject to the following constraints:
+
+  - The type of each `cons` is a telescope, hence possibly involving
+    dependent products, and must live within universe `Sort u` or lower.
+    It must end with `T a₁ … aₙ`, exactly.
+    (It can be a trivial telescope `T a₁ … aₙ` with no arguments. In other
+    words, `k` can be zero)
+
+  - The number of constructors `m` can be zero.
+
+  - Each `σ` must be a (possibly trivial) telescope itself of the form
+      `γ₁ → … → γₕ`
+    where each `γᵢ` satisfies:
+      - if `i < h`, then `γᵢ` has no occurrences of `T` inside
+      - if `i = h`, then `γₕ` can be of one of these forms:
+        - non-inductive argument: it has no occurrences of `T` inside
+        - inductive argument    : it is equal to `T a₁ … aₙ`, exactly
+
+    For example, the (contrived) constructor
+      `cons: ((s: String) → Q s → T) → (t: T) → Nat → P t → T`
+    has
+      - an inductive argument `(s: String) → Q s → T`
+      - an inductive argument `(t: T)`
+      - a non-inductive argument `Nat`
+      - a non-inductive argument `P t` (which depends on `t`)
+-/
+end Type_formation
+section Introduction
+/-
+  __Introduction__: Trivially provided by the constructors.
+-/
+end Introduction
+section Elimination
+/-
+  Elimination is performed via the generated `T.rec` _recursor_. This is
+  implicitly called when we use pattern matching and recursion, which is
+  more convenient to use. In a sense, we can think of pattern matching and
+  recursion as the practical elimination forms, even if the recursor is the
+  "true" foundation.
+
+  That being said, below we discuss how the recursor type is generated from
+  the definition of `T`. The exact general construction is rather technical,
+  so below we only .
+
+  - First, we take the _parameters_ `a₁ … aₙ` as arguments.
+
+  - Second, we take a recursion _motive_:
+      `motive: T a₁ … aₙ → Sort v`
+    The universe `v` is arbitrary, except when `T a₁ … aₙ` was declared to
+    live in `Prop`, in which case `v` must be zero (i.e., `Sort u` must be
+    `Prop`). This is coherent with the restriction that a proof of a
+    proposition can never be used to construct non-proof values.
+
+  - Third, for any constructor of `T`
+      `cons: σ₁ → ⋯ → σₖ → T a₁ … aₙ`
+    we take a corresponding recursor argument:
+      `cons: (x₁: σ₁) → ⋯ → (xₖ: σₖ) → motive (T.cons x_₁ … xₖ)`
+    Each `(xⱼ: σⱼ)` which stands for an inductive argument is immediately
+    followed by an additional argument `(ih_xⱼ: ∀ …, motive (xⱼ …))` which
+    corresponds to the "induction hypothesis" or "recursive call".
+
+    For example, in `Nat` we have
+      `zero: Nat`
+      `succ: Nat → Nat`
+    Hence, in the recursor we have arguments
+      `zero: motive Nat.zero`
+      `succ: (n: Nat) → motive n → motive (Nat.succ n)`
+                        ↑ ↑ ↑ ↑
+                        additional argument
+
+  - Finally, we return a "recursively defined function" of type
+      `(t: T a₁ … aₙ) → motive t`
+    If we work in `Prop`, this corresponds to stating that the motive
+    holds for all values of the inductive type `T`.
+-/
+end Elimination
+section Computation
+/-
+  The computation/β rule states that if `T` has a constructor
+    `consᵢ: σ₁ → ⋯ → σₖ → T a₁ … aₙ`
+  then the application of the recursor
+    `T.rec a₁ … aₙ motive cons₁ … consₘ (T.consᵢ x₁ … xₖ)`
+  reduces to
+    `consᵢ x₁ (ih_x₁)? … xₖ (ih_xₖ)?`
+  where each `xⱼ: σⱼ` is followed by an additional term `ih_xⱼ` if and only
+  if it stands for an inductive constructor argument. Since `ih_xⱼ` only
+  appears only in some cases (the inductive ones), we used `?` above to
+  remark it might be missing.
+
+  The additional argument `ih_xⱼ` is defined as follows. If the inductive
+  argument type `σⱼ` is `γ₁ → … → γₕ₋₁ → T a₁ … aₙ`, then `ih_xⱼ` is
+    `λ g₁ … gₕ₋₁ => T.rec a₁ … aₙ motive cons₁ … consₘ (xⱼ g_₁ … gₕ₋₁)`
+-/
+
+/-
+  For example, the two terms
+    1: `Nat.rec motive z s Nat.zero`
+    2: `Nat.rec motive z s (Nat.succ x)`
+  respectively reduce to
+    1: `z`
+    2: `s x (Nat.rec motive z s x)`
+            ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ This is ih_x₁
+
+  Below we choose a constant `motive := λ _ => α` to keep things simple.
+-/
+#reduce (λ (α: Type) (z: α) (s: Nat → α → α) =>
+  Nat.rec (motive := λ _ => α) z s Nat.zero)
+
+#reduce (λ (α: Type) (z: α) (s: Nat → α → α) (x: Nat) =>
+  Nat.rec (motive := λ _ => α) z s (Nat.succ x))
+
+/-
+  Here we instead choose a property as a non-constant motive, as it
+  would happen in a standard proof by induction on naturals.
+-/
+#reduce (proofs := true)
+  (λ  (motive: Nat → Prop)
+      (z: motive Nat.zero)
+      (s: (k: Nat) → motive k → motive (Nat.succ k)) =>
+  Nat.rec (motive := motive) z s Nat.zero)
+
+#reduce (proofs := true)
+  (λ  (motive: Nat → Prop)
+      (z: motive Nat.zero)
+      (s: (k: Nat) → motive k → motive (Nat.succ k))
+      (n: Nat) =>
+  Nat.rec (motive := motive) z s (Nat.succ n))
+
+end Computation
+
+end Foundations
+
+-- TODO more examples: propositions (better with type families, I guess)
