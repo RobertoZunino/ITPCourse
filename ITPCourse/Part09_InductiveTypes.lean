@@ -73,12 +73,12 @@ example: Shape
   := .circle (3,4) 42
 
 def Shape.translate_x (δx: Nat): Shape → Shape
-  | .segment (x₁, y₁) (x₂, y₂)
-    => .segment (x₁ + δx, y₁) (x₂ + δx, y₂)
-  | .triangle (x₁, y₁) (x₂, y₂) (x₃, y₃)
-    => .triangle (x₁ + δx, y₁) (x₂ + δx, y₂) (x₃ + δx, y₃)
-  | .circle (x, y) r
-    => .circle (x + δx, y) r
+| .segment (x₁, y₁) (x₂, y₂)
+  => .segment (x₁ + δx, y₁) (x₂ + δx, y₂)
+| .triangle (x₁, y₁) (x₂, y₂) (x₃, y₃)
+  => .triangle (x₁ + δx, y₁) (x₂ + δx, y₂) (x₃ + δx, y₃)
+| .circle (x, y) r
+  => .circle (x + δx, y) r
 
 /-
   Effectively, any _algebraic_ type formed through the operations
@@ -158,7 +158,6 @@ def ℕ.double₂: ℕ → ℕ
 #print Nat
 
 section The_recursor
-
 /-
   Each time an inductive type `τ` is defined, Lean implicitly creates a
   special function `τ.rec` called _recursor_. The recursor has many purposes:
