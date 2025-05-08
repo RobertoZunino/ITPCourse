@@ -110,7 +110,8 @@ def swap₁: Nat × String → String × Nat
 def swap₂: String × Nat → Nat × String
   := sorry
 /-
-  Prove that their composition (in either direction) is the identity on pairs.
+  Prove that their composition (in either direction) is the identity on
+  pairs.
 -/
 example: sorry = (λ x: Nat × String => x)
   := sorry

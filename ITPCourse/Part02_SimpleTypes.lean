@@ -173,8 +173,8 @@ def compose₆ (f: Nat → Nat): (Nat → Nat) → Nat → Nat
 -/
 
 /-
-  __Exercise__: Prove that the above composition operators are indeed the same.
-  Here is a first step:
+  __Exercise__: Prove that the above composition operators are indeed the
+  same. Here is a first step:
 -/
 example: compose₁ = compose₂
   := rfl
