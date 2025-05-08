@@ -223,6 +223,52 @@ end A_theoretical_remark
 
 end The_recursor
 
+section On_tactics
+/-
+  In tactics, introduction for inductive types can be done via applying
+  the constructors. If there is only one constructor, or if we want to use
+  the first one, we can even use the `constructor` tactic.
+-/
+example: Nat
+  := by
+  constructor  -- Chooses Nat.zero
+
+/-
+  A basic form of elimination can be done by `cases` as with sum types.
+
+  (This might involve dependent pattern matching under the hood.)
+-/
+example (n: Nat) (P: Nat → Prop)
+  (h_zero: P .zero)
+  (h_succ: ∀ k: Nat, P k.succ)
+  : P n
+  := by
+  cases n
+  case zero =>
+    exact h_zero
+  case succ k =>
+    exact h_succ k
+
+/-
+  General elimination can instead be done using the `induction` tactic.
+
+  Unlike `cases`, `induction` fully exploits the recursor so to provide
+  induction hypotheses.
+-/
+example (n: Nat) (P: Nat → Prop)
+  (h_zero: P .zero)
+  (h_succ: ∀ k, P k → P k.succ)
+  : P n
+  := by
+  induction n  -- Like `cases`, but with induction hypotheses
+  case zero =>
+    exact h_zero
+  case succ k ih_k =>  -- Note the additional `ih_k`
+    apply h_succ
+    exact ih_k
+
+end On_tactics
+
 end Actually_inductive_inductive_types
 
 end Inductive_types
