@@ -661,4 +661,4 @@ end Computation
 
 end Foundations
 
--- TODO more examples: propositions (better with type families, I guess)
+-- TODO arithmetics, add, mul, ... by recursion
