@@ -323,23 +323,31 @@ section Why_impredicativity?
   Why is impredicativity important?
 
   Well, without it we could not easily write properties which quantify over
-  "all the propositions".
+  "all the propositions" or "all the properties".
 -/
 def Leibniz_equality (τ: Type) (a b: τ): Prop
   := ∀ P: τ → Prop, P a → P b
 /-
-  If we only use predicative universes, we must use a higher universe, and
-  that can cause issues later on.
+  If we only use predicative universes, we must place the property we are
+  defining in a higher universe than the one we quantify over, as in the
+  following example.
 -/
 def Leibniz_equality_in_type (τ: Type) (a b: τ): Type 1
   := ∀ P: τ → Type, P a → P b
 /-
+  Since the quantification on "all the properties `P`" is now restricted to
+  universe `Type`, it does not involve those properties that are defined in
+  terms of the `Leibniz_equality_in_type` property itself, which lives in
+  `Type 1`.
+-/
+
+/-
   __Exercise__: (challenging)
-  Try proving reflexivity and symmetry of these relations.
-  Note that the impredicative relation can be exploited when choosing `P`,
-  so symmetry can be proved by claiming that since `a` has the property of
-  being equal to `a`, then `b` must satisfy the same property.
-  The predicative relation prevents the same proof to be used.
+  Try proving reflexivity and symmetry of the above equality relations.
+  Note that, with the impredicative relation, we can prove symmetry by
+  claiming that since `a` has the property `P` of "being equal to `a`",
+  then `b` must satisfy the same property.
+  The predicative relation prevents the same proof idea to be used.
   (It can still be proved symmetric, but we might not have seen enough Lean
   to handle that at this time.)
 -/
@@ -377,6 +385,65 @@ example: true_or_true₁ = true_or_true₂ := rfl
   else (`Type u`).
 -/
 end Why_predicativity?
+
+section Proof_irrelevance_and_elimination
+/-
+  Since `Prop` is impredicative and because of proof irrelevance, Lean
+  forbids to eliminate a proof to produce a non-proof.
+
+  Formally, if we eliminate `t: τ` with `τ: Prop` to create a value inside
+  type `σ`, then we must have `σ: Prop` as well.
+  We have no such restriction with predicative universes.
+
+  For example, we can _not_ write
+    ```
+    example: True ∨ True → Bool
+    | .inl _ => true
+    | .inr _ => false
+    ```
+  because `Bool` is not in `Prop`, i.e. it is not a proposition, while
+  `True ∨ True` is in `Prop`.
+
+  Instead, we _can_ write
+-/
+example: Bool → True ∨ True
+| true  => .inl True.intro
+| false => .inr True.intro
+
+/-
+  There are a few exceptions to this general rule.
+
+  - The axiom of choice, `Classical.choose`. Using choice, we can extract a
+    value (a non-proof) from a proof of existence. We will discuss it later.
+
+  - The subsingleton exception. When proposition `p: Prop` is defined so
+    that it can have at most one proof _by definition_ (a "subsingleton"),
+    then there is no harm to allow elimination from `p` to any other type.
+
+  For example, `True` and `False` are subsingletons. Instead, any `… ∨ …`
+  proposition is not.
+
+  The subsingleton exception allows to discard "impossible" cases in a
+  definition, as in the following example:
+-/
+def extractLeft₁ (τ σ: Type) (x: τ ⊕ σ)
+  -- Hypothesis: `x` is not of the form `.inr …`.
+  (h: ∀ y, x = .inr y → False)
+  : τ
+  :=
+  -- This is a form of dependent match we will discuss in the future.
+  -- It does not fit within the simple pattern matching rules we saw so far.
+  match x , h with
+  | .inl t , _  => t
+  | .inr s , h' =>
+    -- Here, since `x = .inr s` we have that `h'` has the refined type
+    --   `h': ∀ y, .inr s = .inr y → False`
+    -- from which we can get a contradiction:
+    let contr: False := h' s rfl
+    -- Subsingleton elimination: from a proof of `False` we can derive `τ`.
+    nomatch contr
+
+end Proof_irrelevance_and_elimination
 
 section The_general_dependent_product_type_formation_rule
 /-
@@ -643,6 +710,24 @@ example (τ: Type) (P: τ → Prop)
   := by
   sorry
 
+/-
+  We can even use tactics to rule out impossible cases in a definition.
+  (This will implicitly use dependent pattern matching, under the hood.)
+-/
+def extractLeft₂ (τ σ: Type) (x: τ ⊕ σ)
+  -- Hypothesis: `x` is not of the form `.inr …`.
+  (h: ∀ y, x = .inr y → False)
+  : τ
+  := by
+  cases x
+  case inl t =>
+    exact t
+  case inr s =>
+    exfalso  -- Prove False instead of the current goal
+    apply h s
+    rfl      -- Same as exact rfl
+
 end Tactics
 
+-- TODO tactics for definitions
 -- TODO propext, funext
