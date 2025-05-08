@@ -276,7 +276,6 @@ structure Struct₂: Type 8 where
 
 end Structures_in_a_given_universe
 
-
 section Structures_with_parameters
 /-
   Structure types can be parametrized:
