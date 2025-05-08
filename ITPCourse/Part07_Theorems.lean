@@ -711,6 +711,58 @@ example (τ: Type) (P: τ → Prop)
   sorry
 
 /-
+  We normally use term-style definitions when defining objects with `def`
+  and tactic-style definitions when proving propositions in `theorem`.
+  However, both styles can be used for both cases.
+
+  Here are a few tactics-based definitions.
+-/
+def identity {τ: Type}: τ → τ
+  := by
+  intro x
+  exact x
+
+def swap_pair {τ σ: Type}: τ × σ → σ × τ
+  := by
+  intro p
+  have ⟨ t, s ⟩ := p
+  constructor  -- Introduce the pair
+  case fst =>
+    exact s
+  case snd =>
+    exact t
+
+/-
+  We can mix the two styles: `exact` effectively switches to term-style mode
+  while `by` can be used to switch to tactics-style mode.
+
+  This should be done with some care, since it can make the code confusing.
+  With some experience, you will understand when it is worth to switch
+  styles. The examples below are arguably not worth it.
+-/
+example {τ σ: Type}: τ × σ → σ × τ
+  := λ p =>
+  ⟨ p.2
+  , by
+    have ⟨ t, _ ⟩ := p
+    exact t
+  ⟩
+
+example {τ σ: Type}: τ × σ → σ × τ
+  := by
+  intro p
+  exact ⟨ p.2 , p.1 ⟩
+
+example {τ σ: Type}: τ × σ → σ × τ
+  := by
+  intro p
+  constructor
+  case fst =>
+    exact p.2
+  case snd =>
+    exact p.1
+
+/-
   We can even use tactics to rule out impossible cases in a definition.
   (This will implicitly use dependent pattern matching, under the hood.)
 -/
@@ -729,5 +781,4 @@ def extractLeft₂ (τ σ: Type) (x: τ ⊕ σ)
 
 end Tactics
 
--- TODO tactics for definitions
 -- TODO propext, funext
