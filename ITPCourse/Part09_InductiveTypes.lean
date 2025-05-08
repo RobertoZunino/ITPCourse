@@ -160,7 +160,8 @@ def ℕ.double₂: ℕ → ℕ
 section The_recursor
 /-
   Each time an inductive type `τ` is defined, Lean implicitly creates a
-  special function `τ.rec` called _recursor_. The recursor has many purposes:
+  special function `τ.rec` called _recursor_. The recursor has many
+  purposes:
 
     - `τ.rec` acts as a general elimination rule for `τ`.
 
