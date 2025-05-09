@@ -193,16 +193,242 @@ example: Equal "abc" "abc"
 #check Equal.rec
 
 -- The substutition principle in a simpler form
-theorem Equal.subst (τ: Type) (P: τ → Prop)
-  (x y: τ)
+def Equal.subst.{u} {τ: Type} (motive: τ → Sort u)
+  {x y: τ}
   (eq: Equal x y)
-  : P x → P y
+  : motive x → motive y
   := by
   intro h
   cases eq
   exact h
 
--- TODO much more on equality
+/-
+  The standard library equality relation is named `Eq`.
+  The syntax `x = y` is a notation for `Eq x y`.
+-/
+#print Eq
+/-
+  `rfl` or `Eq.refl …` is the introduction form.
+-/
+example: Eq "abc" "abc" := rfl
+example: "abc" = "abc"  := rfl              -- term-style `rfl`
+example: "abc" = "abc"  := by rfl           -- it is also a tactic
+example: "abc" = "abc"  := Eq.refl "abc"
+example: "abc" = "abc"  := Eq.refl _        -- inferred
+
+/-
+  When eliminating an assumption `h: x = y`, we can use the same tactics
+  we use for inductive types (`cases`, `induction`), but we also have a few
+  specific ones for equality.
+
+  The tactic `subst h` requires an hypothesis `h: x = expression` where
+  `expression` does not involve `x`. It replaces `x` with `expression`
+  _everywhere_: in all the hypotheses and in the goal. After this, `h` is
+  removed making `x` completely disappear.
+
+  `subst h` also works when `h: expression = x`.
+
+  `subst x` also works, and automatically searches for a suitable hypothesis
+  `h: x = …` or `h: … = x`.
+
+  `subst` can not operate with equations of other forms.
+-/
+example
+  (P: Nat → Prop)
+  (n m: Nat)
+  (h1: m*m + 42 = n)
+  (h2: P n)
+  : P (m*m + 42)
+  := by
+  subst h1   -- or `subst n`
+  exact h2
+
+/-
+  The `rw [ h ]` tactic, instead, works with any equation `h: e₁ = e₂` and
+  rewrites the _goal_ replacing `e₁` with `e₂`.
+
+  `rw [ ←h ]` instead replaces `e₂` with `e₁` in the _goal_.
+  (It is equivalent to `rw [ h.symm ]` which applies symmetry first to the
+  term `h`.)
+
+  `rw [ h1, h2, ←h3, … ]` chains multiple rewritings.
+
+  `rw [ … ] at h'` rewrites the _hypothesis_ `h'` instead of the goal.
+-/
+example
+  (P: Nat → Prop)
+  (n m: Nat)
+  (h1: n*n = m + 2)
+  (h2: P (n*n + 4))
+  : P (m + 6)
+  := by
+  rw [ h1 ] at h2
+  exact h2
+
+theorem eq_transitivity₁
+  (a b c: Nat)
+  (h1: a = b)
+  (h2: b = c)
+  : a = c
+  := by
+  rw [ h1 ]  -- on the goal
+  exact h2
+
+theorem eq_transitivity₂
+  (a b c: Nat)
+  (h1: a = b)
+  (h2: b = c)
+  : a = c
+  := by
+  rw [ h1 , h2 ]
+  -- `rw` also tries `rfl` at the end automatically
+
+/-
+  `rw [ h ]` also works when `h` is a `∀`-quantified equality.
+-/
+example
+  (P: Nat → Prop)
+  (f g: Nat → Nat)
+  (h1: ∀ k, f k = g k)
+  (h2: P (f 42))
+  : P (g 42)
+  := by
+  rw [ h1 ] at h2
+  -- `rw [ h1 42 ] at h2` would also work, but `k` is inferred anyway
+  exact h2
+
+/-
+  The `conv` tactic allows us to focus on only a _part_ of an expression
+  before we use `rw`. This is useful when `rw` would otherwise rewrite the
+  wrong part.
+-/
+example
+  (P: Nat → Nat → Nat → Prop)
+  (a b: Nat)
+  (h1: a = b)
+  (h2: P a a a)
+  : P a b a
+  := by
+  -- `rw [ h1 ] at h2` rewrites too much and produces `P b b b`.
+  conv at h2 =>
+    arg 2 -- focus on the second argument
+    rw [ h1 ]
+  exact h2
+/-
+  In "`conv` mode" we can use the following tactics:
+    - `left`/`lhs` focus on the left part
+    - `right`/`rhs` focus on the left part
+    - `arg k` focus on the `k`-th argument
+    - `rw [ … ]` rewrite on the focused spot
+    - `dsimp` simplify definitions and compute
+    - `intro` enter a `λ x => …`
+    and many others.
+-/
+example
+  (a b: Nat)
+  (h1: a = b)
+  : (λ n => n + a + a + n)
+  = (λ n => n + b + a + n)
+  := by
+  -- We could simply use `subst a ; rfl`, but let's use `conv` instead
+  conv => -- focus on parts of the goal
+    left     -- left hand side
+    intro n  -- under `λ n =>`
+    -- `n+a+a+n` means `((n+a)+a)+n`, so we need to navigate inside.
+    arg 1
+    arg 1
+    arg 2
+    rw [ h1 ]
+  -- `rfl` is automatically tried after `conv`
+
+/-
+  The `calc` tactic works very well when chaining relations and applying
+  transitivity-like results. This can be used to chain equalities
+    `… = … = … = … = … = …`
+  but also other relations
+    `… ≤ … = … < … = … ≤ …`
+
+  It implicitly uses lemmas from the libraries to perform the chaining.
+-/
+example
+  (h1: 5 ≤ 6)
+  (h2: 6 < 10)
+  : 5 < 10
+  := by
+  calc
+    5 = 2+3 := rfl
+    _ = 1+4 := rfl
+    _ ≤ 6   := h1
+    _ = 3+3 := rfl
+    _ < 10  := h2
+
+-- TODO more exercises
+
+section A_frequent_error_message
+-- TODO convert this to `=` ?
+/-
+  A counter-intuitive fact is that by using the recursor or substitution
+  principle on `h: Equal x y` we can _not_ always change `x` into `y` inside
+  an arbitrary expression.
+
+  More precisely, this fails when dependent products are involved.
+
+  Consider this complex context:
+    `x y: τ`
+    `h: Equal x y`
+    `α: τ → Type`
+    `w: α x`
+    `P: (t: τ) → α t → Prop`
+    `k: P x w`
+  Here, we can not replace `x` with `y` in `k` and simply obtain
+    `k': P y w`
+  since the term `P y w` is _ill-typed_: `w` has type `α x`, not `α y`.
+
+  Formally, if we try to apply substitution we can not choose
+    `motive := λ a => P a w`
+  but that is ill-typed (`w` has not type `α a`).
+
+  When dealing with standard equality, attempting to use `rw [ h ] at k`
+  fails with an error "motive is ill-typed" for the reason above.
+  `subst` does not have the same issue since it replaces a variable
+  _everywhere_.
+-/
+
+/-
+  In the example above, we can not obtain `P y w` but we _can_ obtain
+    `P y (Equal.subst α h w)`
+  which is now well-typed:
+-/
+example
+  (τ: Type)
+  (x y: τ)
+  (h: Equal x y)
+  (α: τ → Type)
+  (w: α x)
+  (P: (t: τ) → α t → Prop)
+  (k: P x w)
+  : P y (Equal.subst α h w)
+  := by
+  cases h
+  dsimp [ Equal.subst ]  -- Expand the definition and compute
+  exact k
+
+-- The same, but with standard equality
+example
+  (τ: Type)
+  (x y: τ)
+  (h: x = y)
+  (α: τ → Type)
+  (w: α x)
+  (P: (t: τ) → α t → Prop)
+  (k: P x w)
+  : P y (h ▸ w)   -- The general substitution principle for `=` is `▸`
+  := by
+  cases h
+  dsimp -- Expand the definition of `▸` and compute
+  exact k
+
+end A_frequent_error_message
 
 end Equality
 
