@@ -432,4 +432,191 @@ end A_frequent_error_message
 
 end Equality
 
--- TODO dependent match
+section Dependent_pattern_matching
+/-
+  We previously described simple pattern matching as a way to eliminate
+  inductive types (and type families). Essentially,
+    ```
+    match t with
+    | pat₁ => e₁
+    ⋮
+    | patₖ => eₖ
+    ```
+  matches the value `t` against all the forms its could have, which are
+  covered by the patterns `patⱼ`. Recall that the terms `eⱼ` must all share
+  a common type `τ`, which is the also result type for the whole `match`
+  expression.
+
+  We also saw how it can also be used on multiple values at once:
+    ```
+    match t₁ , … , tₙ with
+    | pat₁₁ , … , pat₁ₙ => e₁
+    ⋮
+    | patₖ₁ , … , patₖₙ => eₖ
+    ```
+  matches all the values `t₁ , … , tₙ` against the patterns below at the
+  same time.
+
+  To better understand what the `match` actually does, it is convenient to
+  think of it as a function application
+    `matchFun t₁ … tₙ`
+  where
+    `matchFun: τ₁ → … τₙ → τ`
+  is an "elimination" function which is implicitly created by the `match`
+  expression and maps all the arguments `tᵢ: τᵢ` to the result type `τ`.
+  The type of this function is called the `motive` of the `match` and can be
+  optionally written explicitly as follows:
+-/
+example: String
+ := match (motive := Bool → String → Nat → String) -- The motive
+   true , "hello" , 42 with                        -- The values to match
+ | true  , _      , .zero   => "result A"          -- The cases
+ | false , _      , .succ _ => "result B"
+ | _     , s      , _       => s
+
+
+/-
+  The key idea of _dependent_ pattern matching is to make the type of
+  `matchFun` into a _telescope_
+    `matchFun: (x₁: τ₁) → … → (xₙ: τₙ) → τ`
+  hence:
+    - each `τᵢ` can depend on the `xₘ` such that `m < i`
+    - `τ` can depend on all the `xₘ`
+
+  This makes it possible to eliminate inductive type families in a
+  meaningful way. Let us see a few examples.
+-/
+
+section Patterns_affect_what_comes_after
+/-
+  In a dependent match `match t₁ , … , tₙ` a pattern matching `tᵢ` can
+  "refine" the types of the following terms.
+
+  Observe this example carefully:
+-/
+def dep_match₁ (b: Bool) (x: if b then String else Nat): String
+  := match (motive := (b: Bool) → (if b then String else Nat) → String )
+    b     , x with
+  | true  , y       => y
+  | false , .zero   => "zero"
+  | false , .succ _ => "non zero"
+/-
+  The `match b , x` involves a `x` whose type depends on `b`.
+
+  Matching `b` against the pattern `true` and `x` against `y` causes the
+  value of `y` to be `String` instead of `if …`. Hence, returning `y` as
+  the resulting string is accepted.
+
+  Similarly, matching `b` against the pattern `false` allows `x` to be
+  matched against `.zero` and `.succ _`, as if it now had the `Nat` type.
+-/
+
+/-
+  Another example:
+-/
+def dep_match₂ (b: Bool): if b then String else Nat
+  := match (motive := (b: Bool) → if b then String else Nat)
+    b with
+  | true  => "hello"
+  | false => (42: Nat)
+/-
+  Here the two expressions `"hello"` and `42: Nat` do not share the same
+  type: one is a `String`, the other is a `Nat`.
+  However, the former is used in the `b = true` case, and the latter is used
+  in the `b = false` case, so we could say they do share
+    `if b then String else Nat`
+-/
+
+/-
+  Effectively, when a value `t` is matched against `pat`, the types
+  mentioned in the `motive` get "refined" as when applying a function in a
+  dependent product type.
+  In `dep_match₂` we intuitively have:
+    `matchFun: (b: Bool) → if b then String else Nat)` (motive)
+    `matchFun true: String`
+    `matchFun false: Nat`
+  Similarly, `dep_match₁` we intuitively have:
+    `matchFun: (b: Bool) → (if b then String else Nat) → String` (motive)
+    `matchFun true: String → String`
+    `matchFun false: Nat → String`
+-/
+end Patterns_affect_what_comes_after
+
+section Patterns_affect_what_comes_before
+/-
+  When using inductive type families, i.e. `inductive` types with _indices_
+  (and not just _parameters_), a pattern can also affect the matches that
+  come before. This might be surprising at first.
+
+  Observe this example:
+-/
+inductive IsString: Type → Type
+| str: IsString String
+
+example
+  (α: Type)
+  (a: α)
+  (h: IsString α)
+  : String
+  := match (motive := (α: Type) → α → IsString α → String)
+    α , a  , h with
+  | _ , a' , .str => a'
+/-
+  Here, matching `h` with `.str` forces the type in `h: IsString α` to be
+  refined as `OnlyType String`, since that is the index mandated by
+  constructor `.str`. This causes `α` to be `String` and `a'` to have type
+  `String`, hence returning `a'` as the result of the match is correct.
+
+  Note that this happens even if we did not pattern match `α` against a
+  pattern. Indeed, we can _not_ really do that: writing
+    `match α with | String => …`
+  is forbidden by Lean since `α: Type` and `Type` is not a type which allows
+  pattern matching. Also, `String` is not a pattern, but a term.
+
+  We can only pattern match `α` with "trivial" patterns like these:
+    - the wildcard `_` as done above
+    - a new variable, e.g. `β`, but Lean considers this to be an error since
+      `β` would be later forced to be `String`, so there is no point in
+      referring to `β` later on.
+    - the special "inaccessible" pattern `.(e)` where `e` is any
+      _expression_ (not required to be a pattern) that will be forced later
+       on by other patterns.
+-/
+example
+  (α: Type)
+  (a: α)
+  (h: IsString α)
+  : String
+  := match (motive := (α: Type) → α → IsString α → String)
+    α         , a  , h with
+  | .(String) , a' , .str => a'
+
+/-
+  Fortunately, most of these technical aspects can be automatically inferred
+  by Lean, so we do not have to be so pedantic in our `match`es.
+  For instance, here the motive and the inaccessible pattern are inferred.
+-/
+def dep_match₃
+  (α: Type)
+  (a: α)
+  (h: IsString α)
+  : String
+  := match
+    α , a  , h with
+  | _ , a' , .str => a'
+
+/-
+  We can ask Lean to print the inferred motive and patterns, by turning the
+  following option on.
+  (Enclosing it in a `section` makes the option revert to normal later on.)
+-/
+section
+set_option pp.motives.all true
+#print dep_match₃
+end
+
+-- TODO Examples
+end Patterns_affect_what_comes_before
+
+-- TODO
+end Dependent_pattern_matching
