@@ -474,7 +474,6 @@ example: String
  | false , _      , .succ _ => "result B"
  | _     , s      , _       => s
 
-
 /-
   The key idea of _dependent_ pattern matching is to make the type of
   `matchFun` into a _telescope_
@@ -615,8 +614,102 @@ set_option pp.motives.all true
 #print dep_match₃
 end
 
--- TODO Examples
+/-
+  A common case of dependent pattern matching is to affect the index of the
+  equality type `x = y`, effectively implementing the "substitution"
+  property of equality.
+-/
+example
+  (τ: Type)
+  (α: τ → Type)
+  (x y: τ)
+  (h: x = y)
+  (z: α x)
+  : α y
+  := match (motive := (y: τ) → x = y → α x → α y)
+    y    , h          , z with
+  | .(x) , .refl .(x) , z' => z'
+/-
+  Recall that in `x = y` we have a _parameter_ `x` and an _index_ `y`.
+  By matching against the pattern `.refl` we force the index to be `x`, and
+  the inaccessible patterns above reflect that.
+  This also allows `z: α x` to become `z': α y`.
+
+  Note how most of the technical parts can be omitted, letting Lean infer
+  the rest.
+-/
+def dep_match_subst
+  (τ: Type)
+  (α: τ → Type)
+  (x y: τ)
+  (h: x = y)
+  (z: α x)
+  : α y
+  := match h with
+  | .refl _ => z
+
+/-
+  Lean automatically adds the index `y` before `h`.
+-/
+section
+set_option pp.motives.all true
+#print dep_match_subst
+end
+/-
+  The type of `z` is also adapted automatically without needing to match
+  against a new variable `z'`.
+-/
+
+/-
+  Another example: another definition of even naturals.
+-/
+inductive Even₂: Nat → Prop
+| intro: (n: Nat) → Even₂ (2*n)
+
+def even₂_example
+  (n: Nat)
+  (P: Nat → Prop)
+  (h1: Even₂ n)
+  (h2: ∀ k, P (2*k))
+  : P n
+  := match n , h1 with
+  | .(2*y) , .intro y => h2 y
+
+section
+set_option pp.motives.all true
+#print even₂_example
+end
+
 end Patterns_affect_what_comes_before
 
--- TODO
+/-
+  A dependent `match` term is subject to restrictions similar to those for
+  simple pattern matching, which we have already discussed. We only
+  highlight the main differences:
+
+  Considering a `match` term as the following
+    ```
+    match
+      (motive := (x₁:τ₁) → … → (xₙ:τₙ) → τ)
+      t₁ , … , tₙ with
+    | pat₁₁ , … , pat₁ₙ => e₁
+    ⋮
+    | patₖ₁ , … , patₖₙ => eₖ
+    ```
+  we have that:
+
+  - Any inductive type involved in the motive must have its indices
+    also occurring in the motive telescope at an earlier position.
+
+  - The expressions `eⱼ` no longer need to share the same type `τ`, but
+    must have the type `(λ x₁ … => τ) patᵢ₁ …`, which substitutes inside `τ`
+    the variables in the telescope with the values required by the patterns.
+
+  - The type of the `match` term is now `(λ x₁ … => τ) t₁ …`.
+
+  - The patterns still need to be exhaustive. This constraint now also takes
+    into account the indices that can be forced to have a specific value,
+    since different values from the forced ones do not need to be
+    considered.
+-/
 end Dependent_pattern_matching
