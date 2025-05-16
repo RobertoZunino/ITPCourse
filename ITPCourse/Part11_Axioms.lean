@@ -207,6 +207,13 @@ def StringAB.length (s: StringAB): Nat
 -/
 #check Quot.sound
 
+example: str_a = str_b
+  := by
+  apply Quot.sound
+  right
+  left
+  trivial
+
 /-
   Note that the converse implication only holds when `equiv` is an actual
   equivalence relation. In such case we have that
