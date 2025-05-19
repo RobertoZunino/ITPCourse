@@ -713,3 +713,161 @@ end Patterns_affect_what_comes_before
     considered.
 -/
 end Dependent_pattern_matching
+
+section A_simple_language_semantics_example
+/-
+  We showcase the power of inductive type families using a simple example.
+
+  Consider a simple language of expressions:
+-/
+inductive Expr
+  -- literals (e.g., 42)
+| lit: Nat → Expr
+  -- addition (+)
+| add: Expr → Expr → Expr
+  -- pairs (e₁, e₂)
+| pair: Expr → Expr → Expr
+  -- projections πᵢ(e)
+| π₁: Expr → Expr
+| π₂: Expr → Expr
+
+/-
+  The value denoted by an `Expr` can be integer, or a pair.
+
+  Pairs can be nested, so a pair-of-pairs-of-integers is possible
+-/
+inductive Value
+| nat: Nat → Value
+| pair: Value → Value → Value
+
+/-
+  The semantics of an `Expr` is a partial function: for instance `π₁(42)`
+  is ill-formed and has no value. We use `Option` to represent evaluation
+  errors.
+-/
+#print Option -- `Option α ≅ α ⊕ Unit`
+
+def Expr.semantics: Expr → Option Value
+| .lit x => .some (.nat x)
+| .add e₁ e₂ =>
+  match e₁.semantics , e₂.semantics with
+  | .some (.nat x₁) , .some (.nat x₂) => .some (.nat (x₁ + x₂))
+  | _               , _               => .none
+| .pair e₁ e₂ =>
+  match e₁.semantics , e₂.semantics with
+  | .some v₁ , .some v₂ => .some (.pair v₁ v₂)
+  | _        , _        => .none
+| .π₁ e =>
+  match e.semantics with
+  | .some (.pair v₁ _) => .some v₁
+  | _                  => .none
+| .π₂ e =>
+  match e.semantics with
+  | .some (.pair _ v₂) => .some v₂
+  | _                  => .none
+/-
+  Above, we have to consider the cases where
+  - the subexpressions `eᵢ` are ill-formed
+  - the subexpressions `eᵢ` are well-formed but denote an unexpected value
+    (i.e., a value of the wrong type as in `π₁(42)` where `42` is not a
+    pair).
+
+  This requires a plethora of additional checks against `.none` results.
+
+  Here are a few examples:
+-/
+example:
+  (Expr.pair (.lit 42) (.lit 43)).semantics
+  =
+  .some (Value.pair (.nat 42) (.nat 43))
+  := rfl
+
+example:
+  (Expr.add
+    (.π₁ (.pair (.lit 42) (.lit 43)))
+    (.lit 1)
+  ).semantics
+  =
+  .some (Value.nat 43)
+  := rfl
+
+-- Adding pairs fails.
+example:
+  (Expr.add
+    (.pair (.lit 42) (.lit 43))
+    (.lit 1)
+  ).semantics
+  = .none
+  := rfl
+
+/-
+  Inductive type families and dependent pattern matching provide an
+  alternative solution.
+
+  We start by defining a language of "types" for our expressions: these
+  are the types involving only the basic type of naturals and products.
+-/
+inductive Ty
+  -- The basic `Int` type
+| nat: Ty
+  -- A product type
+| prod: Ty → Ty → Ty
+
+/-
+  We can map `Ty` "types" into actual lean types:
+-/
+def Ty.semantics:  Ty → Type
+| nat => Nat
+| .prod α β => α.semantics × β.semantics
+
+/-
+  We now label each expression with its type. We call these `TExpr` for
+  "typed expressions".
+
+  In this way, we rule out ill-formed expressions like `π₁(42)`.
+-/
+inductive TExpr: Ty → Type
+  -- literals (e.g., 42)
+| lit: Nat → TExpr .nat
+  -- addition (+)
+| add: TExpr .nat → TExpr .nat → TExpr .nat
+  -- pairs (e₁, e₂)
+| pair: {α β: Ty} → TExpr α → TExpr β → TExpr (.prod α β)
+  -- projections πᵢ(e)
+| π₁: {α β: Ty} → TExpr (.prod α β) → TExpr α
+| π₂: {α β: Ty} → TExpr (.prod α β) → TExpr β
+
+/-
+  The semantics of an `Expr'` is now a _total_ function: there are no
+  ill-formed expressions, so every one can have a value.
+
+  There is no need to use `Option` to represent evaluation errors, since
+  we removed those.
+-/
+def TExpr.semantics {τ: Ty}: TExpr τ → τ.semantics
+| .lit x => x
+| .add e₁ e₂ => Nat.add e₁.semantics e₂.semantics
+| .pair e₁ e₂ => (e₁.semantics, e₂.semantics)
+| .π₁ e => e.semantics.fst
+| .π₂ e => e.semantics.snd
+/-
+  Above, dependent pattern matching automatically refines `τ` in each case.
+
+  We conclude with a few examples:
+-/
+example:
+  (TExpr.pair (.lit 42) (.lit 43)).semantics
+  =
+  ((42: Nat) , (43: Nat))
+  := rfl
+
+example:
+  (TExpr.add
+    (.π₁ (.pair (.lit 42) (.lit 43)))
+    (.lit 1)
+  ).semantics
+  =
+  (43: Nat)
+  := rfl
+
+end A_simple_language_semantics_example
