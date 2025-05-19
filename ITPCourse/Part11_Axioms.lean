@@ -152,17 +152,17 @@ section Quotient_types
 
   As a simple example, we identify the two `String`s `"a"` and `"b"`:
 -/
-def equiv (x y: String): Prop
+def equivAB (x y: String): Prop
   := x=y ∨ (x="a" ∧ y="b") ∨ (x="b" ∧ y="a")
 
-def StringAB: Type := Quot equiv
+def QuotAB: Type := Quot equivAB
 
 /-
   Introduction is performed using 'Quot.mk`:
 -/
-def str_hello: StringAB := Quot.mk equiv "hello"
-def str_a: StringAB     := Quot.mk equiv "a"
-def str_b: StringAB     := Quot.mk equiv "b"
+def str_hello: QuotAB := Quot.mk equivAB "hello"
+def str_a: QuotAB     := Quot.mk equivAB "a"
+def str_b: QuotAB     := Quot.mk equivAB "b"
 
 /-
   Elimination requires, of course, a function which yields the same result
@@ -170,10 +170,10 @@ def str_b: StringAB     := Quot.mk equiv "b"
 
   This is done using `Quot.lift`.
 -/
-def StringAB.length (s: StringAB): Nat
+def StringAB.length (s: QuotAB): Nat
   := Quot.lift String.length stable s
   where
-  stable : ∀ s₁ s₂, equiv s₁ s₂ → String.length s₁ = String.length s₂
+  stable : ∀ s₁ s₂, equivAB s₁ s₂ → String.length s₁ = String.length s₂
     := by
     intro s₁ s₂ h1
     cases h1
@@ -254,7 +254,78 @@ theorem quot_exact
   dsimp at h2
   exact h2
 
--- TODO the `Quotient` type
+/-
+  An alternative to `Quot` types are `Quotient` types.
+
+  `Quotient` is a wrapper around `Quot` that ensures that the relation
+  used in `Quot` is indeed an equivalence relation.
+
+  Using `Quotient` involves a few additional types: `Equivalence` and
+  `Setoid`. The proposition `Equivalence r` states that `r` is an
+  equivalence relation. A `Setoid α` instead is a structure that contains
+  both a relation `r` and a proof of `Equivalence r`.
+-/
+#print Equivalence
+#print Setoid
+
+theorem AB_equivalence: Equivalence equivAB
+  := sorry -- Left as an exercise.
+
+def AB_setoid: Setoid String :=
+  { r := equivAB
+  , iseqv := AB_equivalence
+  }
+
+def QuotientAB := Quotient AB_setoid
+
+/-
+  Introduction is done using `Quotient.mk`. Now we use the setoid instead
+  of the arbitrary relation.
+-/
+def qstr_hello: QuotientAB := Quotient.mk AB_setoid "hello"
+def qstr_a: QuotientAB     := Quotient.mk AB_setoid "a"
+def qstr_b: QuotientAB     := Quotient.mk AB_setoid "b"
+
+/-
+  Elimination is done via `lift`, as for `Quot`.
+-/
+#check Quotient.lift
+
+/-
+  These two theorems ensure that two equivalence classes are equal if and
+  only if their representatives are equivalent.
+
+  They are analogous to the ones for `Quot`.
+-/
+#check Quotient.sound
+#check Quotient.exact
+
+example: qstr_a = qstr_b
+  := by
+  apply Quotient.sound
+  case a =>
+  change (equivAB _ _)
+  right
+  left
+  trivial
+
+/-
+  It is recommended to use `Quotient` instead of `Quot` in everyday usage,
+  since in virtually all cases we are using equivalences anyway.
+
+  `Quot` is seen as a low-level primitive, while `Quotient` is considered
+  the "normal" tool to use.
+-/
+
+/-
+  __Exercise__: Define integers as a quotient of `Nat × Nat`.
+  Intuitively, a pair `(a,b)` represents the integer `a-b`.
+  Consistently, let `(a,b) ≈ (c,d)` iff `a+d = c+b` (in `Nat`).
+  Define some operations on integers such as addition.
+  Optionally prove a few properties of additions exploiting the existing
+  results on `Nat`.
+-/
+
 end Quotient_types
 
 section Dependencies_among_axioms
