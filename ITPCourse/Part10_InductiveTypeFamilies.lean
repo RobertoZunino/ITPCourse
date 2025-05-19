@@ -714,6 +714,82 @@ end Patterns_affect_what_comes_before
 -/
 end Dependent_pattern_matching
 
+section Natural_arithmetics
+/-
+  We can now try to prove a few basic arithmetical properties on natural
+  numbers.
+
+  Note that this involves:
+  - an inductive type for natural numbers
+  - an inductive type family for equality
+  Because of equality, the proofs we are going to write using tactics will
+  actually involve a few dependent pattern matches.
+
+  (We could use `Nat`, but we prefer to redefine everything so that no lemma
+  form the libraries is implicitly exploited in our development.)
+-/
+inductive ℕ
+| zero: ℕ
+| succ: ℕ → ℕ
+
+def ℕ.add: ℕ → ℕ → ℕ
+| n, .zero => n
+| n, .succ m => (n.add m).succ
+
+-- Trivial definitional equality
+theorem ℕ.add_zero (n: ℕ): n.add .zero = n
+  := rfl
+
+-- Non trivial property
+theorem ℕ.zero_add (n: ℕ): ℕ.zero.add n = n
+  := by
+  induction n
+  case zero =>
+    rfl
+  case succ m ih =>
+    -- Expand the definition
+    unfold ℕ.add
+    -- Use induction hypothesis
+    rw [ ih ]
+
+-- Trivial
+theorem ℕ.add_succ (n m: ℕ): n.add m.succ = (n.add m).succ
+  := rfl
+
+-- Non-trivial
+theorem ℕ.succ_add (n m: ℕ): n.succ.add m = (n.add m).succ
+  := by
+  induction m
+  case zero =>
+    rfl
+  case succ m ih =>
+    conv =>
+      left
+      unfold ℕ.add
+    rw [ ih ]
+    rfl
+
+theorem ℕ.add_comm (n m: ℕ): n.add m = m.add n
+  := by
+  induction m
+  case zero =>
+    -- Exploit previous lemmas
+    rw [ ℕ.add_zero, ℕ.zero_add ]
+  case succ m' ih =>
+    conv =>
+      left
+      unfold ℕ.add
+    rw [ ih , ℕ.succ_add ]
+
+/-
+  __Exercise__: State and prove the analogous properties of multiplication.
+
+  __Exercise__: Prove associativity.
+
+  __Exercise__: Prove distributivity.
+-/
+end Natural_arithmetics
+
 section A_simple_language_semantics_example
 /-
   We showcase the power of inductive type families using a simple example.

@@ -660,5 +660,3 @@ section Computation
 end Computation
 
 end Foundations
-
--- TODO arithmetics, add, mul, ... by recursion
