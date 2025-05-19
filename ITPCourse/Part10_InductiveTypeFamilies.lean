@@ -715,7 +715,7 @@ end Patterns_affect_what_comes_before
 -/
 end Dependent_pattern_matching
 
-section Natural_arithmetics
+section Natural_arithmetic
 /-
   We can now try to prove a few basic arithmetical properties on natural
   numbers.
@@ -789,7 +789,7 @@ theorem ℕ.add_comm (n m: ℕ): n.add m = m.add n
 
   __Exercise__: Prove distributivity.
 -/
-end Natural_arithmetics
+end Natural_arithmetic
 
 section A_simple_language_semantics_example
 /-
