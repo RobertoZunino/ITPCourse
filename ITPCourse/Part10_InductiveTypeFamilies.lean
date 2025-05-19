@@ -182,7 +182,8 @@ example: Equal "abc" "abc"
   _index_. Indeed, `x` is fixed to an arbitrary value, but `y` is then
   constrained to be equal to `x`.
 
-  Perhaps, `Equal` should be better understood as if we defined the predicate
+  Perhaps, `Equal` should be better understood as if we defined the
+  predicate
     `Equal x: τ → Prop`
   meaning "being equal to `x`".
 
