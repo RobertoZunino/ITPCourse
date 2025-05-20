@@ -324,8 +324,23 @@ example: qstr_a = qstr_b
   Define some operations on integers such as addition.
   Optionally prove a few properties of additions exploiting the existing
   results on `Nat`.
--/
+  Also inspect the library `Int` type.
 
+  __Exercise__: (challenging)
+  Define rationals exploiting a suitable quotient of `Int × Nat`.
+
+  __Exercise__: (challenging)
+  Define real numbers.
+  Start by defining Cauchy-converging sequences of rationals.
+    ```
+    structure CauchyConverging where
+      seq: ℕ → ℚ
+      seq_converges: ∀ …   -- property of seq
+    ```
+  Then take a suitable quotient.
+  Note: you might want to require an exponentially fast convergence. This is
+  convenient if you then want to define, say, addition.
+-/
 end Quotient_types
 
 section Dependencies_among_axioms
