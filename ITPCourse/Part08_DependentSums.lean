@@ -164,9 +164,15 @@ example (τ: Type) (R: τ → τ → Prop)
   pass. Replace those with the actual values. Note how the proof is now
   much worse to read.
 -/
+
+/-
+  __Exercise__: Define primality on natural numbers.
+  Exploit multiplication and quantifiers.
+-/
+def divides (n m: Nat): Prop
+  := sorry
+
+def prime (n: Nat): Prop
+  := n > 1 ∧ sorry
+
 end Existential_quantification
-
--- TODO with funext and propext we could do some set-theoretic exercises
--- on indexed unions / intersections
-
--- TODO eliminating Prop to Type, and the subsingleton exception
