@@ -1,4 +1,6 @@
 
+import Mathlib.Data.Real.Basic  -- For `Real` numbers
+
 section Type_classes
 /-
   Sometimes we want to add additional information on top of existing types.
@@ -169,5 +171,111 @@ instance instOrderString₂: Order String where
 end Type_classes
 
 section Decidable_properties
--- TODO
+/-
+  A fairly common class of propositions is the `Decidable` class, that
+  comprises those propositions that can be checked through computation,
+  i.e. with an algorithm.
+-/
+example (x y z: Nat): Decidable (x+y ≤ z)
+  := inferInstance  -- Let Lean find the needed instances
+
+/-
+  Decidable properties include (among others)
+  - common arithmetic operators on `Nat`, `Int`, `Rat`
+  - common logical operators `=`, `≠`, `≤`, … on `Nat`, `Int`, `Rat`
+  - combinations of decidable properties using `∧`, `∨`, `→`, `↔`, `¬`
+
+  The `Decidable` class does NOT include (among others)
+  - properties involving `∀` or `∃`
+  - properties on most functions
+  - properties on `Real` numbers
+  Intuitively, this is because to check `∀ n: Nat, P n` sometimes we do
+  not really have an algorithm. Note that we can not actually check
+    `P 0`, `P 1`, `P 2`, …
+  because when no counterexample exists that would take infinite time, so we
+  would not be able to that `∀ n: Nat, P n` is true.
+
+  [ Note: the general absence of an algorithm can actually be proved with
+    tools from _computability theory_ (also known as _recursion theory_). ]
+
+  Further, we can not decide `f = g` when `f g: Nat → Bool`. Testing those
+  functions on their whole infinite domain is unfeasible.
+
+  `Real` numbers can be represented in many ways, but all of them involve
+  function-like objects, such as
+  - converging rational sequences (`Nat → Rat`)
+  - sequences of (say) base-2 digits (`Nat → Bool`)
+  - suitable sets of rationals (`Rat → Prop`)
+  Therefore, we can not have an algorithm to decide `x = 0` when `x: Real`.
+-/
+
+/-
+  Decidable properties can be used inside an `if …` in definitions, even if
+  their type is `Prop` (and not `Bool`).
+-/
+def half_parabola₁ (x: Int): Int
+  :=
+  if x ≤ 0
+  then 0
+  else x^2
+
+/-
+  Lean prods ourselves to use `Decidable` properties as much as possible
+  since it helps automating simplification steps in proofs.
+
+  Sometimes, though, this `Decidable` restriction in `if … ` is simply too
+  strong. Working with real numbers, for instance, requires us to use many
+  undecidable properties.
+
+  In such cases, Lean allows us to exploit axioms and pretend that all
+  propositions are "decidable":
+-/
+#check Classical.propDecidable
+/-
+  Here is a simple example. Note how Lean still forces us to mark the
+  definition as `noncomputable`, since it is not backed by an algorithm.
+-/
+noncomputable
+def half_parabola₂ (x: Real): Real
+  :=
+  if x ≤ 0
+  then 0
+  else x^2
+
+#print axioms Classical.propDecidable
+#print axioms half_parabola₂
+
+/-
+  More complex conditions might require to exploit `propDecidable` more
+  explicitly.
+-/
+noncomputable
+def best_function₁ (f g: Real → Real) (x: Real): Real
+  :=
+  let _ := Classical.propDecidable  -- Put the result in scope
+  if (∀ y, f y ≤ g y)
+  then f x
+  else g x
+
+/-
+  In tactics mode, `classical` does just that:
+-/
+noncomputable
+def best_function₂ (f g: Real → Real) (x: Real): Real
+  := by
+  classical
+  exact if (∀ y, f y ≤ g y)
+        then f x
+        else g x
+
+example (f g: Real → Real)
+  : True
+  := by
+  classical
+  let best (x: Real): Real :=
+    if ∀ y, f y ≤ g y
+    then f x
+    else g x
+  trivial
+
 end Decidable_properties
