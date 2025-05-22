@@ -88,7 +88,7 @@ end Name
   keyword above. You probably need to hover your mouse pointer over it to
   see it. This should "fold" the section, hiding it temporarily.
 
-    43 v   section Name
+    80 v   section Name
        ↑
        here
 -/
@@ -134,7 +134,6 @@ section Symbols
   Don't worry if it is not valid Lean syntax for now.
 -/
 end Symbols
-
 
 section First_definitions
 /-
@@ -307,3 +306,18 @@ example: Nat
 example := m + m
 
 end First_theorems
+
+section Recap_exercises
+/-
+  __Exercise__: Write several lower-case and upper-case greek letters.
+  You can try to see if a few other alphabets are supported (ℵ, ℶ, …).
+-/
+
+/-
+  __Exercise__: Define a few numerical constants of type `Nat`, then
+  evaluate a few arithmetic expressions involving them. You can do that
+  with `#eval`, or you could state a theorem `expression = result` and
+  try proving it with `rfl`. Also try proving a false equation like
+  `1 + 1 = 3` with `rfl`.
+-/
+end Recap_exercises

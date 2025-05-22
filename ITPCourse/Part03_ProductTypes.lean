@@ -375,3 +375,30 @@ def Person.older (p: Person): Person
 end Associated_functions
 
 end Structures
+
+section Recap_exercises
+/-
+  __Exercise__: Define a structure to represent a car record, comprising the
+  owner's name, the model, the current mileage, the mileage at the last oil
+  change, etc.
+  Define a function to increase the mileage by a given amount.
+  Define a function to record a new oil change.
+  Make these associated functions.
+-/
+
+/-
+  __Exercise__: Define a structure representing points in a three
+  dimensional space having integer coordinates. You can exploit the `Int`
+  type for that, as well as common arithmetic operators.
+  Define associated functions for translating such points, and for rotating
+  them clockwise by 90° along any axis.
+-/
+
+/-
+  __Exercise__: We saw that Lean can suggest operations and theorems
+  involving a given type. Write `example: Nat.` and observe the (large!)
+  list of associated items. Try finding something familiar there, even if
+  we have not seen theorems in Lean yet. Names such as `add`, `mul`, `gcd`
+  should be self-explanatory.
+-/
+end Recap_exercises

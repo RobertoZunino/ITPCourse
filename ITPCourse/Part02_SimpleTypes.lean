@@ -392,3 +392,30 @@ section The_fundamentals_of_types
   rules for the product type.
 -/
 end The_fundamentals_of_types
+
+section Recap_exercises
+/-
+  __Exercise__: For each term below, find an appropriate type for the whole
+  term and all its involved variables. Validate your guess using Lean, using
+  `def` or `example`.
+    `λ x => x`
+    `λ x y => x y`
+    `λ x y z => x y z`
+    `λ x y z => x (y z)`
+    `λ x => x (λ y => y)`
+    `λ x => x (λ y => y (λ z => z))`
+    `λ x y z => x (y z)`
+-/
+
+/-
+  __Exercise__: For each type below, find an appropriate term having that
+  type. There are trivial solutions, but strive to find non-trivial
+  solutions too. Feel free to use arithmetic operators and constants such as
+  `+`, `*`, `42`, … . Find multiple solutions, be creative!
+    `Nat → Nat`
+    `Nat → (Nat → Nat)`
+    `(Nat → Nat) → Nat`
+    `(Nat → Nat) → (Nat → Nat)`
+    `((Nat → Nat) → Nat) → Nat`
+-/
+end Recap_exercises
