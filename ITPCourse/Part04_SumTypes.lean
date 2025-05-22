@@ -284,8 +284,38 @@ section Dealing_with_partial_functions
 
   This might be a little more challenging than usual.
 -/
-def partial_sum (f: Nat → Nat ⊕ Unit) (g: Nat → Nat ⊕ Unit)
+def partial_sum (f g: Nat → Nat ⊕ Unit)
   : Nat → Nat ⊕ Unit
   := sorry
 
 end Dealing_with_partial_functions
+
+section Recap_exercises
+/-
+  __Exercise__: Complete the following in a non-trivial way.
+-/
+example (x: (Nat → String) ⊕ (String × Bool)) (n: Nat): String
+  := sorry
+
+/-
+  __Exercise__: Complete the following in a non-trivial way.
+-/
+example (x: (Nat → String) ⊕ (Bool → String)) (y: Nat × Bool): String
+  := sorry
+
+/-
+  __Exercise__: Compose two partial functions `f` and `g`.
+  Using informal notation, `f (g n)` is defined only when we have that:
+  - `g n` is defined as `m: Nat`, AND
+  - `f m` is defined
+-/
+def compose_partial (f g: Nat → Nat ⊕ Unit): Nat → Nat ⊕ Unit
+  := sorry
+
+/-
+  __Exercise__: Without actually using Lean, describe in informal terms why
+  we intuitively have the isomorphism
+    `String ≅ Unit ⊕ (Char × String)`
+  where the `Char` type represents a single character in the string.
+-/
+end Recap_exercises
