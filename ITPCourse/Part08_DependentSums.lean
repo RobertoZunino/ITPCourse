@@ -86,7 +86,6 @@ def Monoid.opposite (m: Monoid): Monoid where
   op := λ x y => m.op y x
   assoc := by
     intro x y z
-    dsimp  -- Simplify using definitions and computation (β reduction)
     symm   -- Apply symmetry to the goal equation
     exact m.assoc z y x
   id := m.id
