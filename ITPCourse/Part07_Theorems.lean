@@ -464,8 +464,8 @@ end Impredicativity
 
 section Tactics
 /-
-  Proving theorems via plain Curry-Howard, i.e. by writing Lean terms, is
-  a task that while feasible, can easily feel tiresome, especially when the
+  Proving theorems via plain Curry-Howard, i.e. by writing Lean terms, is a
+  task that, while feasible, can easily feel tiresome, especially when the
   propositions at hand become large. Even with the help of types and the
   "Lean InfoView" messages, it is easy to get lost.
 
@@ -775,10 +775,84 @@ def extractLeft₂ (τ σ: Type) (x: τ ⊕ σ)
   case inl t =>
     exact t
   case inr s =>
-    exfalso  -- Prove False instead of the current goal
+    exfalso  -- Prove `False` instead of the current goal
     apply h s
     rfl      -- Same as exact rfl
 
 end Tactics
 
--- TODO propext, funext
+section Automatic_simplification
+/-
+  We can ask Lean to simplify the current goal by exploiting a few
+  assumptions or library theorems with the `simp` tactic. More precisely,
+    `simp [ prop₁, prop₂, … ]`
+  will try applying the mentioned properties to the current goal to
+  simplify it, and potentially solve it.
+
+  It is also possible to mention defined entities:
+    `simp [ x, prop, … ]`
+  will expand the definition of `x`.
+
+  A few variants:
+    `simp [ … ] at h` simplifies hypothesis `h`
+    `simp [*]` uses all the hypotheses
+    `simp … at *` simplifies the goal and all the hypotheses
+    `simp_all` simplifies everything multiple times
+    `simp +arith` uses a few arithmetic properties from the library
+    `simp? …` also reports which properties where actually used
+
+  _A word of caution_: the magic of `simp` is a double-edged sword. Under
+  the hood, Lean uses complex heuristic algorithms to decide which
+  properties should be used, and how, and this "magic" can be sometimes hard
+  to understand for humans.
+
+  Its magic can help you many times before betraying you at the most
+  critical time.
+
+  We recommend to use `simp` in the following cases:
+
+  - As a _shortcut_: if you feel you perfectly _know_ how to prove your
+    current goal using proper terms and tactics, but you just want to skip
+    this boring and trivial part so you can get to the next goals which pose
+    the actual challenge, then this is an excellent time for `simp`.
+
+  - As an _oracle_: if you face some goal which involves some construct of
+    Lean that we have not yet covered in the course, and have no way to deal
+    with it, you can attempt to use `simp`, as long as you promise yourself
+    to study that construct later on -- just in case next time `simp` fails.
+
+  - As a _tool_: if your objective is proving a conjecture, and not learning
+    Lean, then you can leverage all the automation you can get.
+
+  All these cases can be summarized with the principle:
+    "Better `simp` than `sorry`"
+-/
+example
+  (a b c d: Nat)
+  (h1: a = b + c)
+  (h2: b = c + d)
+  : a = 2*c + d
+  := by
+  simp +arith [*]
+
+example
+  (a b: Nat)
+  : (a + b)*(a + b) = a*a + 2*a*b + b*b
+  := by
+  -- Let's start applying some library properties
+  simp [ Nat.add_mul , Nat.mul_add ]
+  simp +arith [ Nat.mul_comm , Nat.mul_assoc ]
+  -- This final lemma was found with with `exact?`
+  exact Nat.mul_left_comm a b 2
+
+example
+  (f g: Nat → Nat)
+  (h1: ∀ x, f x = x + 5)
+  (h2: ∀ x, g x = 2*x)
+  : ∀ x, g (f x) = 2*x + 10
+  := by
+  intro x
+  simp [ h1, h2 ]
+  simp +arith [*]
+
+end Automatic_simplification
