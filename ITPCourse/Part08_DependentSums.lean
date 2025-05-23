@@ -73,7 +73,7 @@ def Bijection.inverse (α β: Type) (bij: Bijection α β)
   fw_bk := bij.bk_fw
   bk_fw := bij.fw_bk
 
-structure Monoid where
+structure Monoid where  -- Note: this lives in `Type 1`!
   τ: Type
   op: τ → τ → τ
   assoc: ∀ x y z, op (op x y) z = op x (op y z)
@@ -100,7 +100,26 @@ structure AbelianMonoid extends Monoid where
 /-
   Note how `op` correctly refers to the inherited field.
 
+  Indeed, all the inherited fields are just there:
+-/
+def nat_additive_monoid: AbelianMonoid where
+  τ := Nat
+  op := Nat.add
+  assoc := Nat.add_assoc  -- Theorems from the library
+  id := 0
+  id_op := Nat.zero_add
+  op_id := Nat.add_zero
+  comm := Nat.add_comm
+
+def underlying_type: Type
+  := nat_additive_monoid.τ  -- Field access
+
+def underlying_identity: Nat
+  := nat_additive_monoid.id
+
+/-
   Inheritance also automatically provides a type conversion function.
+  Effectively, this "forgets" the additional fields.
 -/
 #check AbelianMonoid.toMonoid
 
@@ -109,14 +128,6 @@ structure AbelianMonoid extends Monoid where
 -/
 structure MonoidHom (m₁ m₂: Monoid) where
   some_fields: sorry
-
-/-
-  __Exercise__: Define a `Group` type.
-
-  __Exercise__: Define a `Ring` type.
-  It might be convenient to first define a `GroupOn (τ: Type)`, a group type
-  that is parametrized by the underlying type `τ`.
--/
 
 end Structures
 
@@ -175,3 +186,25 @@ def prime (n: Nat): Prop
   := n > 1 ∧ sorry
 
 end Existential_quantification
+
+section Recap_exercises
+/-
+  __Exercise__: Define a function for the direct product of two monoids.
+  To prove the involved properties, you can use
+    `by simp [ prop1, prop2, … ]`
+  asking Lean to try solving them automatically by exploiting the mentioned
+  properties.
+-/
+def Monoid.prod (m₁ m₂: Monoid): Monoid  -- You can also use `where` here.
+  := sorry
+
+/-
+  __Exercise__: Define a `Group` type.
+-/
+
+/-
+  __Exercise__: Define a `Ring` type.
+  It might be convenient to first define a `GroupOn (τ: Type)`, a group type
+  that is parametrized by the underlying type `τ`.
+-/
+end Recap_exercises
