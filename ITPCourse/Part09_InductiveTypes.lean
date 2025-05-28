@@ -86,7 +86,7 @@ def Shape.translate_x (δx: Nat): Shape → Shape
   can be represented, up to type isomorphism, as an `inductive` type.
   Indeed, as we previously mentioned, by exploiting the abelian semiring
   laws, any such type can be written in polynomial form (a sum-of-products)
-    `… × (… × … × …) ⊕ (… × …) ⊕ ⋯`
+    `… ⊕ (… × … × …) ⊕ (… × …) ⊕ ⋯`
   This can then be turned into an `inductive` type: we can declare a
   constructor `c` for each product in the sum, and make `c` take as many
   arguments as the factors in the product it corresponds to.
