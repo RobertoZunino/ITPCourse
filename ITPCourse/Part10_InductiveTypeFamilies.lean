@@ -699,11 +699,12 @@ end Patterns_affect_what_comes_before
     ```
   we have that:
 
-  - Any inductive type involved in the motive must have its indices
-    also occurring in the motive telescope at an earlier position.
+  - If `τⱼ` is an inductive type `T param₁ … index₁ …` then its indices must
+    be distinct _variables_, not occurring in parameters, and occurring as
+    `xᵢ` in the motive telescope at an earlier position (`i < j`).
 
   - The expressions `eⱼ` no longer need to share the same type `τ`, but
-    must have the type `(λ x₁ … => τ) patᵢ₁ …`, which substitutes inside `τ`
+    must have the type `(λ x₁ … => τ) patⱼ₁ …`, which substitutes inside `τ`
     the variables in the telescope with the values required by the patterns.
 
   - The type of the `match` term is now `(λ x₁ … => τ) t₁ …`.
@@ -752,6 +753,21 @@ theorem ℕ.zero_add (n: ℕ): ℕ.zero.add n = n
     unfold ℕ.add
     -- Use induction hypothesis
     rw [ ih ]
+
+/-
+  Note the (scary!) dependent matches which lie underneath the above proof.
+
+  Here we redo the same proof, but without tactics, using only terms.
+-/
+def ℕ.zero_add₂ (n: ℕ): ℕ.zero.add n = n
+  := match
+    (motive := (n: ℕ) → ℕ.zero.add n = n)
+    n with
+  | .zero   => .refl _
+  | .succ m => match
+      (motive := (k: ℕ) → ℕ.zero.add m = k → ℕ.zero.add m.succ = k.succ)
+      m , ℕ.zero_add₂ m with
+    | .(ℕ.zero.add m) , .refl .(ℕ.zero.add m) => .refl _
 
 -- Trivial
 theorem ℕ.add_succ (n m: ℕ): n.add m.succ = (n.add m).succ
@@ -893,8 +909,8 @@ inductive Ty
 /-
   We can map `Ty` "types" into actual lean types:
 -/
-def Ty.semantics:  Ty → Type
-| nat => Nat
+def Ty.semantics: Ty → Type
+| nat       => Nat
 | .prod α β => α.semantics × β.semantics
 
 /-
@@ -922,11 +938,11 @@ inductive TExpr: Ty → Type
   we removed those.
 -/
 def TExpr.semantics {τ: Ty}: TExpr τ → τ.semantics
-| .lit x => x
-| .add e₁ e₂ => Nat.add e₁.semantics e₂.semantics
+| .lit x      => x
+| .add e₁ e₂  => Nat.add e₁.semantics e₂.semantics
 | .pair e₁ e₂ => (e₁.semantics, e₂.semantics)
-| .π₁ e => e.semantics.fst
-| .π₂ e => e.semantics.snd
+| .π₁ e       => e.semantics.fst
+| .π₂ e       => e.semantics.snd
 /-
   Above, dependent pattern matching automatically refines `τ` in each case.
 
