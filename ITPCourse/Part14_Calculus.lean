@@ -1,9 +1,28 @@
 -- import Mathlib.Data.Real.Basic
 -- import Mathlib.Topology.Basic
+-- import Mathlib.Analysis.Calculus.Deriv.Slope
+-- import Mathlib.Analysis.Asymptotics.Defs
+-- import Mathlib.Analysis.NormedSpace.Real
 import Mathlib.Topology.Instances.RealVectorSpace
+import Mathlib.Analysis.Calculus.Deriv.Basic
 
 section Arithmetics
 -- TODO some basic arith formula manipulations
+
+/-
+  __Exercise__: Prove the following.
+-/
+theorem forall_x_y_h
+  (P: Real → Real → Prop)
+  : (∀ x y, P x y) ↔ (∀ x h, P x (x+h))
+  := by
+  sorry
+
+theorem forall_x_y_h_left
+  (P: Real → Real → Prop)
+  : (∀ x h, P x (x+h)) → (∀ x y, P x y)
+  := (forall_x_y_h P).mpr
+
 end Arithmetics
 
 section Continuity
@@ -130,3 +149,87 @@ theorem sub_cont
   := sorry
 
 end Continuity
+
+section Derivatives
+-- TODO comments, more exercises
+
+theorem deriv_x_squared:
+  deriv (λ x: Real => x^2) = λ x => 2*x
+  := by
+  -- We reduce to `HasDerivAt`
+  apply deriv_eq
+  intro x
+  -- We reduce to Landau's little-o notation
+  -- Here `nhds x` are the neighborhoods of `x`
+  apply hasDerivAt_iff_isLittleO.mpr
+  case h =>
+  -- We reduce to "for all close enough" quantification `∀ᶠ`
+  apply Asymptotics.IsLittleO.of_bound
+  intro c c_pos
+  -- We finally reduce to norms
+  apply Metric.eventually_nhds_iff.mpr
+  case a =>
+  -- We choose `x` and `y` to have distance `< c`
+  exists c
+  constructor
+  case left =>
+    positivity
+  case right =>
+    intro y h_dist
+    simp_all [ dist ]
+    calc
+      _ = |(y - x)^2|          := by ring
+      _ = |(y - x) * (y - x)|  := by ring
+      _ = |y - x| * |y - x|    := abs_mul _ _
+      _ ≤ c * |y - x|          := by gcongr
+
+
+theorem deriv_x_cubed:
+  deriv (λ x: Real => x^3) = λ x => 3*x^2
+  := by
+  apply deriv_eq
+  intro x
+  apply hasDerivAt_iff_isLittleO.mpr
+  case h =>
+  apply Asymptotics.IsLittleO.of_bound
+  intro c c_pos
+  apply Metric.eventually_nhds_iff.mpr
+  case a =>
+  -- We pick the distance between `x` and `y` to be smaller than the
+  -- quantities we will meet later on.
+  exists min 1 (c / (3*|x|+1))
+  constructor
+  case left =>
+    positivity
+  case right =>
+    intro y h_dist
+    simp_all [ dist ]
+    revert h_dist x y
+    apply forall_x_y_h_left
+    intro x h h_dist
+    simp at h_dist
+    have ⟨ h1, h2 ⟩ := h_dist
+    clear h_dist
+    ring_nf
+    calc
+      _ = |x * h ^ 2 * 3 + h ^ 3|  := by ring
+      _ = |(3*x + h)*h^2|     := by ring
+      _ = |3*x+h| * |h^2|     := abs_mul _ _
+      _ ≤ |3*x+h| * |h|^2     := by simp only [abs_pow, sq_abs, le_refl]
+      _ = |3*x+h| * |h| * |h| := by ring
+      _ ≤ (3*|x|+1) * |h| * |h| := by
+        gcongr
+        calc
+          _ ≤ |3*x|+|h|  := by simp [abs_add]
+          _ = 3*|x|+|h|  := by simp [abs_mul]
+          _ ≤ 3*|x|+1    := by gcongr
+      _ ≤ c * |h|        := by
+        gcongr
+        calc
+          _ ≤ (3 * |x| + 1) * (c / (3*|x| + 1))  := by gcongr
+          _ = c   := by
+            apply mul_div_cancel₀ c
+            -- Ensure we did not divide by zero
+            positivity
+
+end Derivatives
