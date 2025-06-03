@@ -199,6 +199,7 @@ example {τ: Type}:
 example {s₁ s₂: Set Nat}: s₁ ∩ s₂ = s₂ ∩ s₁ := by exact Set.inter_comm s₁ s₂
 example {s₁ s₂: Set Nat}: s₁ ∪ s₂ = s₂ ∪ s₁ := by exact Set.union_comm s₁ s₂
 example {s: Set Nat}: s \ s = ∅ := by simp
+example {s: Set Nat}: sᶜ ∩ s = ∅ := by exact Set.compl_inter_self s
 
 /-
   __Exercise__: Prove the following.
