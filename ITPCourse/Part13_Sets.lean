@@ -3,7 +3,7 @@ import Mathlib.Data.Set.Basic
 import Mathlib.Order.SetNotation
 import Mathlib.Tactic.Linarith
 
-section Sets
+section Set_notation
 /-
   Previously, we saw that we can represent the "subsets" of a type `τ` using
   a function `τ → Prop`.
@@ -32,12 +32,60 @@ example: 10 ∈ less20
   dsimp [less20] -- Expand the definitions
   decide         -- Compute using the `Decidable` type class
 
-end Sets
+/-
+  A plethora of variations on the syntax `{ … | … }` is available from the
+  libraries. Here we only mention a few examples.
+  Note that there is some special handling of relations like `<` and `⊆`.
+-/
+example: Set Nat := { n | n < 10 }
+example: Set Nat := { n < 10 | n > 5 }
+example: Set Nat := { n^2 + n + 2 | n > 5 }
+example: Set Nat := { n^2 + n + 2 | (n: Nat) (prop: n > 5 ∧ n < 20) }
+example: Set (Set Nat) := { s | ∀ n ∈ s, 1 ≤ n ∧ n ≤ 20 }
+example: Set (Set Nat) := { {n, n+1} | n: Nat }
+example: Set (Set Nat) := { {n, n+1} | (n: Nat) (prop: n > 20) }
 
-section Set_operations
+example: Set Nat := { n | n > 5 ∧ n < 10 }
 
 /-
-  This is the notation for indexed intersections.
+  Not all "reasonable" notations are accepted: for instance, these are
+  allowed
+-/
+example: Set Nat := { n | n > 5 ∧ n < 10 }
+example: Set Nat := { n+1 | n > 5 }
+/-
+  but `{ n+1 | n > 5 ∧ n < 10 }` is not allowed. It can be defined in one of
+  the following ways:
+-/
+example: Set Nat := { n+1 | (n: Nat) (prop: n > 5 ∧ n < 10) }
+example: Set Nat := { n+1 | (n: Nat) (prop1: n > 5) (prop2: n < 10) }
+example: Set Nat := { m | ∃ n: Nat, m = n+1 ∧ n > 5 ∧ n < 10 }
+
+/-
+  The scoping of variables can be tricky. Here `a` is the function argument,
+  while `n` ranges over all naturals `> 10`.
+-/
+example: Nat → Set Nat := λ a => { n+a | n > 10 }
+-- Alternatively:
+example: Nat → Set Nat := λ a => { n+a | (n:Nat) (prop: n > 10) }
+
+/-
+  We can also write enumerated sets:
+-/
+example: {1,2} = { n: Nat | n=1 ∨ n=2 } := rfl
+
+/-
+  __Exercise__: Prove the following.
+-/
+example {τ: Type} {x y: τ}: {x , y} = ({y , x}: Set τ)
+  := sorry
+
+end Set_notation
+
+section Set_operations
+/-
+  Intersecting an _indexed_ family of sets `Aᵢ` is done using the syntax
+    `⋂ i: I, Aᵢ`
 -/
 theorem an_empty_intersection:
   ⋂ n: Nat, { m: Nat | m ≥ n } = ∅
@@ -61,34 +109,111 @@ example:
   ⋂ n: Nat, { m: Nat | m ≥ n } = ∅
   := by
   ext
-  next x =>
+  case h x =>
   constructor
   case mp =>
     intro h
     simp at h
     have h1 := h x.succ
+    linarith   -- `linarith` solves goals with linear arithmetics
+  case mpr =>
+    intro h
+    contradiction
+
+/-
+  If the index ranges over a `Set` and not over all the values in a type, we
+  can use `⋂ i ∈ I, Aᵢ` instead
+-/
+example:
+  ⋂ n ∈ ({1 , 2} : Set Nat), {n} = ∅
+  := by
+  ext
+  case h x =>
+  constructor
+  case mp =>
+    intro h
+    simp at h
     linarith
   case mpr =>
     intro h
     contradiction
 
 /-
-  Instead, this is the notation for intersecting a family of sets.
+  If we want to intersect a (non-indexed) family of sets, i.e. a
+  `F : Set (Set τ)` then we can use the notation `⋂₀ F`.
+
+  Here's the previous example `an_empty_intersection` from above, but with
+  a family of sets instead.
 -/
 example:
   ⋂₀ { { m: Nat | m ≥ n } | n: Nat } = ∅
   := an_empty_intersection
 
--- TODO explain the set-image syntax
-def foo (n: Nat): Set Nat := { n+m | (m:Nat) (_ : m + 5 > 6) }
+/-
+  The empty set, as we have already seen, is `∅`.
+-/
+example {τ: Type}: ∅ = { _t: τ | False } := rfl
+/-
+  The "full" set, containing _all_ the values in a type, is `Set.univ`.
+-/
+example {τ: Type}: Set.univ = { _t: τ | True } := rfl
 
-#print foo
+/-
+  Consequently, the empty intersection is the "full" set.
+-/
+example {τ: Type}:
+  ⋂₀ (∅ : Set (Set τ)) = Set.univ
+  := by simp
 
--- TODO explain the family syntax
+/-
+  Unions use similar notation:
+    `⋃ i: I, Aᵢ`  indexed union
+    `⋃₀ F`        union of a family
+-/
+example {τ: Type}:
+  ⋃ t: τ, {t} = Set.univ
+  := by
+  ext
+  case h x =>
+  constructor
+  case mp =>
+    intro h
+    trivial
+  case mpr =>
+    intro h
+    exists {x}
+    constructor
+    case left =>
+      exists x
+    case right =>
+      trivial
 
--- TODO more basic set theory using `Set τ`
+example {τ: Type}:
+  ⋃₀ (∅ : Set (Set τ)) = ∅
+  := by simp
+
+/-
+  The following examples illustrate the basic set operators
+    `∩`, `∪`, `\`, `ᶜ`
+-/
+example {s₁ s₂: Set Nat}: s₁ ∩ s₂ = s₂ ∩ s₁ := by exact Set.inter_comm s₁ s₂
+example {s₁ s₂: Set Nat}: s₁ ∪ s₂ = s₂ ∪ s₁ := by exact Set.union_comm s₁ s₂
+example {s: Set Nat}: s \ s = ∅ := by simp
+
+/-
+  __Exercise__: Prove the following.
+-/
+example {τ: Type} {A: Set τ} {B: Nat → Set τ}:
+  A ∩ ⋂ n: Nat, B n
+  =
+  ⋂ n: Nat, A ∩ B n
+  := sorry
 
 end Set_operations
+
+section Sets_vs_types
+-- TODO
+end Sets_vs_types
 
 section Set_like_types
 /-
@@ -105,7 +230,7 @@ structure less20_struct where
 
 example: less20_struct := ⟨ 5 , by decide ⟩
 
-example: Type := List less20_struct  -- This is OK.
+example: Type := List less20_struct  -- This is now OK.
 
 /-
   The Lean libraries, however, allow a more familiar syntax for this kind of
