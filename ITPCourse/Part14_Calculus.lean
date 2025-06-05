@@ -5,6 +5,32 @@
 -- import Mathlib.Analysis.NormedSpace.Real
 import Mathlib.Topology.Instances.RealVectorSpace
 import Mathlib.Analysis.Calculus.Deriv.Basic
+import Mathlib.Analysis.Calculus.Deriv.Mul
+
+section General_note
+/-
+  Below, we will see a few proofs for a few familiar properties like
+  continuity and differentiability, which are defined in the Lean libraries.
+
+  Note, however, that the definitions found in the libraries might be more
+  general than the ones you expect. Much more general.
+
+  Continutity for a basic function `f: Real → Real`, for instance, is
+  defined in terms of _topology_. A few theorems from the library must then
+  be used to restate continuity in terms of distance in a _metric space_,
+  and from there simplify the goal so to see the usual `ε` and `δ` property.
+
+  Differentiability is also defined in very general terms, involving the
+  Fréchet derivative, neighborhoods, filters, Landau's little-o notation,
+  and more. Again, a few theorems from the library must be used to rephrase
+  differentiability in more usual terms.
+
+  Being very general is a common trend in the Lean libraries, which strive
+  not to repeat the same proof in different contexts. This is accomplished
+  by proving the most general statement and then add the common cases as
+  corollaries.
+-/
+end General_note
 
 section Arithmetics
 -- TODO some basic arith formula manipulations
@@ -22,6 +48,14 @@ theorem forall_x_y_h_left
   (P: Real → Real → Prop)
   : (∀ x h, P x (x+h)) → (∀ x y, P x y)
   := (forall_x_y_h P).mpr
+
+/-
+  __Exercise__: Prove the following.
+-/
+theorem forall_ε (a b: Real)
+  : (a ≤ b) ↔ (∀ ε>0, a ≤ b + ε)
+  := by
+  sorry
 
 end Arithmetics
 
@@ -151,9 +185,34 @@ theorem sub_cont
 end Continuity
 
 section Derivatives
--- TODO comments, more exercises
+/-
+  We start by proving that the derivative of `x^2` is `2*x`.
 
-theorem deriv_x_squared:
+  Of course, we can exploit the library theorems and make this almost
+  trivial.
+-/
+theorem deriv_x_squared₁:
+  deriv (λ x: Real => x^2) = λ x => 2*x
+  := by
+  -- We reduce to `HasDerivAt`
+  apply deriv_eq
+  -- Name the point at which we are taking the derivative
+  intro a
+  -- Recall the derivative of x
+  have d_id : HasDerivAt (λ x => x) 1 a
+    := hasDerivAt_id' a
+  -- Deduce the derivative of the product x*x
+  have d_square : HasDerivAt (λ x => x*x) (1*a + a*1) a
+    := HasDerivAt.mul d_id d_id
+  ring_nf at d_square
+  ring_nf
+  exact d_square
+
+/-
+  We prove the same result again, but without relying on the theorem for the
+  derivative of the product.
+-/
+theorem deriv_x_squared₂:
   deriv (λ x: Real => x^2) = λ x => 2*x
   := by
   -- We reduce to `HasDerivAt`
@@ -184,6 +243,10 @@ theorem deriv_x_squared:
       _ ≤ c * |y - x|          := by gcongr
 
 
+/-
+  Proving that the derivative of x^3 is 3*x^2 in an explicit way is a bit
+  more challenging.
+-/
 theorem deriv_x_cubed:
   deriv (λ x: Real => x^3) = λ x => 3*x^2
   := by
