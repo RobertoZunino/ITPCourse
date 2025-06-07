@@ -127,6 +127,11 @@ section Symbols
   will suggest the \name to type it.
 
   Another tip: most names are taken from LaTeX.
+
+  Another tip: in Visual Studio Code, you can get the list of all symbols
+  by putting the cursor in the command palette above (or pressing
+  `Ctrl-Shift-P`) and running the command
+  `>Lean 4: Docs: Show Unicode Input Abbreviations`
 -/
 
 /-
