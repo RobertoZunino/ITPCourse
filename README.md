@@ -7,10 +7,10 @@ This is a course on Interactive Theorem Proving with Lean 4.
 - A main focus is on the _foundations_ of Lean. We discuss the key ideas of
 the underlying type theory in a semi-formal way, aiming to provide some intuition on the inner workings.
 
-- We follow a _bottom-up_ approach, striving to introduce each feature of
-Lean before using it. We only make (few) exceptions when doing otherwise
-would prevent discussing key examples and provide crucial intuition on the
-topic at hand.
+- We follow a _bottom-up_ approach, aiming to introduce each feature of Lean
+before using it. We make a few exceptions in our examples when we feel that
+the reader should still be able to intuitively understand the features we
+use, even when we have not yet formally introduced them.
 
 - The course material is divided by _topic_ rather than by _lesson_. Some
 files are therefore significantly longer than others.
@@ -43,7 +43,15 @@ _uncommitted_ changes will be lost if a codespace is inactive for more than
 
 ## Lean 4 documentation
 
-- [Lean Language Reference](https://lean-lang.org/doc/reference/latest/) -- the ultimate authority on Lean syntax, features, and tactics.
-- [Mathlib4 Documentation](https://leanprover-community.github.io/mathlib4_docs/) -- the standard library formalizing large areas of mathematics.
-- [Theorem Proving in Lean 4](https://lean-lang.org/theorem_proving_in_lean4/) -- a convenient tutorial.
-- [Mathematics in Lean](https://leanprover-community.github.io/mathematics_in_lean/index.html) -- a book on how to formalize mathematics in Lean.
+- [Lean Language Reference][lean4ref] -- the ultimate authority on Lean
+  syntax, features, and tactics.
+- [Mathlib4 Documentation][mathlibDoc] -- the standard library formalizing
+  large areas of mathematics.
+- [Theorem Proving in Lean 4][thProving] -- a convenient tutorial.
+- [Mathematics in Lean][mil] -- a book on how to formalize mathematics in
+  Lean.
+
+[lean4ref]: https://lean-lang.org/doc/reference/latest/
+[mathlibDoc]: https://leanprover-community.github.io/mathlib4_docs/
+[thProving]: https://lean-lang.org/theorem_proving_in_lean4/
+[mil]: https://leanprover-community.github.io/mathematics_in_lean/index.html
