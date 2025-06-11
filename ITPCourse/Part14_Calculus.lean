@@ -134,7 +134,7 @@ theorem line_cont (α β: ℝ) : Continuous (λ x => α*x + β)
   Above, `gcongr` takes a goal of the form
     `f x y z < f x' y' z'`
   and tries to reduce it to some properties of the arguments
-    `x < x'`, `y < y'`, , `z < z'`
+    `x < x'`, `y < y'`, `z < z'`
   provided `f` is monotonic.
   It works on `<` but also on other relations such as `≤`, `=`, … .
   It also tries to close simple subgoals.
