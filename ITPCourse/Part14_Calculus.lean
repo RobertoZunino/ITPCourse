@@ -7,6 +7,8 @@ import Mathlib.Topology.Instances.RealVectorSpace
 import Mathlib.Analysis.Calculus.Deriv.Basic
 import Mathlib.Analysis.Calculus.Deriv.Mul
 
+open Topology -- This enables the 𝓝 notation for neighborhoods
+
 section General_note
 /-
   Below, we will see a few proofs for a few familiar properties like
@@ -222,10 +224,10 @@ theorem deriv_x_squared₁:
   -- Name the point at which we are taking the derivative
   intro a
   -- Recall the derivative of x
-  have d_id : HasDerivAt (λ x => x) 1 a
+  have d_id: HasDerivAt (λ x => x) 1 a
     := hasDerivAt_id' a
   -- Deduce the derivative of the product x*x
-  have d_square : HasDerivAt (λ x => x*x) (1*a + a*1) a
+  have d_square: HasDerivAt (λ x => x*x) (1*a + a*1) a
     := HasDerivAt.mul d_id d_id
   ring_nf at d_square
   ring_nf
@@ -242,7 +244,7 @@ theorem deriv_x_squared₂:
   apply deriv_eq
   intro x
   -- We reduce to Landau's little-o notation
-  -- Here `nhds x` are the neighborhoods of `x`
+  -- Here `𝓝 x` is a filter denoting the neighborhoods of `x`
   apply hasDerivAt_iff_isLittleO.mpr
   case h =>
   -- We reduce to "for all close enough" quantification `∀ᶠ`
