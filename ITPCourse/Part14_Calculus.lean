@@ -346,7 +346,8 @@ theorem abs_diverges₁:
     calc a
     _ ≤ |a| := le_abs_self a
     _ ≤ |a| + 1 := by simp only [le_add_iff_nonneg_right, zero_le_one]
-    _ ≤ 1 / r := by unfold r ; simp only [one_div, div_inv_eq_mul, one_mul, le_refl]
+    _ ≤ 1 / r   := by simp only [r, one_div, div_inv_eq_mul, one_mul,
+                        le_refl]
     _ = 1 / |r| := by rw [ abs_eq_self.mpr ] ; positivity
     _ ≤ _
       := by
@@ -396,7 +397,8 @@ theorem abs_diverges₂:
         := by
         change (|a| / (|a| + 1) ≤ _)
         apply (le_div_iff₀ _).mp
-        . simp only [div_inv_eq_mul, one_mul, le_add_iff_nonneg_right, zero_le_one]
+        . simp only [div_inv_eq_mul, one_mul, le_add_iff_nonneg_right,
+            zero_le_one]
         . positivity
 
 /-
