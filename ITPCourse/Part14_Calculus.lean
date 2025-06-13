@@ -239,36 +239,70 @@ theorem sub_cont
 end Continuity
 
 section Asymptotics
+
+section Filters
 /-
   We start with some reasoning on _filters_. Filters are families of sets
-  modelling "being close" to something, and appear in many places when
+  modelling "closedness" to something, and appear in many places when
   working with calculus (limits, little-o notation, …).
 
   Here are a few examples of filters and what they represent:
   - `𝓝 x` being close or even equal to `x` (neighborhood)
   - `𝓝[≠] x` being close but not equal to `x` (punctured neighborhood)
-  - `𝓝[s] x` being close to `x` and inside set `s` (neighborhood `∩ s`)
+  - `𝓝[s] x` being close to `x` and inside set `s`
   - `Filter.atTop` diverging towards `+∞`
   - `Filter.atBot` diverging towards `-∞`
 
   Note that `𝓝[≠] x` is defined as `𝓝[{x}ᶜ] x`:
-  -/
-  example (x: Real)
-    : 𝓝[≠] x = 𝓝[{x}ᶜ] x
-    := rfl
+-/
+example (x: Real)
+  : 𝓝[≠] x = 𝓝[{x}ᶜ] x
+  := rfl
+/-
+  Technically, a filter `F` is a family of sets such that
+  - the whole real line belongs to `F`
+  - if `a,b ∈ F` then `a ∩ b ∈ F`
+  - if `a ∈ F` and `a ⊆ b` then `b ∈ F`
+
+  You can verify that the families of neighborhoods mentioned above all
+  satisfy these properties. (Note that `𝓝[s] x` is defined as the family of
+  supersets of `s ∩ a` for some `a ∈ 𝓝 x`.)
+
+  In practice, a filter is commonly used to state that a property `P x` holds
+  "eventually", i.e. for all `x` "close enough according to the filter".
+
+  For instance, the following proves "all `x` close enough to `0` are less
+  than `1`"
+-/
+example:
+  ∀ᶠ x: Real in 𝓝 0 , x < 1
+  := by
+  apply eventually_lt_nhds
+  simp only [zero_lt_one]
+/-
+  More formally, `P` is true eventually on filter `F` iff
+    `{ x | P x } ∈ F`
+-/
 
 /-
-  We start by proving the equality between two filters.
+  As an exercise, we prove equality between the following filters.
   - `𝓝[≠] 0`, representing being close but not equal to `0`
   - `𝓝[ Set.Ioo (-ε) ε \ {0} ] 0` representing being close to `0` and inside
     the open real interval `(-ε, ε)` with the `0` removed
 
-  Intuition suggests these are the same: being "close enough" to `0`
-  according to one filter clearly implies also being "close" according to
-  the other filter.
+  Intuition suggests these are the same: being "close" to `0` according to
+  one filter clearly implies also being "close" according to the other
+  filter.
 
-  The `F₁ ≤ F₂` relation between filters indeed models "if you are close
-  enough according to `F₁`, then your are also close according to `F₂`".
+  We establish equality by proving the double inequality between filters
+    `F₁ ≤ F₂ ∧ F₂ ≤ F₁`
+  where `F₁ ≤ F₂` models the intuitive relation "if we are `F₁`-close, then
+  we are also `F₂`-close".
+  (Note that this means that if a property `P` holds when we are `F₂`-close
+  enough, then `P` also holds when we are on the points `F₁`-close enough.
+  It might be counterintuitive at first that the direction is reversed.)
+
+  We start by proving the first inequality:
 -/
 theorem nhdsNE_le_nhdsWithinIoo
   (ε: Real)
@@ -304,18 +338,52 @@ theorem nhdsNE_eq_nhdsWithinIoo
     simp
 
 /-
-  On a more practical side, filter can be used to state that a property
-  `P x` holds "eventually", i.e. for all `x` "close enough according to the
-  filter".
-
-  This proves "all `x` close enough to `0` are less than `1`"
+  Here is an example of strict inequality between filters: approaching `0`
+  from the right implies approaching `0`, but not vice versa.
 -/
-example:
-  ∀ᶠ x: Real in 𝓝 0 , x < 1
+example
+  : 𝓝[ Set.Ioi 0 ] 0 < 𝓝[≠] (0: Real)
   := by
-  apply eventually_lt_nhds
-  simp only [zero_lt_one]
+  apply lt_of_le_not_le
+  case hab =>
+    apply nhdsWithin_mono
+    simp only [Set.subset_compl_singleton_iff, Set.mem_Ioi,
+      lt_self_iff_false, not_false_eq_true]
+  case hba =>
+    apply Filter.not_le.mpr
+    exists Set.Ioi 0
+    constructor
+    case left =>
+      exact self_mem_nhdsWithin
+    case right =>
+      intro h
+      rw [ nhdsWithin ] at h
+      simp [ min ] at h
+      replace ⟨ a , h_a , b , h1 , h2 ⟩ := h
+      clear h
+      have ⟨ ε , ε_pos , h_ball ⟩  := Metric.mem_nhds_iff.mp h_a
+      have h3: -ε/2 ∈ a ∩ b
+        := by
+        constructor
+        case left =>
+          apply h_ball
+          have ε_abs: |ε| = ε := abs_of_pos ε_pos
+          simp only [Metric.mem_ball, dist_zero_right, norm_div, norm_neg,
+            Real.norm_eq_abs, Real.norm_ofNat, gt_iff_lt]
+          rw [ε_abs]
+          simp only [Nat.abs_ofNat, half_lt_self_iff, ε_pos]
+        case right =>
+          apply h1
+          simp only [Set.mem_compl_iff, Set.mem_singleton_iff,
+            div_eq_zero_iff, neg_eq_zero, OfNat.ofNat_ne_zero, or_false]
+          linarith
+      rw [ ←h2 ] at h3
+      simp at h3
+      linarith
 
+end Filters
+
+section Limits
 /-
   We now study a limit, proving that the function
     `λ x => 1 / |x|`
@@ -442,10 +510,13 @@ theorem abs_diverges₃:
   _ ≤ c * |x|⁻¹
     := by gcongr ; apply abs_le.mpr ; constructor <;> linarith
 
+end Limits
+
+section LittleO
 /-
   We now prove that the exponential function
     `λ x => exp (- 1 / |x|)`
-  tends to `0` faster than the square function
+  approaches `0` faster than the square function
     `λ x => x^2`
   when the argument approaches `0`.
 -/
@@ -554,6 +625,8 @@ example:
         apply Asymptotics.IsLittleO.mono _ h_filter
         apply Asymptotics.isLittleO_pow_pow (n:=2) (m:=1)
         decide
+
+end LittleO
 
 end Asymptotics
 
