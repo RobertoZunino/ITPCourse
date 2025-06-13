@@ -363,3 +363,28 @@ section Dependencies_among_axioms
 #print axioms Classical.em     -- `propext`, `choice`, `Quot.sound`
 
 end Dependencies_among_axioms
+
+section Recap_exercises
+/-
+  __Exercise__: Prove the following property of the reflexive and transitive
+  closure of a relation `r`.
+  Use `funext` and `propext` as needed.
+-/
+inductive Refl_trans_closure {α: Type} (r: α → α → Prop): α → α → Prop
+| refl: ∀ a, Refl_trans_closure r a a
+| trans: ∀ a₁ a₂ a₃,
+  Refl_trans_closure r a₁ a₂ →
+  Refl_trans_closure r a₂ a₃ →
+  Refl_trans_closure r a₁ a₃
+| incl: ∀ a₁ a₂, r a₁ a₂ → Refl_trans_closure r a₁ a₂
+
+theorem Rtc_idempotent {α: Type} (r: α → α → Prop)
+  : Refl_trans_closure (Refl_trans_closure r) = Refl_trans_closure r
+  := sorry
+
+/-
+  __Exercise__: Redo the previous exercise, adding symmetry to the
+  properties. In this way, the closure is the smallest equivalence relation
+  that includes `r`.
+-/
+end Recap_exercises
