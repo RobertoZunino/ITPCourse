@@ -88,6 +88,29 @@ theorem archimedes (a b: Real)
   : ∃ n: Nat, n * a > b
   := sorry
 
+/-
+  Real intervals in Lean are denoted as follows:
+  - `Set.Ioo x y` open interval `(x,y)`
+  - `Set.Icc x y` closed interval `[x,y]`
+  - `Set.Ico x y` semi-open interval `[x,y)`
+  - `Set.Ioc x y` semi-open interval `(x,y]`
+  - `Set.Ioi x` open straight `(x,+∞)`
+  - `Set.Iio x` open straight `(-∞,x)`
+  - `Set.Ici x` closed straight `[x,+∞)`
+  - `Set.Iic x` closed straight `(-∞,x]`
+  - `Set.univ` the whole real line `(-∞,+∞)`
+-/
+example (x y: Real):
+  Set.Ioi x ∩ Set.Iio y = Set.Ioo x y
+  := rfl
+
+/-
+  __Exercise__: Prove the following.
+-/
+example (x y: Real) (h: x < y):
+  Set.Ioi x ∩ Set.Ioi y = Set.Ioi y
+  := sorry
+
 end Arithmetics
 
 section Continuity
@@ -235,19 +258,6 @@ section Asymptotics
     := rfl
 
 /-
-  Real intervals in Lean are denoted as follows:
-  - `Set.Ioo x y` open interval `(x,y)`
-  - `Set.Icc x y` closed interval `[x,y]`
-  - `Set.Ico x y` semi-open interval `[x,y)`
-  - `Set.Ioc x y` semi-open interval `(x,y]`
-  - `Set.Ioi x` open straight `(x,+∞)`
-  - `Set.Iio x` open straight `(-∞,x)`
-  - `Set.Ici x` closed straight `[x,+∞)`
-  - `Set.Iic x` closed straight `(-∞,x]`
-  - `Set.univ` the whole real line `(-∞,+∞)`
--/
-
-/-
   We start by proving the equality between two filters.
   - `𝓝[≠] 0`, representing being close but not equal to `0`
   - `𝓝[ Set.Ioo (-ε) ε \ {0} ] 0` representing being close to `0` and inside
@@ -384,7 +394,7 @@ theorem abs_diverges₂:
       := by
       have y_bound: |y| ≤ (|a|+1)⁻¹
         := by
-        apply abs_le'.mpr
+        apply abs_le.mpr
         constructor
         case left =>
           linarith
