@@ -165,6 +165,49 @@ theorem forall_ε (a b: Real)
   : (a ≤ b) ↔ (∀ ε>0, a ≤ b + ε)
   := sorry
 
+end Basic_arithmetic
+
+section Casts
+/-
+  It is possible to convert a number to a "larger" numeric type using the
+  cast syntax `↑x`, as follows:
+-/
+example: ℕ → ℤ := λ x => ↑x
+example: ℕ → ℚ := λ x => ↑x
+example: ℕ → ℝ := λ x => ↑x
+example: ℕ → ℂ := λ x => ↑x
+example: ℤ → ℚ := λ x => ↑x
+example: ℤ → ℝ := λ x => ↑x
+example: ℤ → ℂ := λ x => ↑x
+example: ℚ → ℝ := λ x => ↑x
+example: ℚ → ℂ := λ x => ↑x
+example: ℝ → ℂ := λ x => ↑x
+/-
+  Technically, this involves a few "coercion" type classes.
+  We omit the technical details.
+  The coercion can often be omitted in several cases.
+-/
+example: ℕ → ℚ := λ x => x   -- Coercion automatically added.
+
+example (a: ℕ) (b: ℝ)
+  : a + b = b + a  -- Coercion automatically added.
+  := by ring
+
+/-
+  The `push_cast` tactic rewrites `↑(a + b)` as `↑a + ↑b` and similar
+  expressions in the analogous way.
+-/
+example
+  (P: ℝ → Prop)
+  (h1: ∀ x y: ℝ, P (x + y))
+  (a b c: ℕ)
+  (h2: c = a + b)
+  : P c
+  := by
+  rw [h2]
+  push_cast
+  exact h1 ↑a ↑b
+
 /-
   __Exercise__: Prove the following.
   Note how `n: Nat` is automatically converted to a `Real` below when we use
@@ -174,7 +217,7 @@ theorem forall_ε (a b: Real)
   - `⌈ … ⌉₊` aka `Nat.ceil`
   - `Nat.le_ceil`
   - `div_mul_cancel₀`
-  - Tactic `push_cast` to turn `↑(a+b)` into `↑a + ↑b`
+  - Tactic `push_cast`
   - Tactics `ring`, `congr`, `gcongr`, `positivity`, `simp`, `calc`
 -/
 theorem archimedes (a b: Real)
@@ -183,7 +226,7 @@ theorem archimedes (a b: Real)
   : ∃ n: Nat, n * a > b
   := sorry
 
-end Basic_arithmetic
+end Casts
 
 section On_partial_operations
 /-
