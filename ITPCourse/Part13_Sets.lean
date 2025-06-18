@@ -213,7 +213,23 @@ example {τ: Type} {A: Set τ} {B: Nat → Set τ}:
 end Set_operations
 
 section Sets_vs_types
--- TODO
+/-
+  Sets might superficially resemble types, but there are profound
+  differences between these two concepts.
+
+  A (correct) Lean term has an associated type, which is essentially unique.
+  The term `true` is a `Bool`, and only a `Bool`. The type of a term is
+  computed automatically by Lean.
+
+  With sets, this does not hold. Any value `x` belongs to many sets:
+    `{x}`, `{x,y}`, `{x,y,z}`, … , `{x} ∪ S`.
+
+  The typing `x : σ` is _not_ a proposition, and can essentially only appear
+  at the top-level of a Lean definition. There is no way to write something
+  like `(x : σ) ∨ (x : τ)`.
+
+  The membership `x ∈ S` is a proposition. We can write `x ∈ S ∨ x ∈ T`.
+-/
 end Sets_vs_types
 
 section Set_like_types
