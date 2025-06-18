@@ -92,6 +92,17 @@ example (a b: ℝ)
   _ < |a| + |b| + 1 := by linarith
 
 /-
+  The `positivity` tactic can also solve several goals dealing with positive
+  or non-negative quantities.
+-/
+example
+  (x y z: ℝ)
+  (h: z > 0)
+  : |x| + y^2 + z > 0
+  := by
+  positivity  -- `linarith` does not suffices here
+
+/-
   Sometimes, two large formulas only differ by a small part.
   The `congr` and `gcongr` tactics can effectively "remove" the common
   parts and focus only on the points the formulas differ.
