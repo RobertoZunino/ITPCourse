@@ -196,14 +196,15 @@ example (x: Real)
   satisfy these properties. (Note that `𝓝[s] x` is defined as the family of
   supersets of `s ∩ a` for some `a ∈ 𝓝 x`.)
 
-  In practice, a filter is commonly used to state that a property `P x` holds
-  "eventually", i.e. for all `x` "close enough according to the filter".
+  In practice, a filter is commonly used to state that a property `P x`
+  holds "eventually", i.e. for all `x` "close enough according to the
+  filter".
 
   For instance, the following proves "all `x` close enough to `0` are less
   than `1`"
 -/
-example:
-  ∀ᶠ x: Real in 𝓝 0 , x < 1
+example
+  : ∀ᶠ x: Real in 𝓝 0 , x < 1
   := by
   apply eventually_lt_nhds
   simp only [zero_lt_one]
@@ -484,10 +485,10 @@ theorem exp_is_faster_than_square
 /-
   Here is another example of the little-o notation.
 -/
-example:
-  (λ x: Real => x^2 + Real.exp (- 1/x^2))
-  =o[𝓝[≠] 0]
-  (λ x: Real => x)
+example
+  : (λ x: Real => x^2 + Real.exp (- 1/x^2))
+    =o[𝓝[≠] 0]
+    (λ x: Real => x)
   := by
   apply Asymptotics.IsLittleO.add
   case h₁ =>
