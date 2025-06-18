@@ -229,6 +229,10 @@ section Sets_vs_types
   like `(x : σ) ∨ (x : τ)`.
 
   The membership `x ∈ S` is a proposition. We can write `x ∈ S ∨ x ∈ T`.
+
+  In Lean, a set `S` must have a type, namely `Set α` for some `α: Type`.
+  In a sense, Lean does not have real sets, but only subsets of some already
+  constructed type.
 -/
 end Sets_vs_types
 
