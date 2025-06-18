@@ -128,7 +128,6 @@ example (x: ℝ) (P: ℝ → Prop)
   have eq: 2*x = x+x := by ring
   rw [eq]
   exact h1
-
 /-
   It is simpler to use `convert_to` instead.
 -/
@@ -185,6 +184,50 @@ theorem archimedes (a b: Real)
   := sorry
 
 end Basic_arithmetic
+
+section On_partial_operations
+/-
+  Note that some operations on numeric types are partial, i.e. they are
+  undefined in some cases. Division by zero is the obvious example.
+  Subtraction on naturals can also fail, e.g. `3 - 5`.
+
+  When defining these operations, the library designers had a few options:
+  - Require a proof as an additional argument.
+    This would require using e.g., `Real.div x y proof_of_y≠0` at each use
+    of division.
+  - Return an optional result, using some sum type.
+    Defining `Real.div: ℝ → ℝ → Option ℝ` allows to return `.none` when the
+    second argument is zero, and `.some result` otherwise.
+    This would make harder to write `5 + x/y` since `x/y` is an `Option ℝ`,
+    and not a `ℝ`.
+  - Define division in all cases, in some arbitrary way (say `0`).
+    Letting `x/0 = 0` allows one to write formulas more easily, but then
+    the user must be careful not to fall into this case.
+
+  The lean designers opted for the last solution:
+-/
+example: (1: ℝ) / (0: ℝ) = (0: Real) := by ring  -- "Undefined" denoted as 0
+example: (3: ℕ) - (5: ℕ) = (0: ℕ)    := by ring  -- "Undefined" denoted as 0
+example: (21: ℕ) / (10: ℕ) = (2: ℕ)  := by ring  -- Quotient
+/-
+  This idea is widespread across the library: the designers opted for
+  defining several partial operations in an arbitrary way, so to make them
+  total (always defined).
+
+  For instance, when doing calculus, the derivative of the absolute value
+  `deriv (λ x => |x|)` is _always_ defined in Lean. More specifically, it is
+  `-1` when `x<0`, `0` when `x=0` and `+1` when `x>0`.
+  There is another predicate `HasDerivAt …` that states that a function is
+  actually differentiable at a point, and that correctly does not hold at
+  `0` for the absolute value function.
+
+  Be wary! Properties like
+    `(a - b) + b = a`
+  fail on `ℕ`, without additional hypotheses. When a tactic unexpected
+  fails, it could be because the statement is subtly wrong in some corner
+  cases.
+-/
+end On_partial_operations
 
 section Intervals
 /-
