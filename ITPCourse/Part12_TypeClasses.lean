@@ -44,8 +44,8 @@ def orderedList {τ: Type} (oτ: OrderOn τ): List τ → Prop
 
 def a_list: List (Nat × Nat) := [(0,10), (4,17), (5,22)]
 
-example:
-  orderedList (orderProduct orderNat orderNat) a_list
+example
+  : orderedList (orderProduct orderNat orderNat) a_list
   := by
   simp [ a_list, orderedList , orderNat , orderProduct ]
 

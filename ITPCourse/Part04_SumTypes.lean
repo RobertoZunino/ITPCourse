@@ -112,21 +112,21 @@ end Simple_pattern_matching
 -/
 
 -- An example of β₁
-example:
-  (λ (x: String) (f: String → Bool) (g: Nat → Bool) =>
-    match (.inl x : String ⊕ Nat) with
-    | .inl s => f s
-    | .inr n => g n)
-  = (λ (x: String) f _g => f x)
+example
+  : (λ (x: String) (f: String → Bool) (g: Nat → Bool) =>
+      match (.inl x : String ⊕ Nat) with
+      | .inl s => f s
+      | .inr n => g n)
+    = (λ (x: String) f _g => f x)
   := rfl
 
 -- An example of β₂
-example:
-  (λ (y: Nat) (f: String → Bool) (g: Nat → Bool) =>
-    match (.inr y : String ⊕ Nat) with
-    | .inl s => f s
-    | .inr n => g n)
-  = (λ (y: Nat) _f g => g y)
+example
+  : (λ (y: Nat) (f: String → Bool) (g: Nat → Bool) =>
+      match (.inr y : String ⊕ Nat) with
+      | .inl s => f s
+      | .inr n => g n)
+    = (λ (y: Nat) _f g => g y)
   := rfl
 
 /-

@@ -100,8 +100,8 @@ section Functional_extensionality
 /-
   Usually, this axiom is invoked though the `funext x` tactic.
 -/
-example:
-  (λ n m: Nat => n + m) = (λ n m: Nat => m + n)
+example
+  : (λ n m: Nat => n + m) = (λ n m: Nat => m + n)
   := by
   funext n
   funext m

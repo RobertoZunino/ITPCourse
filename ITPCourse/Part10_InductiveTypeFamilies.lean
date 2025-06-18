@@ -869,28 +869,28 @@ def Expr.semantics: Expr → Option Value
 
   Here are a few examples:
 -/
-example:
-  (Expr.pair (.lit 42) (.lit 43)).semantics
-  =
-  .some (Value.pair (.nat 42) (.nat 43))
+example
+  : (Expr.pair (.lit 42) (.lit 43)).semantics
+    =
+    .some (Value.pair (.nat 42) (.nat 43))
   := rfl
 
-example:
-  (Expr.add
-    (.π₁ (.pair (.lit 42) (.lit 43)))
-    (.lit 1)
-  ).semantics
-  =
-  .some (Value.nat 43)
+example
+  : (Expr.add
+      (.π₁ (.pair (.lit 42) (.lit 43)))
+      (.lit 1)
+    ).semantics
+    =
+    .some (Value.nat 43)
   := rfl
 
 -- Adding pairs fails.
-example:
-  (Expr.add
-    (.pair (.lit 42) (.lit 43))
-    (.lit 1)
-  ).semantics
-  = .none
+example
+  : (Expr.add
+      (.pair (.lit 42) (.lit 43))
+      (.lit 1)
+    ).semantics
+    = .none
   := rfl
 
 /-
@@ -948,19 +948,19 @@ def TExpr.semantics {τ: Ty}: TExpr τ → τ.semantics
 
   We conclude with a few examples:
 -/
-example:
-  (TExpr.pair (.lit 42) (.lit 43)).semantics
-  =
-  ((42: Nat) , (43: Nat))
+example
+  : (TExpr.pair (.lit 42) (.lit 43)).semantics
+    =
+    ((42: Nat) , (43: Nat))
   := rfl
 
-example:
-  (TExpr.add
-    (.π₁ (.pair (.lit 42) (.lit 43)))
-    (.lit 1)
-  ).semantics
-  =
-  (43: Nat)
+example
+  : (TExpr.add
+      (.π₁ (.pair (.lit 42) (.lit 43)))
+      (.lit 1)
+    ).semantics
+    =
+    (43: Nat)
   := rfl
 
 end A_simple_language_semantics_example

@@ -105,8 +105,8 @@ theorem an_empty_intersection:
     contradiction
 
 -- The same, but with more automation.
-example:
-  ⋂ n: Nat, { m: Nat | m ≥ n } = ∅
+example
+  : ⋂ n: Nat, { m: Nat | m ≥ n } = ∅
   := by
   ext
   case h x =>
@@ -124,8 +124,8 @@ example:
   If the index ranges over a `Set` and not over all the values in a type, we
   can use `⋂ i ∈ I, Aᵢ` instead
 -/
-example:
-  ⋂ n ∈ ({1 , 2} : Set Nat), {n} = ∅
+example
+  : ⋂ n ∈ ({1 , 2} : Set Nat), {n} = ∅
   := by
   ext
   case h x =>
@@ -145,8 +145,8 @@ example:
   Here's the previous example `an_empty_intersection` from above, but with
   a family of sets instead.
 -/
-example:
-  ⋂₀ { { m: Nat | m ≥ n } | n: Nat } = ∅
+example
+  : ⋂₀ { { m: Nat | m ≥ n } | n: Nat } = ∅
   := an_empty_intersection
 
 /-
