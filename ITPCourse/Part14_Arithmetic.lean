@@ -152,6 +152,22 @@ example (x: ℝ) (P: ℝ → Prop)
   exact h1
 
 /-
+  When two expressions are definitionally equal, `change` can be used
+  instead of `convert_to`. It does not generate subgoals.
+
+  Note that both `convert_to` and `change` have an `… at h` variant to
+  affect an hypothesis instead of the goal.
+-/
+example
+  (P: ℕ → Prop)
+  (h1: ∀ x, P (x+0) → P 5)
+  (h2: P 7)
+  : P 5
+  := by
+  change P (7+0) at h2
+  apply h1 _ h2
+
+/-
   __Exercise__: Prove the following.
   You will likely only need basic tactics, and `simp` to simplify a few
   sums.
@@ -308,3 +324,23 @@ example (x y: Real) (h: x < y):
   := sorry
 
 end Intervals
+
+section Recap_exercises
+/-
+  __Exercise__: Consider the following two definitions of even natural
+  number. Prove they are equivalent.
+  You can use `constructor`, `induction` (on two types), `exists`, `have`,
+  and a few other tactics.
+-/
+def even₁ (n: ℕ): Prop := ∃ k: ℕ, n = 2*k
+
+inductive even₂: ℕ → Prop
+| zero: even₂ 0
+| next: ∀ n, even₂ n → even₂ (n+2)
+
+theorem even₁_iff_even₂ (n: ℕ)
+  : even₁ n ↔ even₂ n
+  := by
+  sorry
+
+end Recap_exercises
