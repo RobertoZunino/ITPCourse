@@ -8,7 +8,7 @@ section Set_notation
   Previously, we saw that we can represent the "subsets" of a type `τ` using
   a function `τ → Prop`.
 -/
-example: Nat → Prop
+example: ℕ → Prop
   := λ n => n < 20
 
 /-
@@ -17,15 +17,15 @@ example: Nat → Prop
 -/
 #print Set
 
-example: Set Nat
+example: Set ℕ
   := λ n => n < 20
 
 /-
   The library also provides a more familiar notation, hiding the fact that
   sets are represented as function `… → Prop`
 -/
-def less20: Set Nat
-  := { n: Nat | n < 20 }
+def less20: Set ℕ
+  := { n: ℕ | n < 20 }
 
 example: 10 ∈ less20
   := by
@@ -37,42 +37,42 @@ example: 10 ∈ less20
   libraries. Here we only mention a few examples.
   Note that there is some special handling of relations like `<` and `⊆`.
 -/
-example: Set Nat := { n | n < 10 }
-example: Set Nat := { n < 10 | n > 5 }
-example: Set Nat := { n^2 + n + 2 | n > 5 }
-example: Set Nat := { n^2 + n + 2 | (n: Nat) (prop: n > 5 ∧ n < 20) }
-example: Set (Set Nat) := { s | ∀ n ∈ s, 1 ≤ n ∧ n ≤ 20 }
-example: Set (Set Nat) := { {n, n+1} | n: Nat }
-example: Set (Set Nat) := { {n, n+1} | (n: Nat) (prop: n > 20) }
+example: Set ℕ := { n | n < 10 }
+example: Set ℕ := { n < 10 | n > 5 }
+example: Set ℕ := { n^2 + n + 2 | n > 5 }
+example: Set ℕ := { n^2 + n + 2 | (n: ℕ) (prop: n > 5 ∧ n < 20) }
+example: Set (Set ℕ) := { s | ∀ n ∈ s, 1 ≤ n ∧ n ≤ 20 }
+example: Set (Set ℕ) := { {n, n+1} | n: ℕ }
+example: Set (Set ℕ) := { {n, n+1} | (n: ℕ) (prop: n > 20) }
 
-example: Set Nat := { n | n > 5 ∧ n < 10 }
+example: Set ℕ := { n | n > 5 ∧ n < 10 }
 
 /-
   Not all "reasonable" notations are accepted: for instance, these are
   allowed
 -/
-example: Set Nat := { n | n > 5 ∧ n < 10 }
-example: Set Nat := { n+1 | n > 5 }
+example: Set ℕ := { n | n > 5 ∧ n < 10 }
+example: Set ℕ := { n+1 | n > 5 }
 /-
   but `{ n+1 | n > 5 ∧ n < 10 }` is not allowed. It can be defined in one of
   the following ways:
 -/
-example: Set Nat := { n+1 | (n: Nat) (prop: n > 5 ∧ n < 10) }
-example: Set Nat := { n+1 | (n: Nat) (prop1: n > 5) (prop2: n < 10) }
-example: Set Nat := { m | ∃ n: Nat, m = n+1 ∧ n > 5 ∧ n < 10 }
+example: Set ℕ := { n+1 | (n: ℕ) (prop: n > 5 ∧ n < 10) }
+example: Set ℕ := { n+1 | (n: ℕ) (prop1: n > 5) (prop2: n < 10) }
+example: Set ℕ := { m | ∃ n: ℕ, m = n+1 ∧ n > 5 ∧ n < 10 }
 
 /-
   The scoping of variables can be tricky. Here `a` is the function argument,
   while `n` ranges over all naturals `> 10`.
 -/
-example: Nat → Set Nat := λ a => { n+a | n > 10 }
+example: ℕ → Set ℕ := λ a => { n+a | n > 10 }
 -- Alternatively:
-example: Nat → Set Nat := λ a => { n+a | (n:Nat) (prop: n > 10) }
+example: ℕ → Set ℕ := λ a => { n+a | (n:ℕ) (prop: n > 10) }
 
 /-
   We can also write enumerated sets:
 -/
-example: {1,2} = { n: Nat | n=1 ∨ n=2 } := rfl
+example: {1,2} = { n: ℕ | n=1 ∨ n=2 } := rfl
 
 /-
   __Exercise__: Prove the following.
@@ -88,7 +88,7 @@ section Set_operations
     `⋂ i: I, Aᵢ`
 -/
 theorem an_empty_intersection:
-  ⋂ n: Nat, { m: Nat | m ≥ n } = ∅
+  ⋂ n: ℕ, { m: ℕ | m ≥ n } = ∅
   := by
   apply Set.ext -- The extensionality principle
   intro x
@@ -106,7 +106,7 @@ theorem an_empty_intersection:
 
 -- The same, but with more automation.
 example
-  : ⋂ n: Nat, { m: Nat | m ≥ n } = ∅
+  : ⋂ n: ℕ, { m: ℕ | m ≥ n } = ∅
   := by
   ext x  -- Similar to `apply Set.ext ; intro x`
   case h =>
@@ -125,7 +125,7 @@ example
   can use `⋂ i ∈ I, Aᵢ` instead
 -/
 example
-  : ⋂ n ∈ ({1 , 2} : Set Nat), {n} = ∅
+  : ⋂ n ∈ ({1 , 2} : Set ℕ), {n} = ∅
   := by
   ext x
   case h =>
@@ -146,7 +146,7 @@ example
   a family of sets instead.
 -/
 example
-  : ⋂₀ { { m: Nat | m ≥ n } | n: Nat } = ∅
+  : ⋂₀ { { m: ℕ | m ≥ n } | n: ℕ } = ∅
   := an_empty_intersection
 
 /-
@@ -196,18 +196,18 @@ example {τ: Type}:
   The following examples illustrate the basic set operators
     `∩`, `∪`, `\`, `ᶜ`
 -/
-example {s₁ s₂: Set Nat}: s₁ ∩ s₂ = s₂ ∩ s₁ := by exact Set.inter_comm s₁ s₂
-example {s₁ s₂: Set Nat}: s₁ ∪ s₂ = s₂ ∪ s₁ := by exact Set.union_comm s₁ s₂
-example {s: Set Nat}: s \ s = ∅ := by simp
-example {s: Set Nat}: sᶜ ∩ s = ∅ := by exact Set.compl_inter_self s
+example {s₁ s₂: Set ℕ}: s₁ ∩ s₂ = s₂ ∩ s₁ := by exact Set.inter_comm s₁ s₂
+example {s₁ s₂: Set ℕ}: s₁ ∪ s₂ = s₂ ∪ s₁ := by exact Set.union_comm s₁ s₂
+example {s: Set ℕ}: s \ s = ∅ := by simp
+example {s: Set ℕ}: sᶜ ∩ s = ∅ := by exact Set.compl_inter_self s
 
 /-
   __Exercise__: Prove the following.
 -/
-example {τ: Type} {A: Set τ} {B: Nat → Set τ}:
-  A ∩ ⋂ n: Nat, B n
+example {τ: Type} {A: Set τ} {B: ℕ → Set τ}:
+  A ∩ ⋂ n: ℕ, B n
   =
-  ⋂ n: Nat, A ∩ B n
+  ⋂ n: ℕ, A ∩ B n
   := sorry
 
 end Set_operations
@@ -246,7 +246,7 @@ section Set_like_types
   Concretely, we have several options. One is to define a `structure`.
 -/
 structure less20_struct where
-  n: Nat
+  n: ℕ
   prop: n < 20
 
 example: less20_struct := ⟨ 5 , by decide ⟩
@@ -257,7 +257,7 @@ example: Type := List less20_struct  -- This is now OK.
   The Lean libraries, however, allow a more familiar syntax for this kind of
   set-like dependent sums:
 -/
-def less20_τ: Type := { n: Nat // n < 20 }
+def less20_τ: Type := { n: ℕ // n < 20 }
                             -- ↑↑ Note the // instead of |
 
 example: less20_τ := ⟨ 5 , by decide ⟩
@@ -265,10 +265,10 @@ example: less20_τ := ⟨ 5 , by decide ⟩
 example: Type := List less20_τ   -- This is OK.
 
 /-
-  To convert `x: less20_τ` into a `Nat` we can use `x.val` (or `x.1`).
+  To convert `x: less20_τ` into a `ℕ` we can use `x.val` (or `x.1`).
   Instead, `x.mem` (or `x.2`) certifies that `x.val` belongs to the set.
 -/
-example: less20_τ → Nat
+example: less20_τ → ℕ
   := λ x => x.val
 
 example (x: less20_τ): x.val < 20
@@ -281,7 +281,7 @@ example (x: less20_τ): x.val < 20
   already mandates if they live inside a type or not.
 -/
 
-def less10_τ: Type := { n: Nat // n < 10 }
+def less10_τ: Type := { n: ℕ // n < 10 }
 
 theorem pseudo_inclusion:
   ∀ x: less10_τ, ∃ y: less20_τ, x.val = y.val
