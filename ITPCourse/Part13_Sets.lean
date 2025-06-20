@@ -310,3 +310,61 @@ theorem pseudo_inclusion₂:
   rfl
 
 end Set_like_types
+
+section Images
+/-
+  The image of a set along a function is denoted with `f '' A`.
+-/
+example
+  : (λ x => x+1) '' {1,2,3} = {2,3,4}
+  := by
+  ext x
+  case h =>
+  simp only [Set.mem_image, Set.mem_insert_iff, Set.mem_singleton_iff,
+    exists_eq_or_imp, Nat.reduceAdd, exists_eq_left]
+  tauto
+
+/-
+  The domain of a function `f: α → β` is simply `Set.univ: Set α`.
+  The domain is then `Set.univ: Set β`.
+  The range of a function is instead `Set.range f`.
+-/
+example
+  (α β: Type) (f: α → β)
+  : Set.range f = f '' Set.univ
+  := Set.image_univ.symm
+
+/-
+  The preimage of a set is instead denoted with `f ⁻¹' S`
+-/
+example
+  : (λ x => x+1) ⁻¹' {2,3,4} = {1,2,3}
+  := by
+  ext x
+  case h =>
+  simp only [Set.mem_preimage, Set.mem_insert_iff, Nat.reduceEqDiff,
+    Set.mem_singleton_iff]
+
+example
+  : (λ x: ℤ => x^2) ⁻¹' {4} = {-2,2}
+  := by
+  ext x
+  case h =>
+  simp only [Set.mem_preimage, Set.mem_singleton_iff, Int.reduceNeg,
+    Set.mem_insert_iff]
+  constructor
+  case mp =>
+    intro h
+    -- A convenient lemma from the libraries!
+    exact sq_eq_sq_iff_eq_or_eq_neg.mp h
+  case mpr =>
+    intro h
+    cases h
+    case inl h1 =>
+      subst x
+      dsimp
+    case inr h2 =>
+      subst x
+      dsimp
+
+end Images
