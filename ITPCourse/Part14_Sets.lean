@@ -1,5 +1,6 @@
 
 import Mathlib.Data.Set.Basic
+import Mathlib.Data.Finite.Defs
 import Mathlib.Order.SetNotation
 import Mathlib.Tactic.Linarith
 
@@ -368,6 +369,215 @@ example
       dsimp
 
 end Images
+
+section Finite_sets
+/-
+  The finiteness of a set `S` can be defined in several equivalent ways.
+
+  One is to require an enumeration of `S`.
+-/
+def Finite₁ {α: Type} (S: Set α)
+  := ∃ n: ℕ,
+    -- f: {0 .. n-1} → α
+    ∃ f: (x: ℕ) → x < n → α,
+    -- f surjective on S
+    ∀ s ∈ S, ∃ x h, f x h = s
+
+/-
+  Another way instead uses inductively defined predicates.
+-/
+inductive Finite₂ {α: Type}: Set α → Prop
+| empty: Finite₂ ∅
+| insert: ∀ s S, Finite₂ S → Finite₂ (S ∪ {s})
+
+/-
+  We now prove they are equivalent.
+
+  Here is the first implication: if `S` is finitely enumerable then it is
+  finite in the inductive sense.
+-/
+theorem Finite₁_to_Finite₂ {α: Type} (S: Set α)
+  : Finite₁ S → Finite₂ S
+  := by
+  intro S_fin
+  have ⟨ n , f , f_surj ⟩ := S_fin
+  clear S_fin
+  revert S f
+  induction n
+
+  case zero =>
+    intro S f f_surj
+    have S_empty: S = ∅
+      := by
+      ext s
+      simp only [Set.mem_empty_iff_false, iff_false]
+      intro s_in_S
+      have ⟨ k , k_neg , h ⟩  := f_surj s s_in_S
+      contradiction -- `k: ℕ` can not be negative
+    subst S
+    exact Finite₂.empty
+
+  case succ n ih =>
+    intro S f f_surj
+    let f' (x : ℕ) (h: x < n): α
+      := f x (by linarith)
+    let fn: α := f n (by linarith)
+
+    let S' := { f x (by linarith)
+      | (x: ℕ) (h: x < n) (in_S: f x (by linarith) ∈ S) }
+
+    have S'_sub_S: S' ⊆ S
+      := by
+      unfold S'
+      intro s
+      simp only [Set.mem_setOf_eq, forall_exists_index]
+      intro x x_lt_n f_in_S f_s
+      subst s
+      exact f_in_S
+
+    have S_sub_S': S ⊆ S' ∪ {fn}
+      := by
+      unfold S'
+      intro s
+      simp only [Int.reduceNeg, Int.reduceMul, Int.rawCast.eq_1,
+        Int.cast_eq, Nat.rawCast.eq_1, Nat.cast_id, Int.cast_ofNat_Int,
+        Nat.cast_ofNat, Int.reduceAdd, Int.ofNat_eq_coe, eq_mp_eq_cast,
+        id_eq, Int.natCast_add, exists_prop, Set.union_singleton,
+        Set.mem_insert_iff, Set.mem_setOf_eq]
+      intro s_in_S
+      have ⟨ x , x_lt , f_s ⟩ := f_surj s s_in_S
+      have h1: x ≤ n := by linarith
+      replace h1: x = n ∨ x < n := Nat.eq_or_lt_of_le h1
+      cases h1
+      case inl x_eq =>
+        left
+        subst x
+        subst s
+        rfl
+      case inr x_lt2  =>
+        right
+        case h =>
+        exists x
+        exists x_lt2
+        constructor
+        case left =>
+          rw [f_s]
+          exact s_in_S
+        case right =>
+          rw [f_s]
+
+    cases (Classical.em (S = S'))
+
+    case inl S_eq_S' =>
+      rw [S_eq_S']
+      refine ih S' f' ?f'_surj
+      case f'_surj =>
+        intro s s_in_S'
+        unfold S' at s_in_S'
+        have ⟨ x , x_lt , in_S , eq_s ⟩  := s_in_S'
+        exists x
+        exists x_lt
+
+    case inr S_neq_S' =>
+      have fn_in_S: fn ∈ S
+        := by
+        by_contra fn_notin_S -- by contradiction
+        apply S_neq_S'
+        apply subset_antisymm
+        case a =>
+          intro s s_S
+          cases S_sub_S' s_S
+          case inl h =>
+            exact h
+          case inr h =>
+            simp_all only [Set.union_singleton, Set.mem_singleton_iff]
+        case a =>
+          exact S'_sub_S
+
+      have S_eq_S'fn: S = S' ∪ {fn}
+        := by
+        apply subset_antisymm
+        case a =>
+          exact S_sub_S'
+        case a =>
+          apply Set.union_subset_iff.mpr
+          constructor
+          case left =>
+            exact S'_sub_S
+          case right =>
+            exact Set.singleton_subset_iff.mpr fn_in_S
+
+      rw [S_eq_S'fn]
+      apply Finite₂.insert fn
+      case a =>
+        apply ih S' f' ?f'_surj
+        case f'_surj =>
+          intro s s_in_S'
+          unfold S' at s_in_S'
+          have ⟨ x , x_lt , in_S , eq_s ⟩ := s_in_S'
+          exists x
+          exists x_lt
+
+/-
+  Here is the second implication: if `S` is finite in the inductive sense
+  then it is finitely enumerable.
+-/
+theorem Finite₂_to_Finite₁ {α: Type} (S: Set α)
+  : Finite₂ S → Finite₁ S
+  := by
+  intro h
+  induction h
+
+  case empty =>
+    let f (x: ℕ) (n_lt: x<0): α
+      := by contradiction -- the domain is empty
+    exists 0
+    exists f
+    intro x x_lt
+    contradiction
+
+  case insert s' S' ih2 ih =>
+    have ⟨ n , f , h_f ⟩ := ih
+    let f' (x: ℕ) (x_lt: x<n+1): α
+      := if x_lt2: x<n
+      then f x (by linarith)
+      else s'
+    exists n+1
+    exists f'
+    intro s s_in_S's
+    cases s_in_S's
+    case inl s_in_S' =>
+      have ⟨ x , x_lt , f_eq ⟩ := h_f s s_in_S'
+      exists x
+      exists (by linarith)
+      unfold f'
+      simp only [x_lt, ↓reduceDIte]
+      exact f_eq
+    case inr s_eq_s' =>
+      simp at s_eq_s'
+      subst s
+      exists n
+      exists (by linarith)
+      unfold f'
+      simp only [lt_self_iff_false, ↓reduceDIte]
+
+-- The equivalence.
+theorem Finite₂_iff_Finite₁ {α: Type} (S: Set α)
+  : Finite₁ S ↔ Finite₂ S
+  := ⟨ Finite₁_to_Finite₂ S , Finite₂_to_Finite₁ S ⟩
+
+/-
+  __Exercise__: Observe how the libraries define the finiteness of a set,
+  by checking out how `Set.Finite` is defined.
+  For a challenge, prove the next statement.
+-/
+#check Set.Finite
+
+example {α: Type} (S: Set α)
+  : Finite₁ S ↔ Set.Finite S
+  := sorry
+
+end Finite_sets
 
 section Recap_exercises
 /-
