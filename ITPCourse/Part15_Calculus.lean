@@ -7,7 +7,7 @@ import Mathlib.Analysis.Calculus.Deriv.Mul
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 
-import ITPCourse.Part14_Arithmetic
+import ITPCourse.Part13_Arithmetic
 
 open Topology -- This enables the 𝓝 notation for neighborhoods
 
