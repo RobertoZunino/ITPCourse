@@ -90,7 +90,7 @@ section Set_operations
 theorem an_empty_intersection:
   ⋂ n: Nat, { m: Nat | m ≥ n } = ∅
   := by
-  apply Set.ext
+  apply Set.ext -- The extensionality principle
   intro x
   constructor
   case mp =>
@@ -108,8 +108,8 @@ theorem an_empty_intersection:
 example
   : ⋂ n: Nat, { m: Nat | m ≥ n } = ∅
   := by
-  ext
-  case h x =>
+  ext x  -- Similar to `apply Set.ext ; intro x`
+  case h =>
   constructor
   case mp =>
     intro h
@@ -127,8 +127,8 @@ example
 example
   : ⋂ n ∈ ({1 , 2} : Set Nat), {n} = ∅
   := by
-  ext
-  case h x =>
+  ext x
+  case h =>
   constructor
   case mp =>
     intro h
@@ -173,8 +173,8 @@ example {τ: Type}:
 example {τ: Type}:
   ⋃ t: τ, {t} = Set.univ
   := by
-  ext
-  case h x =>
+  ext x
+  case h =>
   constructor
   case mp =>
     intro h
@@ -368,3 +368,16 @@ example
       dsimp
 
 end Images
+
+section Recap_exercises
+/-
+  __Exercise__: Prove the following.
+-/
+example
+  (α β γ: Type)
+  (f: α → β) (g: β → γ)
+  (s: Set α)
+  : (g ∘ f) '' s = g '' (f '' s)
+  := sorry
+
+end Recap_exercises
