@@ -380,4 +380,19 @@ example
   : (g ∘ f) '' s = g '' (f '' s)
   := sorry
 
+/-
+  __Exercise__: Find which inclusions hold between
+    `f ⁻¹' (f '' S)   ⊆?⊇   S`
+    `f '' (f ⁻¹' T)   ⊆?⊇   T`
+  and prove them.
+-/
+
+/-
+  __Exercise__: Find how images and preimages behave when dealing with
+  unions and intersections.
+    `f '' (S ∪ T)   ⊆?⊇   (f '' S) ∪ (f '' T)`
+    `f '' (S ∩ T)   ⊆?⊇   (f '' S) ∩ (f '' T)`
+    `f ⁻¹' (S ∪ T)   ⊆?⊇   (f ⁻¹' S) ∪ (f ⁻¹' T)`
+    `f ⁻¹' (S ∩ T)   ⊆?⊇   (f ⁻¹' S) ∩ (f ⁻¹' T)`
+-/
 end Recap_exercises
