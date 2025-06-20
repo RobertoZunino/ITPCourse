@@ -173,12 +173,12 @@ example
   sums.
 -/
 theorem forall_x_y_h
-  (P: Real → Real → Prop)
+  (P: ℝ → ℝ → Prop)
   : (∀ x y, P x y) ↔ (∀ x h, P x (x+h))
   := sorry
 
 theorem forall_x_y_h_left
-  (P: Real → Real → Prop)
+  (P: ℝ → ℝ → Prop)
   : (∀ x h, P x (x+h)) → (∀ x y, P x y)
   := (forall_x_y_h P).mpr
 
@@ -188,7 +188,7 @@ theorem forall_x_y_h_left
   - Tactics `linarith`, `let`, `unfold`, `constructor`
   - `lt_or_le`
 -/
-theorem forall_ε (a b: Real)
+theorem forall_ε (a b: ℝ)
   : (a ≤ b) ↔ (∀ ε>0, a ≤ b + ε)
   := sorry
 
@@ -237,7 +237,7 @@ example
 
 /-
   __Exercise__: Prove the following.
-  Note how `n: Nat` is automatically converted to a `Real` below when we use
+  Note how `n: ℕ` is automatically converted to a `ℝ` below when we use
   `n * a`. This is done through the `NatCast` type class. If you see `↑n`
   printed instead of `n`, the `↑` is denoting the automatic coercion.
   You might want to use:
@@ -247,10 +247,10 @@ example
   - Tactic `push_cast`
   - Tactics `ring`, `congr`, `gcongr`, `positivity`, `simp`, `calc`
 -/
-theorem archimedes (a b: Real)
+theorem archimedes (a b: ℝ)
   (h1: 0 < a)
   (h2: a ≤ b)
-  : ∃ n: Nat, n * a > b
+  : ∃ n: ℕ, n * a > b
   := sorry
 
 end Casts
@@ -276,7 +276,7 @@ section On_partial_operations
 
   The lean designers opted for the last solution:
 -/
-example: (1: ℝ) / (0: ℝ) = (0: Real) := by ring  -- "Undefined" denoted as 0
+example: (1: ℝ) / (0: ℝ) = (0: ℝ)    := by ring  -- "Undefined" denoted as 0
 example: (3: ℕ) - (5: ℕ) = (0: ℕ)    := by ring  -- "Undefined" denoted as 0
 example: (21: ℕ) / (10: ℕ) = (2: ℕ)  := by ring  -- Quotient
 /-
@@ -312,14 +312,14 @@ section Intervals
   - `Set.Iic x` closed straight `(-∞,x]`
   - `Set.univ` the whole real line `(-∞,+∞)`
 -/
-example (x y: Real):
+example (x y: ℝ):
   Set.Ioi x ∩ Set.Iio y = Set.Ioo x y
   := rfl
 
 /-
   __Exercise__: Prove the following.
 -/
-example (x y: Real) (h: x < y):
+example (x y: ℝ) (h: x < y):
   Set.Ioi x ∩ Set.Ioi y = Set.Ioi y
   := sorry
 
