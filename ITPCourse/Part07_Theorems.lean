@@ -3,6 +3,8 @@
   equalities.
 -/
 
+import Mathlib.Tactic.Tauto -- for the `tauto` tactic
+
 section The_Curry_Howard_isomorphism
 /-
   So far we focused on how to define mathematical objects in Lean.
@@ -22,7 +24,7 @@ section The_Curry_Howard_isomorphism
     `∀ a:A, P a` (for all)  ↔ `(a:A) → P a` (dependent product type)
 
   The underlying idea is to regard a proposition as a _type_ denoting all
-  the possible proofs for that proposition. Under this idea:
+  the possible proofs for that proposition. According to this principle:
 
   - `True` has one proof, like `Unit` has one value.
   - `False` has no proofs, like `Empty` has no values.
@@ -194,7 +196,7 @@ theorem yoneda (p: Prop)
 
 example: False ↔ (∀ q: Prop, q)
   := sorry
-example: True ↔ (∀ q: Prop, q)
+example: True ↔ (∀ q: Prop, q → q)
   := sorry
 example (p q: Prop)
   : p ∧ q ↔ (∀ r: Prop, p → q → r)
@@ -856,3 +858,52 @@ example
   simp +arith [*]
 
 end Automatic_simplification
+
+section Tautologies
+/-
+  The `tauto` tactic can automatically prove all the propositional
+  tautologies of the form
+    `∀ (p q r …:Prop), …`
+  where the last `…` does not involve additional quantifiers.
+
+  It will often exploit the excluded middle law, even when there is no need
+  to do so.
+
+  Use it as you would use `simp`: if your goal is learning the basics of
+  Lean you should avoid it, but when learning more advanced Lean topics
+  feel free to use it so to focus on the more advanced topics.
+-/
+example (p q: Prop)
+  : (p ∧ p → q) → (p → q)
+  := by tauto
+
+end Tautologies
+
+section Recap_exercises
+/-
+  __Exercise__: Prove the following without `tauto`.
+  (Try using both terms and tactics.)
+
+  You can do this without using the excluded middle law.
+-/
+example
+ (p q r s: Prop)
+ : (p → (q ∧ r)) → (q → s) ∨ (p → (r → s)) → p → s
+ := by tauto
+
+example
+ (p q s: Prop)
+ : (p ∨ q) → (p → (q → s)) → (p → s) ∨ (q → s)
+ := by tauto
+
+example
+ (p q r s t: Prop)
+ : (p → q) → (r → s) → (p ∧ r) → s ∧ ((q ∧ p) ∨ t)
+ := by tauto
+
+example
+ (p q: Prop)
+ : ((p → q) → (p → (p ∧ q))) ∧ (p → (p ∧ q)) → p → q
+ := by tauto
+
+end Recap_exercises
