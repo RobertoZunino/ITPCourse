@@ -240,6 +240,12 @@ def 𝒫 (τ: Type): Type
 def singletonNat (n: Nat): 𝒫 Nat
   := λ m => m = n
 
+/-
+  Relations can also be modelled as functions `α → β → Prop`.
+-/
+def halfOf: Nat → Nat → Prop
+  := λ n m => n+n = m
+
 end One_more_universe
 
 section Structures_in_a_given_universe
@@ -353,3 +359,27 @@ def Endomorphism.{u} (τ: Type u): Type u := τ → τ
 #print Prod
 
 end Universe_polymorphism
+
+section Recap_exercises
+/-
+  __Exercise__: Define a `structure` to represent the field operations.
+  Then use that to define another `structure` to define the operations for a
+  vector space over a given field.
+  Ignore the laws for fields and vector spaces.
+
+  __Exercise__: Try making the definitions in the previous exercise
+  universe-polymorphic.
+-/
+
+/-
+  __Exercise__: Define a `structure` for an ordering over a type.
+  Ignore the ordering laws, but focus on the operations. There are several
+  possible notions of "order".
+  Recall that a relation can be modelled as a function `α → β → Prop`.
+
+  __Exercise__: Define a function that takes an ordering and "reverses" it.
+
+  __Exercise__: Try making the definitions in the previous exercise
+  universe-polymorphic.
+-/
+end Recap_exercises
