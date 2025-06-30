@@ -1,7 +1,12 @@
 
+import Mathlib.Data.Nat.SuccPred
 import Mathlib.Data.Set.Basic
 import Mathlib.Data.Finite.Defs
+import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+import Mathlib.Order.Interval.Finset.Nat
 import Mathlib.Order.SetNotation
+import Mathlib.Tactic.Ring.Basic
+import Mathlib.Tactic.Ring
 import Mathlib.Tactic.Linarith
 
 section Set_notation
@@ -578,6 +583,34 @@ example {α: Type} (S: Set α)
   := sorry
 
 end Finite_sets
+
+section Finite_sums
+-- TODO
+
+example (k: Nat) (f: Nat → Nat)
+  : (∑ n < k+1 , f n)
+  = (∑ n < k , f n) + f k
+  := by
+  rw [Nat.Iio_eq_range]
+  apply Finset.sum_range_succ
+
+example (n: Nat)
+  : (∑ i ≤ n, i: Rat) = n * (n+1) / 2
+  := by
+  rw [←Finset.Iio_succ_eq_Iic]
+  rw [Nat.Iio_eq_range]
+  simp only [Nat.succ_eq_succ, Nat.succ_eq_add_one, mul_one]
+  induction n
+  case zero =>
+    dsimp
+    rw [Finset.sum_singleton]
+    ring
+  case succ n ih =>
+    rw [Finset.sum_range_succ]
+    rw [ih]
+    push_cast
+    ring
+end Finite_sums
 
 section Recap_exercises
 /-
