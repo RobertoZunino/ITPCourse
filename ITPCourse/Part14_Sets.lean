@@ -582,11 +582,75 @@ example {α: Type} (S: Set α)
   : Finite₁ S ↔ Set.Finite S
   := sorry
 
+/-
+  In the library there is a special type for finite sets, `Finset`:
+-/
+example: Finset ℕ := {2,3,7}
+
+/-
+  Converting a `Set` to a `Finset` and back is possible, under the obvious
+  assumptions.
+-/
+noncomputable
+def Set_to_Finset {τ: Type}: (S: Set τ) → S.Finite → Finset τ :=
+  by
+  intro S h
+  exact Set.Finite.toFinset h
+
+def Finset_to_Set {τ: Type}: Finset τ → Set τ := Finset.toSet
+
+/-
+  __Exercise__: Prove these conversions are inverses, completing the proofs
+  below.
+  Use `unfold` and `simp` to get some help from the library.
+-/
+example {τ: Type} (F: Finset τ)
+  : Set_to_Finset (Finset_to_Set F) (Finset.finite_toSet F) = F
+  := by
+  apply Finset.ext _
+  intro x
+  sorry
+
+example {τ: Type} (S: Set τ) (S_fin: S.Finite)
+  : Finset_to_Set (Set_to_Finset S S_fin) = S
+  := by
+  apply Set.ext _
+  intro x
+  sorry
+
 end Finite_sets
 
 section Finite_sums
--- TODO
+/-
+  In the library, finite sums `∑ i ∈ S, f i` are defined in terms of
+  `Finset`.
+-/
+example: (∑ i ∈ {1,2,3}, i^2) = 1 + 4 + 9
+  := rfl
 
+/-
+  The finite set of naturals `{0,1,…,n-1}` is `Finset.range n`.
+-/
+example: (∑ i ∈ Finset.range 11, i) = 55
+  := rfl
+
+/-
+  Interval notation like `Set.Iio n` can also be used.
+-/
+example: (∑ i ∈ Set.Iio 11, i) = 55
+  := rfl
+
+/-
+  A convenient shortcut:
+-/
+example: (∑ i < 11, i) = 55
+  := rfl
+
+/-
+  The library allows to manipulate finite sums in several ways.
+  Below, we show how `Finset.sum_range_succ` can be used to isolate a term
+  in the sum.
+-/
 example (k: Nat) (f: Nat → Nat)
   : (∑ n < k+1 , f n)
   = (∑ n < k , f n) + f k
@@ -594,6 +658,13 @@ example (k: Nat) (f: Nat → Nat)
   rw [Nat.Iio_eq_range]
   apply Finset.sum_range_succ
 
+/-
+  Here is the classic inductive proof of the formula for 1+2+…+n.
+
+  Note that we cast numbers to `Rat`, so that `/ 2` is the actual division
+  and not the quotient. In this way we can use `ring` to close some subgoals
+  more easily.
+-/
 example (n: Nat)
   : (∑ i ≤ n, i: Rat) = n * (n+1) / 2
   := by
@@ -610,6 +681,7 @@ example (n: Nat)
     rw [ih]
     push_cast
     ring
+
 end Finite_sums
 
 section Recap_exercises
