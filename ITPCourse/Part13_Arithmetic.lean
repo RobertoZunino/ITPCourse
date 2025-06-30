@@ -325,42 +325,6 @@ example: (21: ℕ) / (10: ℕ) = (2: ℕ)  := by ring  -- Quotient
 -/
 end On_partial_operations
 
-section Intervals
-/-
-  Real intervals in Lean are denoted as follows:
-  - `Set.Ioo x y` open interval `(x,y)`
-  - `Set.Icc x y` closed interval `[x,y]`
-  - `Set.Ico x y` semi-open interval `[x,y)`
-  - `Set.Ioc x y` semi-open interval `(x,y]`
-  - `Set.Ioi x` open straight `(x,+∞)`
-  - `Set.Iio x` open straight `(-∞,x)`
-  - `Set.Ici x` closed straight `[x,+∞)`
-  - `Set.Iic x` closed straight `(-∞,x]`
-  - `Set.univ` the whole real line `(-∞,+∞)`
-
-  The same notation can be used on any other ordered type (e.g., `ℕ`).
-  In the general case, the above informal notation `-∞`/`+∞` actually
-  corresponds to "no lower/upper bound".
--/
-example (x y: ℝ):
-  Set.Ioi x ∩ Set.Iio y = Set.Ioo x y
-  := rfl
-
-/-
-  __Exercise__: Prove the following.
--/
-example (x y: ℝ) (h: x < y):
-  Set.Ioi x ∩ Set.Ioi y = Set.Ioi y
-  := sorry
-
-/-
-  __Exercise__: Intersect the family of open real intervals `(x-ε,x+ε)`
-  for all `ε>0`, and prove that the result is `{x}`.
-
-  __Exercise__: Do the same with closed intervals.
--/
-end Intervals
-
 section Recap_exercises
 /-
   __Exercise__: Consider the following two definitions of even natural

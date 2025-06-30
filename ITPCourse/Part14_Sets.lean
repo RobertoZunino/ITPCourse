@@ -1,4 +1,5 @@
 
+import Mathlib.Data.Real.Basic
 import Mathlib.Data.Nat.SuccPred
 import Mathlib.Data.Set.Basic
 import Mathlib.Data.Finite.Defs
@@ -375,6 +376,43 @@ example
 
 end Images
 
+section Intervals
+/-
+  Real intervals in Lean are denoted as follows:
+  - `Set.Ioo x y` open interval `(x,y)`
+  - `Set.Icc x y` closed interval `[x,y]`
+  - `Set.Ico x y` semi-open interval `[x,y)`
+  - `Set.Ioc x y` semi-open interval `(x,y]`
+  - `Set.Ioi x` open straight `(x,+∞)`
+  - `Set.Iio x` open straight `(-∞,x)`
+  - `Set.Ici x` closed straight `[x,+∞)`
+  - `Set.Iic x` closed straight `(-∞,x]`
+  - `Set.univ` the whole real line `(-∞,+∞)`
+
+  The same notation can be used on any other ordered type (e.g., `ℕ`, `ℚ`).
+  In the general case, the above informal notation `-∞`/`+∞` actually
+  corresponds to "no lower/upper bound", so `Set.Iic 2 : Set ℕ` is actually
+  `{0,1} : Set ℕ`.
+-/
+example (x y: ℝ)
+  : Set.Ioi x ∩ Set.Iio y = Set.Ioo x y
+  := rfl
+
+/-
+  __Exercise__: Prove the following.
+-/
+example (x y: ℝ) (h: x < y)
+  : Set.Ioi x ∩ Set.Ioi y = Set.Ioi y
+  := sorry
+
+/-
+  __Exercise__: Intersect the family of open real intervals `(x-ε,x+ε)`
+  for all `ε>0`, and prove that the result is `{x}`.
+
+  __Exercise__: Do the same with closed intervals.
+-/
+end Intervals
+
 section Finite_sets
 /-
   The finiteness of a set `S` can be defined in several equivalent ways.
@@ -710,4 +748,13 @@ example
     `f ⁻¹' (S ∪ T)   ⊆?⊇   (f ⁻¹' S) ∪ (f ⁻¹' T)`
     `f ⁻¹' (S ∩ T)   ⊆?⊇   (f ⁻¹' S) ∩ (f ⁻¹' T)`
 -/
+
+/-
+  __Exercise__: Prove the formula for the sum of squares.
+-/
+example (n: ℕ)
+  : (∑ i ≤ n, i^2 : ℚ) = n*(n+1)*(2*n+1)/6
+  := by
+  sorry
+
 end Recap_exercises
