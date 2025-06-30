@@ -318,7 +318,7 @@ example
 /-
   In "`conv` mode" we can use the following tactics:
     - `left`/`lhs` focus on the left part
-    - `right`/`rhs` focus on the left part
+    - `right`/`rhs` focus on the right part
     - `arg k` focus on the `k`-th argument
     - `rw [ … ]` rewrite on the focused spot
     - `dsimp` simplify definitions and compute
@@ -362,6 +362,37 @@ example
     _ ≤ 6   := h1
     _ = 3+3 := rfl
     _ < 10  := h2
+
+/-
+  The starting value of a `calc` can also be mentioned on the first line:
+-/
+example
+  (h1: 5 ≤ 6)
+  (h2: 6 < 10)
+  : 5 < 10
+  := by
+  calc 5 -- Starting value
+    _ = 2+3 := rfl
+    _ = 1+4 := rfl
+    _ ≤ 6   := h1
+    _ = 3+3 := rfl
+    _ < 10  := h2
+
+/-
+  __Exercise__: Using equality tactics, prove the following.
+  Using `rw` suffices, but feel free to experiment with `conv` and `calc`.
+-/
+example
+  {τ: Type} (P: τ → Prop)
+  (f g: τ → τ)
+  (h1: ∀ t, t = g (g t))
+  (h2: ∀ t, g t = g (g t))
+  (h3: ∀ t, f t = g (g (g t)))
+  (x: τ)
+  (h: P x)
+  : P (f x)
+  := by
+  sorry
 
 -- TODO more exercises
 
@@ -563,7 +594,7 @@ example
   | _ , a' , .str => a'
 /-
   Here, matching `h` with `.str` forces the type in `h: IsString α` to be
-  refined as `OnlyType String`, since that is the index mandated by
+  refined as `IsString String`, since that is the index mandated by
   constructor `.str`. This causes `α` to be `String` and `a'` to have type
   `String`, hence returning `a'` as the result of the match is correct.
 
