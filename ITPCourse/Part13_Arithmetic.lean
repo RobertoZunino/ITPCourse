@@ -168,6 +168,32 @@ example
   apply h1 _ h2
 
 /-
+  Here's an example of a non-linear inequality on naturals, solved by
+  induction.
+-/
+example (n: Nat)
+  : n ≤ n^2
+  := by
+  induction n
+  case zero =>
+    rfl
+  case succ n ih =>
+    ring_nf
+    calc 1 + n
+    _ ≤ 1 + n^2       := by gcongr
+    _ = 1 + 0 + n^2   := by dsimp
+    _ ≤ 1 + n*2 + n^2 := by gcongr ; exact Nat.zero_le (n*2)
+
+/-
+  The same equality can be solved faster by exploiting the libraries.
+-/
+example (n: Nat)
+  : n ≤ n^2
+  := by
+  apply Nat.le_self_pow
+  linarith
+
+/-
   __Exercise__: Prove the following.
   You will likely only need basic tactics, and `simp` to simplify a few
   sums.
