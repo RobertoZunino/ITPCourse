@@ -65,8 +65,8 @@ example
 def HardConjecture: Prop
   := sorry  -- Think of your favorite conjecture here.
 
-theorem easy:
-  ∃n: Nat, (n = 0 ∧ HardConjecture) ∨ (n = 1 ∧ ¬ HardConjecture)
+theorem easy
+  : ∃n: Nat, (n = 0 ∧ HardConjecture) ∨ (n = 1 ∧ ¬ HardConjecture)
   := by
   by_cases hc: HardConjecture
   case pos =>

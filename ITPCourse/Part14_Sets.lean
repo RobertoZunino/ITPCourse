@@ -94,8 +94,8 @@ section Set_operations
   Intersecting an _indexed_ family of sets `Aᵢ` is done using the syntax
     `⋂ i: I, Aᵢ`
 -/
-theorem an_empty_intersection:
-  ⋂ n: ℕ, { m: ℕ | m ≥ n } = ∅
+theorem an_empty_intersection
+  : ⋂ n: ℕ, { m: ℕ | m ≥ n } = ∅
   := by
   apply Set.ext -- The extensionality principle
   intro x
@@ -290,8 +290,8 @@ example (x: less20_τ): x.val < 20
 
 def less10_τ: Type := { n: ℕ // n < 10 }
 
-theorem pseudo_inclusion:
-  ∀ x: less10_τ, ∃ y: less20_τ, x.val = y.val
+theorem pseudo_inclusion
+  : ∀ x: less10_τ, ∃ y: less20_τ, x.val = y.val
   := by
   intro x
   have h : x.val < 20 := by calc
@@ -303,8 +303,8 @@ theorem pseudo_inclusion:
   Above, we had to prove `h` before we used it.
   Alternatively, we can postpone its proof using `?name`:
 -/
-theorem pseudo_inclusion₂:
-  ∀ x: less10_τ, ∃ y: less20_τ, x.val = y.val
+theorem pseudo_inclusion₂
+  : ∀ x: less10_τ, ∃ y: less20_τ, x.val = y.val
   := by
   intro x
   exists ⟨ x.val , ?h ⟩  -- Postponed!

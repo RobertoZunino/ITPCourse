@@ -324,8 +324,8 @@ section Limits
 
   `Filter.Tendsto` is the the relation for limits:
 -/
-theorem abs_diverges₁:
-  Filter.Tendsto (λ x: Real => 1 / |x|) (𝓝[≠] 0) Filter.atTop
+theorem abs_diverges₁
+  : Filter.Tendsto (λ x: Real => 1 / |x|) (𝓝[≠] 0) Filter.atTop
   := by
   -- We reduce to a set property: for all `s` close to `+∞`, we have to find
   -- a close enough argument to `0` so that the result is in `s`.
@@ -369,8 +369,8 @@ theorem abs_diverges₁:
 /-
   An alternative proof, involving our lemma `nhdsNE_eq_nhdsWithinIoo`.
 -/
-theorem abs_diverges₂:
-  Filter.Tendsto (λ x: Real => 1 / |x|) (𝓝[≠] 0) Filter.atTop
+theorem abs_diverges₂
+  : Filter.Tendsto (λ x: Real => 1 / |x|) (𝓝[≠] 0) Filter.atTop
   := by
   apply Filter.tendsto_iff_forall_eventually_mem.mpr
   intro s h1
@@ -412,8 +412,8 @@ theorem abs_diverges₂:
   Yet another proof, involving little-o notation, norms, beyond our lemma
   `nhdsNE_eq_nhdsWithinIoo`.
 -/
-theorem abs_diverges₃:
-  Filter.Tendsto (λ x: Real => 1 / |x|) (𝓝[≠] 0) Filter.atTop
+theorem abs_diverges₃
+  : Filter.Tendsto (λ x: Real => 1 / |x|) (𝓝[≠] 0) Filter.atTop
   := by
   -- We want to introduce the norm to exploit a library theorem
   conv =>
@@ -566,8 +566,8 @@ section Derivatives
   Of course, we can exploit the library theorems and make this almost
   trivial.
 -/
-theorem deriv_x_squared₁:
-  deriv (λ x: Real => x^2) = λ x => 2*x
+theorem deriv_x_squared₁
+  : deriv (λ x: Real => x^2) = λ x => 2*x
   := by
   -- We reduce to `HasDerivAt`
   apply deriv_eq
@@ -587,8 +587,8 @@ theorem deriv_x_squared₁:
   We prove the same result again, but without relying on the theorem for the
   derivative of the product.
 -/
-theorem deriv_x_squared₂:
-  deriv (λ x: Real => x^2) = λ x => 2*x
+theorem deriv_x_squared₂
+  : deriv (λ x: Real => x^2) = λ x => 2*x
   := by
   -- We reduce to `HasDerivAt`
   apply deriv_eq
@@ -622,8 +622,8 @@ theorem deriv_x_squared₂:
   Proving that the derivative of x^3 is 3*x^2 in an explicit way is a bit
   more challenging.
 -/
-theorem deriv_x_cubed:
-  deriv (λ x: Real => x^3) = λ x => 3*x^2
+theorem deriv_x_cubed
+  : deriv (λ x: Real => x^3) = λ x => 3*x^2
   := by
   apply deriv_eq
   intro x
