@@ -337,6 +337,10 @@ section Intervals
   - `Set.Ici x` closed straight `[x,+∞)`
   - `Set.Iic x` closed straight `(-∞,x]`
   - `Set.univ` the whole real line `(-∞,+∞)`
+
+  The same notation can be used on any other ordered type (e.g., `ℕ`).
+  In the general case, the above informal notation `-∞`/`+∞` actually
+  corresponds to "no lower/upper bound".
 -/
 example (x y: ℝ):
   Set.Ioi x ∩ Set.Iio y = Set.Ioo x y
@@ -349,6 +353,12 @@ example (x y: ℝ) (h: x < y):
   Set.Ioi x ∩ Set.Ioi y = Set.Ioi y
   := sorry
 
+/-
+  __Exercise__: Intersect the family of open real intervals `(x-ε,x+ε)`
+  for all `ε>0`, and prove that the result is `{x}`.
+
+  __Exercise__: Do the same with closed intervals.
+-/
 end Intervals
 
 section Recap_exercises
