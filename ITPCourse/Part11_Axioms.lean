@@ -428,4 +428,32 @@ example {τ: Type} (P: τ → Prop) (f: τ → τ) (n: Nat)
   : preserves P f → preserves P (iter n f)
   := sorry
 
+/-
+  __Exercise__: Prove Cantor's theorem.
+  There is no surjective function from `τ` to `τ → Prop`.
+  This is the most famous proof "by diagonalization".
+-/
+theorem Cantor {τ: Type}
+  (g: τ → (τ → Prop))
+  : ¬ g.Surjective
+  := by
+  intro g_surj
+  let diag: τ → Prop := sorry
+  sorry
+
+/-
+  __Exercise__: Prove Lawvere's fixed point theorem.
+  If there is a surjective function from `τ` to `τ → σ`, then any function
+  `σ → σ` admits a fixed point.
+  The proof is similar to the one for Cantor's theorem.
+-/
+theorem Lawvere {τ σ: Type}
+  (g: τ → (τ → σ))
+  (g_surj: g.Surjective)
+  (f: σ → σ)
+  : ∃s, s = f s
+  := by
+  let diag: τ → σ := sorry
+  sorry
+
 end Recap_exercises
