@@ -1,10 +1,12 @@
 
+import Mathlib.Logic.Equiv.Defs -- for `≃`
+
 section Axioms
 /-
   Beyond the standard introduction / elimination principles of types, Lean
   features a few axioms.
 
-  One of these is the law of excluded middle, whcih we have already
+  One of these is the law of excluded middle, which we have already
   discussed.
 -/
 #check Classical.em
@@ -366,6 +368,19 @@ end Dependencies_among_axioms
 
 section Recap_exercises
 /-
+  __Exercise__: Prove the "drinker's lemma".
+  In any non-empty bar, there's one person such that, if they are drinking
+  then _all_ the people in the bar are drinking.
+  This requires the excluded middle.
+-/
+theorem drinker
+  (bar: Type)
+  (p: bar)              -- non-empty bar
+  (drinks: bar → Prop)  -- drink property
+  : ∃q: bar, drinks q → ∀r: bar, drinks r
+  := sorry
+
+/-
   __Exercise__: Prove the following property of the reflexive and transitive
   closure of a relation `r`.
   Use `funext` and `propext` as needed.
@@ -387,4 +402,13 @@ theorem Rtc_idempotent {α: Type} (r: α → α → Prop)
   properties. In this way, the closure is the smallest equivalence relation
   that includes `r`.
 -/
+
+/-
+  __Exercise__: Take `Bool` and identify `true = false` using a quotient.
+  Then prove there is a bijection from that to `Unit`.
+  You can use the library type `Equiv α β` (also written as `α ≃ β`) which
+  is the type of bijections.
+-/
+#print Equiv
+
 end Recap_exercises
