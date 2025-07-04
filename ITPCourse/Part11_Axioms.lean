@@ -411,4 +411,21 @@ theorem Rtc_idempotent {α: Type} (r: α → α → Prop)
 -/
 #print Equiv
 
+/-
+  __Exercise__: Define the `n`-th iteration of a function `f`, namely
+  `f ∘ f ∘ f ∘ ⋯` (`n≥0` times).
+  Then prove that if `f` preserves a property `P`, so does any of its
+  iterations.
+-/
+def iter {τ: Type} (n: Nat) (f: τ → τ)
+  : τ → τ
+  := sorry
+
+def preserves {τ: Type} (P: τ → Prop) (f: τ → τ): Prop
+  := ∀t, P t → P (f t)
+
+example {τ: Type} (P: τ → Prop) (f: τ → τ) (n: Nat)
+  : preserves P f → preserves P (iter n f)
+  := sorry
+
 end Recap_exercises
