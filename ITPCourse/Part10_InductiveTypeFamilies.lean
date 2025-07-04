@@ -759,7 +759,7 @@ section Natural_arithmetic
   actually involve a few dependent pattern matches.
 
   (We could use `Nat`, but we prefer to redefine everything so that no lemma
-  form the libraries is implicitly exploited in our development.)
+  from the libraries is implicitly exploited in our development.)
 -/
 inductive ℕ
 | zero: ℕ
@@ -836,6 +836,38 @@ theorem ℕ.add_comm (n m: ℕ): n.add m = m.add n
 
   __Exercise__: Prove distributivity.
 -/
+
+section In_the_library
+/-
+  Observe how the type of naturals is defined in the standard library.
+  It is very similar to our type above.
+-/
+#print Nat
+
+/-
+  Observe how `<` and `≤` are defined on naturals in the library.
+-/
+#print Nat.le
+#print Nat.lt
+
+/-
+  __Exercise__: Prove the following.
+
+  The direction `→` is easier.
+  You can use `induction` on the `≤` definition.
+  You can use the `Nat.add_succ` theorem from the library.
+
+  The direction `←` is more challenging.
+  You can use `induction n`, but before doing that, you will likely need
+  to `clear` some hypothesis away, and `revert a b` so that the property
+  you prove by induction is stronger.
+  You can use `Nat.add_zero`.
+-/
+example (a b: Nat): a ≤ b ↔ ∃n, a + n = b
+  := sorry
+
+end In_the_library
+
 end Natural_arithmetic
 
 section A_simple_language_semantics_example
@@ -995,3 +1027,16 @@ example
   := rfl
 
 end A_simple_language_semantics_example
+
+section Recap_exercises
+/-
+  __Exercise__: Prove the equivalence between the two following definitions
+  of "there exists a unique …".
+-/
+example (τ: Type) (P: τ → Prop)
+  : ((∃t, P t) ∧ (∀t₁ t₂, P t₁ → P t₂ → t₁ = t₂))
+    ↔
+    (∃a, ∀ t, P t ↔ t = a)
+  := sorry
+
+end Recap_exercises
