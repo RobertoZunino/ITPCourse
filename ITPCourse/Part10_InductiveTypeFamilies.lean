@@ -1040,6 +1040,53 @@ example (τ: Type) (x: Option τ) (h: x ≠ .none)
   := sorry
 
 /-
+  __Exercise__: Consider the `List.map` function on the `List` type from the
+  libraries, which is analogous to the `ListOf.map` function we saw before.
+  Prove its "functor laws", as stated below.
+-/
+#print List
+#print List.map
+example: [1,2,3] = (.cons 1 (.cons 2 (.cons 3 .nil))) := rfl
+example: List.map Nat.succ [1,2,3] = [2,3,4] := rfl
+
+theorem map_id {τ: Type} (xs: List τ)
+  : List.map id xs = xs
+  := sorry
+
+theorem map_comp {τ σ γ: Type} (xs: List τ)
+  (f: τ → σ) (g: σ → γ)
+  : List.map (g ∘ f) xs = List.map g (List.map f xs)
+  := sorry
+
+/-
+  __Exercise__: Define a function to sum a list of `Nat`:
+-/
+def list_sum (xs: List Nat): Nat
+  := List.sum xs  -- Replace this "cheated" answer with your own.
+
+/-
+  __Exercise__: Define a relation `Augments` between two lists of `Nat`,
+  holding when the first list is obtained from the second by replacing each
+  number with a larger-or-equal one, ad possibly adding elements at the end.
+  For instance,
+    `Augments [5,4,10,2,0] [3,4,5]`
+  must hold
+-/
+inductive Augments: List Nat → List Nat → Prop
+  -- Add here your definition
+
+/-
+  __Exercise__: Continuing the exercises above, prove the following.
+  You might need:
+    `Nat.zero_le`
+    `Nat.add_le_add`
+    `unfold GE.ge` -- Turns `a≥b` into `b≤a`
+-/
+example (xs ys: List Nat) (h: Augments xs ys)
+  : list_sum ys ≤ list_sum xs
+  := sorry
+
+/-
   __Exercise__: Prove the equivalence between the two following definitions
   of "there exists a unique …".
 -/
