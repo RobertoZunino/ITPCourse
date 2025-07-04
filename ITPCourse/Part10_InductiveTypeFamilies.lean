@@ -970,7 +970,7 @@ inductive Ty
 | prod: Ty → Ty → Ty
 
 /-
-  We can map `Ty` "types" into actual lean types:
+  We can map `Ty` "types" into actual Lean types:
 -/
 def Ty.semantics: Ty → Type
 | nat       => Nat
@@ -1029,6 +1029,16 @@ example
 end A_simple_language_semantics_example
 
 section Recap_exercises
+/-
+  __Exercise__: Define a function that can extract a `τ` value from an
+  `Option τ` value which is not `.none`.
+  You can write a term involving a (dependent) pattern match, or use tactics
+  instead. Try both styles.
+-/
+example (τ: Type) (x: Option τ) (h: x ≠ .none)
+  : τ
+  := sorry
+
 /-
   __Exercise__: Prove the equivalence between the two following definitions
   of "there exists a unique …".
