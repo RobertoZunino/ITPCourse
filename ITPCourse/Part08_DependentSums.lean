@@ -1,4 +1,6 @@
 
+import Batteries.Data.Rat.Basic -- for `ℚ`
+
 section Dependent_sums
 /-
   We have seen dependent products
@@ -207,4 +209,11 @@ def Monoid.prod (m₁ m₂: Monoid): Monoid  -- You can also use `where` here.
   It might be convenient to first define a `GroupOn (τ: Type)`, a group type
   that is parametrized by the underlying type `τ`.
 -/
+
+/-
+  __Exercise__: Observe how the type of rational numbers `Rat` is defined in
+  the libraries.
+-/
+#print Rat
+
 end Recap_exercises
