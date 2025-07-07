@@ -680,4 +680,16 @@ example {τ: Type} (P: τ → Prop) (f: τ → τ) (n: Nat)
   := by
   sorry
 
+/-
+  __Exercise__: Observe how the type of integers `Int` is defined in the
+  libraries.
+-/
+#print Int
+/-
+  Define the addition operation, without reusing the already available `Int`
+  operations. You can instead use the `Nat` operations.
+-/
+def int_add (x y: Int): Int
+  := sorry
+
 end Recap_exercises
