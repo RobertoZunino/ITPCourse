@@ -51,9 +51,11 @@ _uncommitted_ changes will be lost if a codespace is inactive for more than
 - [Mathematics in Lean][mil] -- a book on how to formalize mathematics in
   Lean.
 - [Loogle][loogle] -- a search engine for the Lean libraries.
+- [Cheatsheet][cheatsheet] -- a summary of the most common terms and tactics.
 
 [lean4ref]: https://lean-lang.org/doc/reference/latest/
 [mathlibDoc]: https://leanprover-community.github.io/mathlib4_docs/
 [thProving]: https://lean-lang.org/theorem_proving_in_lean4/
 [mil]: https://leanprover-community.github.io/mathematics_in_lean/index.html
 [loogle]: https://loogle.lean-lang.org/
+[cheatsheet]: Cheatsheet.md
