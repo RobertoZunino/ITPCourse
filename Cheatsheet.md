@@ -37,7 +37,7 @@ When we want to prove an equality thesis `a = b`, we can use:
 
 - `rfl` when `b` is the same as `a`
 - `symm` to apply symmetry
-- `¢alc` to build a chain of equations
+- `calc` to build a chain of equations
 - `congr` / `gcongr` to remove the common part of the two expressions, and
   focus on the differences.
 
