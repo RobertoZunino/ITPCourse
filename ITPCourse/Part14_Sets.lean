@@ -6,6 +6,7 @@ import Mathlib.Data.Finite.Defs
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 import Mathlib.Order.Interval.Finset.Nat
 import Mathlib.Order.SetNotation
+import Mathlib.Topology.Separation.Hausdorff
 import Mathlib.Tactic.Ring.Basic
 import Mathlib.Tactic.Ring
 import Mathlib.Tactic.Linarith
@@ -756,5 +757,15 @@ example (n: ℕ)
   : (∑ i ≤ n, i^2 : ℚ) = n*(n+1)*(2*n+1)/6
   := by
   sorry
+
+/-
+  __Exercise__: Inspect the following classes from the library, modelling
+  several well-known topological notions.
+-/
+#print TopologicalSpace
+#print Continuous
+#print T0Space
+#print T1Space
+#print T2Space
 
 end Recap_exercises
