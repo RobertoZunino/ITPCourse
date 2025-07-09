@@ -27,7 +27,7 @@ def orderProduct {τ σ: Type} (oτ: OrderOn τ) (oσ: OrderOn σ)
   : OrderOn (τ × σ)
   where
   leq := λ (t₁,s₁) (t₂,s₂) => oτ.leq t₁ t₂ ∧ oσ.leq s₁ s₂
-  leq_refl := sorry
+  leq_refl := sorry   -- (Proofs omitted since not relevant)
   leq_trans := sorry
 /-
   … and so on for other types.
@@ -46,6 +46,7 @@ def a_list: List (Nat × Nat) := [(0,10), (4,17), (5,22)]
 
 example
   : orderedList (orderProduct orderNat orderNat) a_list
+             -- ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑ Inconvenient!
   := by
   simp [ a_list, orderedList , orderNat , orderProduct ]
 
@@ -86,11 +87,11 @@ def orderedList₂ {τ: Type} [oτ: Order τ]: List τ → Prop
 | [_]  => True
 | (x₁ :: x₂ :: rest)
   => oτ.leq x₁ x₂ ∧ orderedList₂ (x₂ :: rest)
-                            --  ↑  No additional argument here
+                            --  ↑  No additional argument here!
 
 def ord_example
   : orderedList₂ a_list
-             -- ↑  No additional argument here
+             -- ↑  No additional argument here!
   := by
   simp [ a_list, orderedList₂ , Order.leq ]
 /-
@@ -120,7 +121,7 @@ def orderedList₃ {τ: Type} [Order τ]: List τ → Prop
 | [_]  => True
 | (x₁ :: x₂ :: rest)
   => Order.leq x₁ x₂ ∧ orderedList₃ (x₂ :: rest)
-  -- ↑ No reference to any particular instance
+  -- ↑ No reference to any particular instance, we exploit inference.
 
 /-
   Type classes are heavily exploited in the Lean standard libraries to keep
@@ -147,6 +148,14 @@ def orderedList₃ {τ: Type} [Order τ]: List τ → Prop
   instance.
 -/
 #print OfNat
+
+section
+set_option pp.all true
+#check (42: Nat)
+#check (42: Int)
+#check (42: Rat)
+#check (42: Real)   -- This also involves another type class.
+end
 
 /-
   Finally note that is is possible that a class constraint like `[Order τ]`
