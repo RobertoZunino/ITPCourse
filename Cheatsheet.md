@@ -9,11 +9,11 @@ needed.
 | Formula | as thesis <br> (term-style) | as thesis <br> (tactic-style) | as hypothesis <br> (term-style) | as hypothesis <br> (tactic-style) |
 |---|---|---|---|---|
 | conjunction `p ∧ q` <br> product `τ × σ` <br> dependent sum `(t: τ) × σ t` <br> existential `∃ t, P t` | `⟨ … , … ⟩` | `constructor` <br> `apply And.intro _ _` <br> `use …` <br> `exists …` | `h.1`, `h.2` <br> `match h with \| ⟨ x , y ⟩ => …` | `have ⟨ x , y ⟩ := h` |
-| `structure S` | `{ field₁ := … , … : S }` | `constructor` <br> `apply S.mk` | `h.field₁`, `h.1`, … | `have ⟨ x₁ , … ⟩ := h` <br> `have { field₁ := x₁ , … } := h` |
-| disjunction `p ∨ q`, sum `τ ⊕ σ` | `.inl …`, `.inr …` | `left`, `right` | `match h with \| .inl x => … \| .inr …` | `cases h` (followed by `case tag x₁ … => `) |
-| implication `p → q` <br> function `τ → σ` <br> dependent product `(t: τ) → σ t` <br> universal `∀ t, P t` | `λ t => …` | `intro t` | `h …` | `apply h`, `have h2 := h …` |
+| `structure S` | `{ field₁ := … , … : S }` | `constructor` <br> `apply S.mk` | `h.field₁`, `h.1`, … <br> `match h with \| { field₁ := x₁ , … } => …` | `have ⟨ x₁ , … ⟩ := h` <br> `have { field₁ := x₁ , … } := h` |
+| disjunction `p ∨ q` <br> sum `τ ⊕ σ` | `.inl …`, `.inr …` | `left`, `right` | `match h with \| .inl x => … \| .inr y => …` | `cases h` (followed by `case tag … =>`) |
+| implication `p → q` <br> function `τ → σ` <br> dependent product `(t: τ) → σ t` <br> universal `∀ t, P t` | `λ t => …` | `intro t` | `h …` | `apply h` <br> `have h2 := h …` |
 | unit `Unit` <br> true `True` | `()`, `True.intro` | `trivial` | --- | --- |
-| empty `Empty` <br> false `False` | --- | --- | `nomatch …` | `contradiction`, `apply False.elim` |
+| empty `Empty` <br> false `False` | --- | --- | `nomatch …` | `contradiction` <br> `apply False.elim` |
 | `inductive T` | `T.cᵢ …` | apply `T.cᵢ` | `match h with \| .c₁ … => … \| …` <br> (possibly dependent, with multiple matched terms, and together with recursion) | `cases h`, `induction h` (followed by `case tag x₁ … => `) |
 
 ## More formulas
