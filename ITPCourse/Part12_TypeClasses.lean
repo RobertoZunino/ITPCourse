@@ -279,3 +279,49 @@ example (f g: Real → Real)
   trivial
 
 end Decidable_properties
+
+section Common_library_type_classes
+/-
+  We saw the `LE` class providing the `≤` relation. Note, however, that `LE`
+  on its own does not guarantee any property on `≤`.
+  If we want to assume some properties on `≤`, we can use other classes.
+-/
+#print LE
+#print Preorder           -- reflexive and transitive
+#print PartialOrder       -- antisymmetric
+#print LinearOrder        -- `a≤b ∨ b≤a`
+#print SemilatticeSup     -- `sup a b`
+#print SemilatticeInf     -- `inf a b`
+#print Lattice            -- both `sup` and `inf`
+#print CompleteLattice    -- Suprema/infima for any set
+-- (We will see the `Set α` type soon)
+
+/-
+  A similar trend is found in other classes. The `+` operation is provided
+  by classes `HAdd` and `Add`, but without any laws.
+  Other classes provide more laws.
+
+  The same idea is applied to other common operations.
+-/
+#print HAdd  -- lawless `a+b` (where `a` and `b` may be of different types)
+#print Add   -- lawless `a+b` (`a` and `b` of the same type)
+#print Zero  -- lawless `0`
+#print Neg   -- lawless `-a`
+#print Sub   -- lawless `a-b`
+#print AddSemigroup   -- associative
+#print AddZeroClass   -- `0` is the identity
+#print AddMonoid
+#print SubNegMonoid   -- negation and subtraction laws
+#print AddGroup
+#print AddCommGroup
+#print Semiring
+#print Ring
+#print CommRing
+#print Field
+
+/-
+  __Exercise__: Inspect the jungle of classes that contribute to the
+  definition of `Field`. You can also use Loogle to browse them with more
+  ease.
+-/
+end Common_library_type_classes
