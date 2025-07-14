@@ -834,6 +834,11 @@ theorem dense_sqrt2_rational
     (√2) 0 sqrt2_nonzero
   sorry
 
+theorem dense_sqrt2_rational₀
+  : Dense { √2 * x | (x: ℝ) (x_rat: Rational x) (x_nonzero: x ≠ 0) }
+  := by
+  sorry
+
 /-
   Conclude that the irrationals are also dense.
 -/
@@ -841,14 +846,14 @@ theorem dense_irrational
   : Dense { x | Irrational x }
   := by
   have incl
-    : { √2 * x | (x: ℝ) (x_rat: ¬ Irrational x) }
+    : { √2 * x | (x: ℝ) (x_rat: ¬ Irrational x)  (x_nonzero: x ≠ 0) }
       ⊆
       { x | Irrational x }
     := by
     intro x
     sorry
   apply Dense.mono incl
-  exact dense_sqrt2_rational
+  exact dense_sqrt2_rational₀
 
 end Density_of_rationals_and_irrationals
 
