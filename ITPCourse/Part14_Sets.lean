@@ -1,9 +1,12 @@
 
 import Mathlib.Data.Real.Basic
+import Mathlib.Data.Real.Sqrt
+import Mathlib.Data.Real.Irrational
 import Mathlib.Data.Nat.SuccPred
 import Mathlib.Data.Set.Basic
 import Mathlib.Data.Finite.Defs
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+import Mathlib.RingTheory.Int.Basic
 import Mathlib.Order.Interval.Finset.Nat
 import Mathlib.Order.SetNotation
 import Mathlib.Topology.Separation.Hausdorff
@@ -767,5 +770,86 @@ example (n: ℕ)
 #print T0Space
 #print T1Space
 #print T2Space
+#print Dense
+
+section Density_of_rationals_and_irrationals
+/-
+  __Exercise__: (challenging)
+  If you want a challenge, you could prove the following properties of dense
+  sets of reals. When solving this, feel free to exploit Loogle to search
+  for relevant theorems from the library -- you will likely need many ones.
+  You might also want to add more intermediate results.
+
+  First, prove that rationals are dense. You can follow the lines below.
+-/
+def Rational (x: ℝ): Prop := ¬ Irrational x
+
+theorem dense_rational_Ioo
+  (a b: ℝ)
+  (a_lt_b: a < b)
+  : ∃ r ∈ Set.Ioo a b, Rational r
+  := sorry
+
+theorem dense_rational
+  : Dense { x: ℝ | Rational x }
+  := sorry
+/-
+  Then, prove that nontrivial affine transformations preserve density.
+-/
+theorem dense_affine
+  (S: Set ℝ)
+  (S_dense: Dense S)
+  (a b: ℝ) (a_nonzero: a ≠ 0)
+  : Dense { a * x + b | x ∈ S }
+  := sorry
+/-
+  Prove that √2 is irrational.
+  You will need more help from the libraries, and the `Dvd.dvd` relation
+  for `2 ∣ x`.
+-/
+theorem sqrt2_irrational
+  : ∀ r: ℚ, r^2 ≠ 2
+  := by
+  intro r
+  cases r
+  case div n d d_nonzero n_d_coprime =>
+  replace n_d_coprime: IsCoprime n d
+    := Int.isCoprime_iff_nat_coprime.mpr n_d_coprime
+  -- You will need many intermediate results
+  have n_even: 2 ∣ n := sorry
+  have d_even: 2 ∣ (d: ℤ) := sorry
+  have unit_2 := IsCoprime.isUnit_of_dvd' n_d_coprime n_even d_even
+  have two_is_pm_one := Int.isUnit_eq_one_or unit_2
+  contradiction
+
+theorem sqrt2_irrational'
+  : Irrational (√ 2)
+  := sorry
+
+theorem dense_sqrt2_rational
+  : Dense { √2 * x | (x: ℝ) (x_rat: Rational x) }
+  := by
+  have sqrt2_nonzero: √2 ≠ 0 := by sorry
+  have h := dense_affine { x | ¬ Irrational x } dense_rational
+    (√2) 0 sqrt2_nonzero
+  sorry
+
+/-
+  Conclude that the irrationals are also dense.
+-/
+theorem dense_irrational
+  : Dense { x | Irrational x }
+  := by
+  have incl
+    : { √2 * x | (x: ℝ) (x_rat: ¬ Irrational x) }
+      ⊆
+      { x | Irrational x }
+    := by
+    intro x
+    sorry
+  apply Dense.mono incl
+  exact dense_sqrt2_rational
+
+end Density_of_rationals_and_irrationals
 
 end Recap_exercises
