@@ -411,4 +411,11 @@ theorem Rtc_idempotent {α: Type} (r: α → α → Prop)
 -/
 #print Equiv
 
+/-
+  __Exercise__: Take `Nat × Nat` and identify `(a,b) = (c,d)` when
+  `a+d = c+b`, using a quotient. Then prove there is a bijection from that
+  to the integer type, `Int`.
+  You will likely need `Quotient.lift`, `Quotient.ind`, `Quotient.sound`,
+  beyond others.
+-/
 end Recap_exercises
