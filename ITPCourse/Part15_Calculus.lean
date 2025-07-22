@@ -1,7 +1,12 @@
 import Mathlib.Data.Real.Basic
 import Mathlib.Topology.Basic
-import Mathlib.Analysis.Asymptotics.Defs
 import Mathlib.Topology.Instances.RealVectorSpace
+import Mathlib.Order.Filter.Defs
+import Mathlib.Order.Filter.AtTopBot.Defs
+import Mathlib.Order.Filter.AtTopBot.Basic
+import Mathlib.Order.Filter.AtTopBot.Tendsto
+import Mathlib.Order.Monotone.Defs
+import Mathlib.Analysis.Asymptotics.Defs
 import Mathlib.Analysis.Calculus.Deriv.Basic
 import Mathlib.Analysis.Calculus.Deriv.Mul
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
@@ -671,3 +676,20 @@ theorem deriv_x_cubed
             positivity
 
 end Derivatives
+
+section Recap_exercises
+/-
+  __Exercise__: Prove the following.
+  You might need the following results from the library:
+  `Filter.tendsto_atTop`, `Filter.eventually_atTop`.
+-/
+example
+  (a b: ℕ → ℝ)
+  (b_mon: Monotone b)
+  (b_dominates_a: ∀ n, ∃ m, a n ≤ b m)
+  : Filter.Tendsto a Filter.atTop Filter.atTop
+  → Filter.Tendsto b Filter.atTop Filter.atTop
+  := by
+  sorry
+
+end Recap_exercises
