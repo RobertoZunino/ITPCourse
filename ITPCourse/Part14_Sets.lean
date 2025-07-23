@@ -250,7 +250,8 @@ end Sets_vs_types
 section Set_like_types
 /-
   Note that if we have `s: Set τ` then `s` is not a type, and we can not use
-  it as such. For instance, we can not write `List s`.
+  it as such. For instance, we can not write `List s`, unless we somehow
+  convert `s` into a type first (we will return on this point).
 
   If we need an actual type, we need to use a dependent sum of the form
     `(t: τ) × (property t)`
@@ -269,7 +270,7 @@ example: Type := List less20_struct  -- This is now OK.
   set-like dependent sums:
 -/
 def less20_τ: Type := { n: ℕ // n < 20 }
-                            -- ↑↑ Note the // instead of |
+                          -- ↑↑ Note the // instead of |
 
 example: less20_τ := ⟨ 5 , by decide ⟩
 
@@ -319,6 +320,29 @@ theorem pseudo_inclusion₂
     _ < 20 := by decide
   -- back to the main goal `x.val = y.val`
   rfl
+
+/-
+  Finally, note that Lean can actually automatically convert `S: Set α` into
+  the type `{ a∶ α // a ∈ S }`.
+-/
+def some_set: Set ℕ := { n | n < 10 }
+
+def list_of_a_set: List some_set
+  :=
+  -- [ 5 , 8 , 9 ]    Type error!
+  [ ⟨ 5 , by simp [some_set] ⟩
+  , ⟨ 8 , by simp [some_set] ⟩
+  , ⟨ 9 , by simp [some_set] ⟩
+  ]
+/-
+  This conversion exploits `Set.Elem`.
+-/
+section
+#print Set.Elem
+#print list_of_a_set    -- Note the `↑`
+set_option pp.all true
+#print list_of_a_set    -- Note the `Set.Elem`
+end
 
 end Set_like_types
 
@@ -760,6 +784,25 @@ example (n: ℕ)
   : (∑ i ≤ n, i^2 : ℚ) = n*(n+1)*(2*n+1)/6
   := by
   sorry
+
+/-
+  __Exercise__: Given a function `f: α → β` and `A: Set α`, define the
+  restriction of `f` to the set `A`.
+
+  Note that below we are using the set `A` as if it were a type. Lean
+  automatically converts `A` to the type `{ a: α // a ∈ A}`.
+-/
+def restrict {α β: Type} (f: α → β) (A: Set α)
+  : A → β
+  := sorry
+
+/-
+  __Exercise__: Given a function `f: α → α` and `A: Set α`, define the
+  restriction below. You must add a suitable additional hypothesis.
+-/
+def restrict_endo {α: Type} (f: α → α) (A: Set α) (h: sorry)
+  : A → A
+  := sorry
 
 /-
   __Exercise__: Inspect the following classes from the library, modelling
