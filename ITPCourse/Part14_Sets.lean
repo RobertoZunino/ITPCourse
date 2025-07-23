@@ -324,18 +324,19 @@ theorem pseudo_inclusion₂
 /-
   Finally, note that Lean can actually automatically convert `S: Set α` into
   the type `{ a∶ α // a ∈ S }`.
+  Recall `less20` is a `Set ℕ`, not a `Type`.
 -/
-def some_set: Set ℕ := { n | n < 10 }
+example: less20 = {n: ℕ | n<20} := rfl
 
-def list_of_a_set: List some_set
+def list_of_a_set: List less20
   :=
   -- [ 5 , 8 , 9 ]    Type error!
-  [ ⟨ 5 , by simp [some_set] ⟩
-  , ⟨ 8 , by simp [some_set] ⟩
-  , ⟨ 9 , by simp [some_set] ⟩
+  [ ⟨ 5 , by simp [less20] ⟩
+  , ⟨ 8 , by simp [less20] ⟩
+  , ⟨ 9 , by simp [less20] ⟩
   ]
 /-
-  This conversion exploits `Set.Elem`.
+  The set-to-type conversion exploits `Set.Elem`.
 -/
 section
 #print Set.Elem
