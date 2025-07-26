@@ -2,6 +2,7 @@
 import Mathlib.Logic.Function.Basic
 import Mathlib.Data.Set.Basic
 import Mathlib.Tactic.Ring
+import Mathlib.Tactic.Linarith
 
 section A_simple_functional_language
 /-
@@ -466,6 +467,7 @@ theorem hoare.correctness {P c Q}
     apply subP
     exact p₁
 
+section Hoare_example_double
 /-
   We showcase the correctness theorem with a basic example.
 
@@ -563,9 +565,7 @@ theorem double.correct (X σ σ')
   → double.sem σ σ'
   → σ' "x" = 2 * X
   := by
-  have correct := hoare.correctness (double.hoareTriple₁ X)
-  simp [validTriple] at correct
-  exact correct σ σ'
+  apply hoare.correctness (double.hoareTriple₁ X)
 
 section More_automation
 /-
@@ -609,6 +609,15 @@ instance instTransHoarePre (c: Com)
     exact hoare.prepost supP (by rfl) h
 
 /-
+  One more instance, similar to the previous one.
+-/
+instance instTransHoarePost (c: Com)
+  : Trans Superset (hoare.flip c) (hoare.flip c) where
+  trans := by
+    intro P' P Q subP h
+    exact hoare.prepost (by rfl) subP h
+
+/-
   Finally, we can exploit the above machinery to re-establish our triple.
 
   Using `¢alc`, we compute hoare assertions bottom-up, starting from the
@@ -644,6 +653,82 @@ theorem double.hoareTriple₂ (X: ℤ):
       simp [Exp.sem, State.update, inv] ; intro σ h ; rw [h] ; ring
 
 end More_automation
+end Hoare_example_double
+
+section Hoare_example_power
+/-
+  A simple algorithm to compute the power `a ^ b`.
+
+  ```python
+  x = 0
+  r = 1
+  while x-b ≠ 0:
+    r = r * a
+    x = x + 1
+  ```
+-/
+def power: Com :=
+  (Com.let_ "x" (.lit 0)).comp
+  ((Com.let_ "r" (.lit 1)).comp
+  (.while_ (.sub (.var "x") (.var "b"))
+    ((Com.let_ "r" (.times (.var "r") (.var "a"))).comp
+    (.let_ "x" (.add (.var "x") (.lit 1))))
+  ))
+
+theorem power.hoareTriple (A B: ℕ)
+  : hoare {σ | σ "a" = A ∧ σ "b" = B} power {σ | σ "r" = A^B }
+  := by
+  unfold power
+
+  let inv: Assert :=
+    {σ | σ "x" ≥ 0 ∧ σ "r" = A ^ (σ "x").natAbs
+       ∧ σ "a" = A ∧ σ "b" = B }
+  let guard: Exp := .sub (.var "x") (.var "b")
+
+  calc
+    _ ⊇ {σ | σ ∈ inv ∧ guard.sem σ = 0} := by
+      simp [Exp.sem, inv, guard] ; intro σ hx hr ha hb h
+      rw [hr,←ha]
+      congr
+      case e_a =>
+      rw [← Nat.cast_inj (R := ℤ), Int.natAbs_of_nonneg hx, ←hb]
+      linarith
+    _ <~_∼ _ := by
+      apply hoare.while_
+      calc
+        _ <~_∼ _ := by apply hoare.let_
+        _ <~_∼ _ := by apply hoare.let_
+        _ ⊇ _ := by
+          simp [inv, Exp.sem, State.update]
+          intro σ hx hr ha hb h1
+          rw [hr,ha,hb]
+          simp
+          constructor
+          case left =>
+            linarith
+          case right =>
+            rw [←Int.pow_succ]
+            congr
+            case e_a =>
+            rw [← Nat.cast_inj (R := ℤ)]
+            push_cast
+            have h: 0 ≤ σ "x" + 1 := by linarith
+            rw [abs_of_nonneg hx, abs_of_nonneg h]
+    _ <~_∼ _  := by apply hoare.let_
+    _ <~_∼ _  := by apply hoare.let_
+    _ ⊇ _ := by simp [State.update, Exp.sem, inv]
+
+theorem power.correct (A B: ℕ) (σ σ': State)
+  : σ "a" = A → σ "b" = B →
+    power.sem σ σ' →
+    σ' "r" = A^B
+  := by
+  intro ha hb
+  apply hoare.correctness (power.hoareTriple A B)
+  simp [ha,hb]
+
+end Hoare_example_power
+
 
 /-
   __Exercise__: (long)
