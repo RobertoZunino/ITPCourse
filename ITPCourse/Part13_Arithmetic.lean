@@ -1,7 +1,9 @@
 import Mathlib.Data.Real.Basic
+import Mathlib.Algebra.Order.GroupWithZero.Unbundled.Basic
 import Mathlib.Data.Complex.Basic
 import Mathlib.Tactic.Ring
 import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.FieldSimp
 
 section Basic_arithmetic
 /-
@@ -194,6 +196,16 @@ example (n: Nat)
   linarith
 
 /-
+  Some equations on fields can be handled by `field_simp`.
+-/
+example (x y: ℝ)
+  (h: x ≠ 0)
+  : x * y / x * x = x * y
+  := by
+  field_simp
+  ring
+
+/-
   __Exercise__: Prove the following.
   You will likely only need basic tactics, and `simp` to simplify a few
   sums.
@@ -219,67 +231,6 @@ theorem forall_ε (a b: ℝ)
   := sorry
 
 end Basic_arithmetic
-
-section Casts
-/-
-  It is possible to convert a number to a "larger" numeric type using the
-  cast syntax `↑x`, as follows:
--/
-example: ℕ → ℤ := λ x => ↑x
-example: ℕ → ℚ := λ x => ↑x
-example: ℕ → ℝ := λ x => ↑x
-example: ℕ → ℂ := λ x => ↑x
-example: ℤ → ℚ := λ x => ↑x
-example: ℤ → ℝ := λ x => ↑x
-example: ℤ → ℂ := λ x => ↑x
-example: ℚ → ℝ := λ x => ↑x
-example: ℚ → ℂ := λ x => ↑x
-example: ℝ → ℂ := λ x => ↑x
-/-
-  Technically, this involves a few "coercion" type classes.
-  We omit the technical details.
-  The coercion can often be omitted in several cases.
--/
-example: ℕ → ℚ := λ x => x   -- Coercion automatically added.
-
-example (a: ℕ) (b: ℝ)
-  : a + b = b + a  -- Coercion automatically added.
-  := by ring
-
-/-
-  The `push_cast` tactic rewrites `↑(a + b)` as `↑a + ↑b` and similar
-  expressions in the analogous way.
--/
-example
-  (P: ℝ → Prop)
-  (h1: ∀ x y: ℝ, P (x + y))
-  (a b c: ℕ)
-  (h2: c = a + b)
-  : P c
-  := by
-  rw [h2]
-  push_cast
-  exact h1 ↑a ↑b
-
-/-
-  __Exercise__: Prove the following.
-  Note how `n: ℕ` is automatically converted to a `ℝ` below when we use
-  `n * a`. This is done through the `NatCast` type class. If you see `↑n`
-  printed instead of `n`, the `↑` is denoting the automatic coercion.
-  You might want to use:
-  - `⌈ … ⌉₊` aka `Nat.ceil`
-  - `Nat.le_ceil`
-  - `div_mul_cancel₀`
-  - Tactic `push_cast`
-  - Tactics `ring`, `congr`, `gcongr`, `positivity`, `simp`, `calc`
--/
-theorem archimedes (a b: ℝ)
-  (h1: 0 < a)
-  (h2: a ≤ b)
-  : ∃ n: ℕ, n * a > b
-  := sorry
-
-end Casts
 
 section On_partial_operations
 /-
@@ -325,7 +276,159 @@ example: (21: ℕ) / (10: ℕ) = (2: ℕ)  := by ring  -- Quotient
 -/
 end On_partial_operations
 
+section Casts
+/-
+  It is possible to convert a number to a "larger" numeric type using the
+  cast syntax `↑x`, as follows:
+-/
+example: ℕ → ℤ := λ x => ↑x
+example: ℕ → ℚ := λ x => ↑x
+example: ℕ → ℝ := λ x => ↑x
+example: ℕ → ℂ := λ x => ↑x
+example: ℤ → ℚ := λ x => ↑x
+example: ℤ → ℝ := λ x => ↑x
+example: ℤ → ℂ := λ x => ↑x
+example: ℚ → ℝ := λ x => ↑x
+example: ℚ → ℂ := λ x => ↑x
+example: ℝ → ℂ := λ x => ↑x
+/-
+  Technically, this involves a few "coercion" type classes.
+  We omit the technical details.
+  The coercion can often be omitted in several cases.
+-/
+example: ℕ → ℚ := λ x => x   -- Coercion automatically added.
+
+example (a: ℕ) (b: ℝ)
+  : a + b = b + a  -- Coercion automatically added.
+  := by ring
+
+/-
+  The `push_cast` tactic rewrites `↑(a + b)` as `↑a + ↑b` and similar
+  expressions in the analogous way.
+-/
+example
+  (P: ℝ → Prop)
+  (h1: ∀ x y: ℝ, P (x + y))
+  (a b c: ℕ)
+  (h2: c = a + b)
+  : P c
+  := by
+  rw [h2]
+  push_cast
+  exact h1 ↑a ↑b
+
+/-
+  Sometimes, to solve an (in-)equation it is convenient to lift it to a
+  larger ring or field.
+
+  For equations, we can do so using the "injectivity of the coercion/cast"
+  theorems from the library. These are named
+    `Nat.cast_inj`, `Int.cast_inj`, … and so on.
+  You might want to specify the new ring/field using `R:=…` or `α:=…`.
+-/
+example (a b c: ℕ)
+  (h: a ≥ b)
+  : a - b + c + b = a + c
+  := by
+  -- We move to integers
+  apply (Nat.cast_inj (R:=ℤ)).mp
+  -- We push the casts until they are on the variables. Note that we need to
+  -- use `h` here, since `↑(a-b)` is not always `↑a - ↑b`. Indeed,
+  -- subtraction is a partial operation on ℕ, and `↑(3-4) = 0 ≠ ↑3 - ↑4`.
+  push_cast [h]
+  ring
+
+/-
+  For inequalities, injectivity of the cast does not suffice. We now need to
+  rely on "casts preserve `≤`" results. These are named
+    `Nat.cast_le`, `Int.cast_le`, … and so on.
+-/
+example (a b c: ℕ)
+  (h: a ≥ b)
+  : a - b + c + b ≤ a + c + 1
+  := by
+  simp at h
+  apply (Nat.cast_le (α:=ℤ)).mp
+  push_cast [h]
+  linarith
+
+/-
+  Above, we had to ensure that `a - b` was defined on ℕ by adding the
+  hypothesis `a ≥ b`. Similarly, to ensure that `a / b` is defined on ℤ we
+  have to assume `b ∣ a` where `∣` is the "divides" relation (`Dvd.dvd`).
+-/
+example (a b c: ℤ)
+  (h1: b ∣ a)
+  (h2: b ≠ 0)
+  : a / b * c * b = a * c
+  := by
+  apply (Int.cast_inj (α:=ℚ)).mp
+  push_cast [h1]
+  field_simp
+
+example (a b c: ℤ)
+  (h1: b ∣ a)
+  (h2: b ≠ 0)
+  : a / b * c * b ≤ a * c + 1
+  := by
+  apply (Int.cast_le (R:=ℚ)).mp
+  push_cast [h1]
+  field_simp
+
+/-
+  __Exercise__: Prove the following.
+  Note how `n: ℕ` is automatically converted to a `ℝ` below when we use
+  `n * a`. This is done through the `NatCast` type class. If you see `↑n`
+  printed instead of `n`, the `↑` is denoting the automatic coercion.
+  You might want to use:
+  - `⌈ … ⌉₊` aka `Nat.ceil`
+  - `Nat.le_ceil`
+  - `div_mul_cancel₀`
+  - Tactic `push_cast`
+  - Tactics `ring`, `congr`, `gcongr`, `positivity`, `simp`, `calc`
+-/
+theorem archimedes (a b: ℝ)
+  (h1: 0 < a)
+  (h2: a ≤ b)
+  : ∃ n: ℕ, n * a > b
+  := sorry
+
+end Casts
+
 section Recap_exercises
+/-
+  __Exercise__: Prove the following.
+  You can exploit any result from the libraries (search for them!).
+-/
+example
+  (x y: ℝ)
+  (h: x*y ≥ 0 )
+  : x^2 + y^2 ≤ (x+y)^2
+  := by
+  sorry
+
+/-
+  __Exercise__: Prove the following.
+  You can exploit any result from the libraries (search for them!). You
+  might need to prove some small result before you can exploit the library
+  results.
+-/
+example
+  (x: ℝ)
+  (h: x > 0 )
+  : (x + 1)^2 / x^2 > 1
+  := by
+  sorry
+
+/-
+  __Exercise__: Prove the following, by induction on `n`.
+  Watch out for the casts among ℕ,ℤ,ℚ !
+-/
+example (n: ℕ)
+  : ∃ x: ℤ, ((n+1) * n / (2: ℚ)) = x
+  := by
+  sorry
+
 /-
   __Exercise__: Consider the following two definitions of even natural
   number. Prove they are equivalent.
