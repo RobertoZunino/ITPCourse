@@ -4,7 +4,7 @@ This is a course on Interactive Theorem Proving with Lean 4.
 
 ## Main features
 
-- A main focus is on the _foundations_ of Lean. We discuss the key ideas of
+- Our main focus is on the _foundations_ of Lean. We discuss the key ideas of
 the underlying type theory in a semi-formal way, aiming to provide some intuition on the inner workings.
 
 - We follow a _bottom-up_ approach, aiming to introduce each feature of Lean
@@ -55,6 +55,8 @@ _uncommitted_ changes will be lost if a codespace is inactive for more than
 - [LeanSearch][leansearch] -- a search engine for the Lean libraries, based
   on _natural language_.
 - [Cheatsheet][cheatsheet] -- a summary of the most common terms and tactics.
+- [100 theorems][th100list] -- a list of famous results.
+
 
 [lean4ref]: https://lean-lang.org/doc/reference/latest/
 [mathlibDoc]: https://leanprover-community.github.io/mathlib4_docs/
@@ -63,3 +65,4 @@ _uncommitted_ changes will be lost if a codespace is inactive for more than
 [loogle]: https://loogle.lean-lang.org/
 [leansearch]: https://leansearch.net/
 [cheatsheet]: Cheatsheet.md
+[th100list]: https://leanprover-community.github.io/100.html
