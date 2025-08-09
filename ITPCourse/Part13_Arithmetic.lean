@@ -430,6 +430,22 @@ example (n: ℕ)
   sorry
 
 /-
+  __Exercise__: Prove the following non-linear systen.
+  You can exploit any result from the libraries (search for them!).
+  You might need `ne_of_lt`.
+-/
+example
+  (a₀ a₁ b₀ b₁ p₀ p₁: ℝ)
+  (pos_a₀: 0 < a₀) (pos_b₀: 0 < b₀)
+  (pos_p₀: 0 < p₀) (pos_p₁: 0 < p₁)
+  (hp: a₀ * a₁ = b₀ * b₁)
+  (ha: a₀ * p₀ = a₁ * p₁)
+  (hb: b₀ * p₀ = b₁ * p₁)
+  : a₀ = b₀ ∧ a₁ = b₁
+  := by
+  sorry
+
+/-
   __Exercise__: Consider the following two definitions of even natural
   number. Prove they are equivalent.
   You can use `constructor`, `induction` (on two types), `exists`, `have`,
