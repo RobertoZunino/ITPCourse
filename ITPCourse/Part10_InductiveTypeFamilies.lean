@@ -526,7 +526,7 @@ section Patterns_affect_what_comes_after
   Observe this example carefully:
 -/
 def dep_match₁ (b: Bool) (x: if b then String else Nat): String
-  := match (motive := (b: Bool) → (if b then String else Nat) → String )
+  := match (motive := (b: Bool) → (if b then String else Nat) → String)
     b     , x with
   | true  , y       => y
   | false , .zero   => "zero"
