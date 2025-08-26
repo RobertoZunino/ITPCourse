@@ -11,6 +11,8 @@ import Mathlib.Analysis.Calculus.Deriv.Basic
 import Mathlib.Analysis.Calculus.Deriv.Mul
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
+import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 
 import ITPCourse.Part13_Arithmetic
 
@@ -676,6 +678,48 @@ theorem deriv_x_cubed
             positivity
 
 end Derivatives
+
+section Integrals
+/-
+  Below we compute the integral of `sin` over the interval `[0,π]`.
+
+  We exploit several library results, including the fundamental theorem of
+  calculus. (We do not attempt to prove the result by relying only on the
+  definitions.)
+
+  Note that the Lean library also has much more complex forms of integrals,
+  involving arbitrary measures and the associated measurable functions and
+  measurable sets.
+-/
+example:
+  ∫ (x: ℝ) in 0..Real.pi, Real.sin x = 2
+  := by
+  calc
+    _ = ∫ (x: ℝ) in 0..Real.pi, - deriv Real.cos x
+      := by
+      congr
+      funext x
+      rw [Real.deriv_cos]
+      ring
+    _ = - ∫ (x: ℝ) in 0..Real.pi, deriv Real.cos x
+      := by
+      rw [intervalIntegral.integral_neg]
+    _ = - (Real.cos Real.pi - Real.cos 0)
+      := by
+      -- The fundamental theorem of calculus
+      rw [intervalIntegral.integral_deriv_eq_sub]
+      case hderiv =>
+        intro x x_in
+        exact Real.differentiableAt_cos
+      case hint =>
+        apply Continuous.intervalIntegrable _
+        continuity
+    _ = 2
+      := by
+      simp only [Real.cos_pi, Real.cos_zero, neg_sub, sub_neg_eq_add]
+      ring
+
+end Integrals
 
 section Recap_exercises
 /-
