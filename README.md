@@ -38,7 +38,7 @@ _uncommitted_ changes will be lost if a codespace is inactive for more than
 30 days.)
 
 [lean4web]: https://live.lean-lang.org/
-[localInstall]: https://docs.lean-lang.org/lean4/doc/quickstart.html
+[localInstall]: https://lean-lang.org/install/
 [codespaces]: https://github.com/codespaces
 
 ## Lean 4 documentation
