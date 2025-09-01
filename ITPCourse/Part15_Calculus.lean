@@ -665,7 +665,7 @@ theorem deriv_x_cubed
       _ ≤ (3*|x|+1) * |h| * |h| := by
         gcongr
         calc
-          _ ≤ |3*x|+|h|  := by simp [abs_add]
+          _ ≤ |3*x|+|h|  := by simp only [abs_add]
           _ = 3*|x|+|h|  := by simp [abs_mul]
           _ ≤ 3*|x|+1    := by gcongr
       _ ≤ c * |h|        := by

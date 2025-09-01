@@ -203,7 +203,6 @@ example (x y: ℝ)
   : x * y / x * x = x * y
   := by
   field_simp
-  ring
 
 /-
   __Exercise__: Prove the following.
@@ -374,6 +373,7 @@ example (a b c: ℤ)
   apply (Int.cast_le (R:=ℚ)).mp
   push_cast [h1]
   field_simp
+  linarith
 
 /-
   __Exercise__: Prove the following.
