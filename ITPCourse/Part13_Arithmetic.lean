@@ -75,8 +75,8 @@ example (a b: ℤ)
 
 /-
   Non-linear inequalities can _not_ be solved with `linarith`, in general.
-  Sometimes, they can anyway, since the solving process does not really
-  involve dealing with the non-linear parts.
+  Sometimes, they can be solved anyway, since the solving process does not
+  really involve dealing with the non-linear parts.
 -/
 example (a b: ℤ)
   : a*b < a*b + 1
@@ -94,8 +94,8 @@ example (a b: ℝ)
   _ < |a| + |b| + 1 := by linarith
 
 /-
-  The `positivity` tactic can also solve several goals dealing with positive
-  or non-negative quantities.
+  The `positivity` tactic can solve several goals dealing with positive or
+  non-negative quantities.
 -/
 example
   (x y z: ℝ)
