@@ -901,4 +901,29 @@ theorem dense_irrational
 
 end Density_of_rationals_and_irrationals
 
+/-
+  __Exercise__: Examine the type for bijections.
+  Note that `Equiv α β` can also be written `α ≃ β`.
+-/
+#print Equiv
+
+/-
+  __Exercise__: Define a bijection from the domain to the range of an
+  injective function.
+
+  Feel free to use any automation (any tactic). You can exploit the axiom
+  of choice `Classical.choose` and `Classical.choose_spec` to extract a
+  preimage.
+  Note that the thesis `α ≃ Set.range f` involves a type `α` and a _set_
+  `Set.range f`. The latter is automatically converted to a type by Lean.
+  In the proof you will see some `↑` denoting the conversion.
+-/
+noncomputable example
+  {α β: Type}
+  (f: α → β)
+  (f_inj: f.Injective)
+  : α ≃ Set.range f
+  := by
+  sorry
+
 end Recap_exercises
