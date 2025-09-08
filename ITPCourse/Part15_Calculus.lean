@@ -246,7 +246,7 @@ theorem nhdsNE_le_nhdsWithinIoo
   : 𝓝[≠] 0 ≤ 𝓝[ Set.Ioo (-ε) ε \ {0} ] 0
   := by
   apply nhdsWithin_le_iff.mpr
-  simp [ nhdsWithin , min , Filter.instInf ]
+  simp [ nhdsWithin , min ]
   exists Set.Ioo (-ε) ε
   constructor
   case left =>
@@ -280,7 +280,7 @@ theorem nhdsNE_eq_nhdsWithinIoo
 example
   : 𝓝[ Set.Ioi 0 ] 0 < 𝓝[≠] (0: Real)
   := by
-  apply lt_of_le_not_le
+  apply lt_of_le_not_ge
   case hab =>
     apply nhdsWithin_mono
     simp only [Set.subset_compl_singleton_iff, Set.mem_Ioi,
@@ -305,7 +305,7 @@ example
           apply h_ball
           have ε_abs: |ε| = ε := abs_of_pos ε_pos
           simp only [Metric.mem_ball, dist_zero_right, norm_div, norm_neg,
-            Real.norm_eq_abs, Real.norm_ofNat, gt_iff_lt]
+            Real.norm_eq_abs, gt_iff_lt]
           rw [ε_abs]
           simp only [Nat.abs_ofNat, half_lt_self_iff, ε_pos]
         case right =>
@@ -321,6 +321,34 @@ end Filters
 
 section Limits
 /-
+  Limits are defined in terms of filters.
+
+  More precisely, let `x` and `y` be two filters. The relation
+  `Filter.Tendsto f x y` states that the value of `f` approaches `y` when
+  its argument approaches `x`.
+
+  The technical definition is a bit complex, but the following
+  characterization should make `Filter.Tendsto` familiar with the usual
+  definition of limit.
+-/
+example
+  {α β: Type}
+  (f: α → β)
+  (x: Filter α) (y: Filter β)
+  : Filter.Tendsto f x y
+  ↔ ∀ ε ∈ y, ∃ δ ∈ x, f '' δ ⊆ ε
+  := by
+  simp [Filter.Tendsto, Filter.map, LE.le]
+  constructor
+  . intro h ε h_ε
+    exists (f ⁻¹' ε)
+    simp
+    exact h h_ε
+  . intro h U h_U
+    have ⟨ δ , h_δ , h_subδ ⟩ := h U h_U
+    exact x.sets_of_superset h_δ h_subδ
+
+/-
   We now study a limit, proving that the function
     `λ x => 1 / |x|`
   tends to `+∞` when `x` approaches `0`.
@@ -328,8 +356,6 @@ section Limits
   Since we don't want to evaluate the function at `0`, we chose `x` to be
   close to the filter `𝓝[≠] 0` (and not just `𝓝 0`). The result the function
   tends to is instead `+∞`, i.e. the filter `Filter.atTop`.
-
-  `Filter.Tendsto` is the the relation for limits:
 -/
 theorem abs_diverges₁
   : Filter.Tendsto (λ x: Real => 1 / |x|) (𝓝[≠] 0) Filter.atTop
