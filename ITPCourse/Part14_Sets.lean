@@ -751,6 +751,140 @@ example (n: Nat)
 
 end Finite_sums
 
+section Some_famous_results
+/-
+  Tarski's prefixed-point theorem states that a set-valued function
+    `f: Set α → Set α`
+  which is `⊆`-monotonic admits a _least prefixed point_, i.e., a least set
+  `s ⊆ α` such that `f s ⊆ s`.
+-/
+def Monotonic {α: Type} (f: Set α → Set α): Prop
+  := ∀ s₁ s₂, s₁ ⊆ s₂ → f s₁ ⊆ f s₂
+
+theorem Tarski_prefixed_point
+  {α: Type}
+  (f: Set α → Set α)
+  (f_monot: Monotonic f)
+  : ∃ s, IsLeast {a | f a ⊆ a} s
+  := by
+  let s := ⋂₀ { a: Set α | f a ⊆ a}
+  exists s
+  constructor
+  . conv =>
+      right
+      unfold s
+    simp
+    intro z h
+    calc f s
+    _ ⊆ f z := by apply f_monot; unfold s; intro a; simp; intro h2; exact h2 z h
+    _ ⊆ z   := h
+  . intro z h
+    unfold s
+    intro a
+    simp only [Set.mem_sInter, Set.mem_setOf_eq]
+    intro h2
+    exact h2 z h
+
+/-
+  Tarski's fixed-point theorem states that a monotinic set-valued function
+    `f: Set α → Set α`
+  also admits a _least fixed point_, i.e., a least set `s ⊆ α` such that
+  `f s = s`.
+-/
+theorem Tarski_fixed_point
+  {α: Type}
+  (f: Set α → Set α)
+  (f_monot: Monotonic f)
+  : ∃ s, IsLeast {a | f a = a} s
+  := by
+  have ⟨ s, s_pf, s_min_pf ⟩ := Tarski_prefixed_point f f_monot
+  exists s
+  constructor
+  . apply subset_antisymm
+    . exact s_pf
+    . apply s_min_pf
+      apply f_monot
+      exact s_pf
+  . intro z h
+    apply s_min_pf
+    exact Eq.subset h
+
+/-
+  The Schröder-Bernstein theorem statesthat, if there are two injections
+    `a: α → β`
+    `b: β → α`
+  then there is also a bijection `a ≃ b`.
+  That is, `α` and `β` must have the same cardinality.
+
+  This can be proved exploiting Tarki's fixed point theorem.
+
+  Informally, the proof is as follows:
+
+  Partition `α` as `Xᶜ ∪ X`. We postpone the exact definition of `X`.
+  We deal with each part separately.
+
+  We map the part `Xᶜ` into `β` using `a`. We get a bijection
+    `Xᶜ ≃ a '' Xᶜ`
+
+  We now need to map `X` to `(a '' Xᶜ)ᶜ`. By symmetry, we instead map
+  `(a '' Xᶜ)ᶜ` to `X`. Using `b` we obtain a bijection
+    `(a '' Xᶜ)ᶜ ≃ b '' (a '' Xᶜ)ᶜ`
+
+  We are almost done, except we reached `b '' (a '' Xᶜ)ᶜ` instead of `X`.
+  However, by Tarki's fixed point theorem, there is an `X` that makes these
+  two sets equal (since `b '' (a '' Xᶜ)ᶜ` is monotonic w.r.t. `X`).
+-/
+theorem Schröder_Bernstein
+  {α β: Type}
+  (a: α → β) (a_inj: a.Injective)
+  (b: β → α) (b_inj: b.Injective)
+  : Nonempty (α ≃ β)
+  := by
+  classical
+  let f: Set α → Set α
+    | X => b '' (a '' Xᶜ)ᶜ
+  have f_monot: Monotonic f
+    := by intro X Y h ; simp_all [f]
+  have ⟨ X , X_fix , X_min ⟩ := Tarski_fixed_point f f_monot
+  clear X_min
+
+  dsimp [f] at X_fix
+  apply Nonempty.intro
+  calc α
+  -- Partition `α`
+  _ ≃ ↑(Xᶜ ∪ X)
+    := by simp; symm; exact Equiv.Set.univ _
+  -- Change to a sum type
+  _ ≃ ↑Xᶜ ⊕ ↑X
+    := by
+    apply Equiv.Set.union _
+    simp [Set.disjoint_compl_left_iff_subset]
+  -- Deal with each part individually
+  _ ≃ ↑(a '' Xᶜ) ⊕ ↑(a '' Xᶜ)ᶜ
+    := by
+    apply Equiv.sumCongr
+    case ea =>
+      apply Equiv.Set.image
+      exact a_inj
+    case eb =>
+      symm
+      conv =>
+        right
+        rw [←X_fix]
+      apply Equiv.Set.image
+      exact b_inj
+  -- Return to a union
+  _ ≃ ↑(a '' Xᶜ ∪ (a '' Xᶜ)ᶜ)
+    := by
+    symm
+    apply Equiv.Set.union _
+    simp [Set.disjoint_compl_right_iff_subset]
+  -- Undo the partition
+  _ ≃ β
+    := by simp; exact Equiv.Set.univ _
+
+end Some_famous_results
+
 section Recap_exercises
 /-
   __Exercise__: Prove the following.
