@@ -762,4 +762,17 @@ example
   := by
   sorry
 
+/-
+  __Exercise__: Read about the many variants of l'Hôpital's rule for limits
+  which can be found in the libraries.
+  In the module `Mathlib.Analysis.Calculus.LHopital` you can find
+  `deriv.lhopital_zero_nhdsNE` as a basic version of the theorem.
+  Exploit that and a few other results from the libraries to prove a few
+  limits. We suggest to start from this:
+-/
+example
+  : Filter.Tendsto (λ x => Real.sin x / x) (𝓝[≠] 0) (𝓝 0)
+  := by
+  sorry
+
 end Recap_exercises
