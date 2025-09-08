@@ -826,13 +826,15 @@ theorem Tarski_fixed_point
   We map the part `Xᶜ` into `β` using `a`. We get a bijection
     `Xᶜ ≃ a '' Xᶜ`
 
-  We now need to map `X` to `(a '' Xᶜ)ᶜ`. By symmetry, we instead map
-  `(a '' Xᶜ)ᶜ` to `X`. Using `b` we obtain a bijection
+  We now need to map `X` into `(a '' Xᶜ)ᶜ`. By symmetry, we instead map
+  `(a '' Xᶜ)ᶜ` into `X`. Using `b`, we obtain a bijection
     `(a '' Xᶜ)ᶜ ≃ b '' (a '' Xᶜ)ᶜ`
 
   We are almost done, except we reached `b '' (a '' Xᶜ)ᶜ` instead of `X`.
-  However, by Tarki's fixed point theorem, there is an `X` that makes these
-  two sets equal (since `b '' (a '' Xᶜ)ᶜ` is monotonic w.r.t. `X`).
+  However, by Tarski's fixed point theorem, there is a set `X` which is
+  equal to `b '' (a '' Xᶜ)ᶜ`. We take our `X` to be that, so we conclude.
+
+  (Note that `b '' (a '' Xᶜ)ᶜ` is indeed monotonic w.r.t. `X`).
 -/
 theorem Schröder_Bernstein
   {α β: Type}
