@@ -776,7 +776,8 @@ theorem Tarski_prefixed_point
     simp
     intro z h
     calc f s
-    _ ⊆ f z := by apply f_monot; unfold s; intro a; simp; intro h2; exact h2 z h
+    _ ⊆ f z := by apply f_monot; unfold s; intro a; simp;
+                  intro h2; exact h2 z h
     _ ⊆ z   := h
   . intro z h
     unfold s
