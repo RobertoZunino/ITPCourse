@@ -26,7 +26,7 @@ section General_note
   Note, however, that the definitions found in the libraries might be more
   general than the ones you expect. Much more general.
 
-  Continutity for a basic function `f: Real → Real`, for instance, is
+  Continuity for a basic function `f: Real → Real`, for instance, is
   defined in terms of _topology_. A few theorems from the library must then
   be used to restate continuity in terms of distance in a _metric space_,
   and from there simplify the goal so to see the usual `ε` and `δ` property.
@@ -761,6 +761,43 @@ example
   → Filter.Tendsto b Filter.atTop Filter.atTop
   := by
   sorry
+
+/-
+  __Exercise__: Formalize and prove the following informal statement.
+  If
+    `lim(x ↦ a) f(x) = b`
+    `lim(x ↦ b) g(x) = c`
+  then
+    `lim(x ↦ a) g(f(x)) = c`
+  Feel free to exploit any result from the libraries.
+
+  (You might find that this result is already proved in the libraries. If
+  so, consider proving it using only lower-lever results, so to avoid
+  trivializing the task.)
+-/
+
+/-
+  __Exercise__: Formalize and prove the equivalence between the informal
+  limits:
+    `lim(x ↦ a) f(x) = b`
+    `lim(x ↦ 0) f(a+x) = b`
+  Feel free to exploit any result from the libraries.
+-/
+
+/-
+  __Exercise__: Formalize the two equivalent ways to define the derivative
+  of a function `f` at a point `b`.
+    `lim(a ↦ b) ( f(a) - f(b) ) / ( a - b ) = c`
+    `lim(h ↦ 0) ( f(b+h) - f(b) ) / h = c`
+  Prove their equivalence.
+  Feel free to exploit any result from the libraries.
+
+  Bonus: also consider the following similar limits.
+    `lim(b ↦ a) ( f(a) - f(b) ) / ( a - b ) = c`
+    `lim(h ↦ 0) ( f(b-h) - f(b) ) / h = c`
+    `lim(h ↦ 0) ( f(b) - f(b+h) ) / h = c`
+  How are these related to the derivative? Prove their relation.
+-/
 
 /-
   __Exercise__: Read about the many variants of l'Hôpital's rule for limits
