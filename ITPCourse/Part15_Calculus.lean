@@ -2,6 +2,7 @@ import Mathlib.Data.Real.Basic
 import Mathlib.Topology.Basic
 import Mathlib.Topology.Instances.RealVectorSpace
 import Mathlib.Order.Filter.Defs
+import Mathlib.Order.Filter.Tendsto
 import Mathlib.Order.Filter.AtTopBot.Defs
 import Mathlib.Order.Filter.AtTopBot.Basic
 import Mathlib.Order.Filter.AtTopBot.Tendsto
@@ -338,12 +339,12 @@ example
   : Filter.Tendsto f x y
   ↔ ∀ ε ∈ y, ∃ δ ∈ x, f '' δ ⊆ ε
   := by
-  simp [Filter.Tendsto, Filter.map, LE.le]
+  simp [Filter.tendsto_def]
   constructor
   . intro h ε h_ε
     exists (f ⁻¹' ε)
     simp
-    exact h h_ε
+    exact h ε h_ε
   . intro h U h_U
     have ⟨ δ , h_δ , h_subδ ⟩ := h U h_U
     exact x.sets_of_superset h_δ h_subδ
