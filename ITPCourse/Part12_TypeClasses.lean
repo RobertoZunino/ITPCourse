@@ -1,4 +1,5 @@
 
+import Mathlib.Data.List.Sort   -- For the `List` type
 import Mathlib.Data.Real.Basic  -- For `Real` numbers
 
 section Type_classes
@@ -334,3 +335,82 @@ section Common_library_type_classes
   ease.
 -/
 end Common_library_type_classes
+
+section Recap_exercises
+/-
+  __Exercise__: Consider the following type representing a 2×2 matrix.
+  Make it into an additive monoid, as defined by the `AddMonoid` class, by
+  completing the related instances below.
+-/
+structure Mat (K: Type) [Field K] where
+  a₁₁: K
+  a₁₂: K
+  a₂₁: K
+  a₂₂: K
+
+instance instMatZero (K) [Field K]
+  : Zero (Mat K) where
+  zero := {a₁₁ := 0, a₁₂ := 0, a₂₁ := 0, a₂₂ := 0}
+
+instance instMatAdd (K) [Field K]
+  : Add (Mat K) where
+  -- Add two matrices
+  add := sorry
+
+instance instMatAddMonoid (K) [Field K]
+  : AddMonoid (Mat K) where
+  -- Prove the monoid laws
+  add_assoc := sorry
+  zero_add := sorry
+  add_zero := sorry
+  -- The class also requires to define "multiplication by a natural number".
+  -- You can ignore this, and leave the following line as it is.
+  nsmul := nsmulRec
+
+/-
+  __Exercise__: Extend the above exercise to make `Mat K` into a `Ring`.
+-/
+
+/-
+  __Exercise__: The following `Opposite T` type represents the values of
+  type `T`, but ordered in the opposite order. Complete the instances
+  below.
+-/
+
+@[ext]
+structure Opposite (T: Type) where
+  t: T
+
+instance instOppositeLE (T: Type) [LE T]
+  : LE (Opposite T) where
+  le := sorry
+
+instance instOppositePartialOrder (T: Type) [PartialOrder T]
+  : PartialOrder (Opposite T) where
+  le_refl := sorry
+  le_trans := sorry
+  le_antisymm := sorry
+
+/-
+  __Exercise__: Extend the exercise above testing your `Opposite` instances
+  with the following data. Complete the proofs. This might amount to a
+  single `simp` or `decide`.
+-/
+
+-- A sorted list of naturals
+def testList: List ℕ := [1,5,8,42,100]
+
+-- We reverse the list and switch to `Opposite`.
+-- Notice the `reverse` and `map` standard list functions.
+def testListOp: List (Opposite ℕ)
+  := testList.reverse.map (λ x => {t := x})
+
+-- `testList` is sorted (using the standard ordering)
+example: testList.Sorted LE.le
+  := by sorry
+
+-- `testListOp` is also sorted (using our ordering)
+example: testListOp.Sorted LE.le
+  := by sorry
+
+end Recap_exercises
