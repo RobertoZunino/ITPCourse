@@ -135,6 +135,38 @@ end Structures
 
 end Dependent_sums
 
+section Extensionality
+/-
+  When defining a structure, we can request the generation of an
+  "extensionality" theorem, stating that two values having the structure
+  type are equal if and only if they have the same fields.
+
+  This is also convenient in the non-dependent case as well.
+-/
+@[ext] -- Request extensionality
+structure Point where
+  x: Nat
+  y: Nat
+
+#check Point.ext      -- Same coordinates → same point
+#check Point.ext_iff  -- Same coordinates ↔ same point
+
+/-
+  The `ext` tactic can also be used in proofs to invoke `Point.ext`.
+-/
+example (p q: Point)
+  (hx: p.x = q.x)
+  (hy: p.y = q.y)
+  : p = q
+  := by
+  ext -- applies Point.ext
+  case x =>
+    exact hx
+  case y =>
+    exact hy
+
+end Extensionality
+
 section Existential_quantification
 /-
   The Curry-Howard correspondent of a dependent sum is an existentially
