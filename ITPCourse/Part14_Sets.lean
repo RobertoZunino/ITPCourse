@@ -51,10 +51,10 @@ example: 10 ∈ less20
 example: Set ℕ := { n | n < 10 }
 example: Set ℕ := { n < 10 | n > 5 }
 example: Set ℕ := { n^2 + n + 2 | n > 5 }
-example: Set ℕ := { n^2 + n + 2 | (n: ℕ) (prop: n > 5 ∧ n < 20) }
+example: Set ℕ := { n^2 + n + 2 | (n: ℕ) (_prop: n > 5 ∧ n < 20) }
 example: Set (Set ℕ) := { s | ∀ n ∈ s, 1 ≤ n ∧ n ≤ 20 }
 example: Set (Set ℕ) := { {n, n+1} | n: ℕ }
-example: Set (Set ℕ) := { {n, n+1} | (n: ℕ) (prop: n > 20) }
+example: Set (Set ℕ) := { {n, n+1} | (n: ℕ) (_prop: n > 20) }
 
 example: Set ℕ := { n | n > 5 ∧ n < 10 }
 
@@ -68,8 +68,8 @@ example: Set ℕ := { n+1 | n > 5 }
   but `{ n+1 | n > 5 ∧ n < 10 }` is not allowed. It can be defined in one of
   the following ways:
 -/
-example: Set ℕ := { n+1 | (n: ℕ) (prop: n > 5 ∧ n < 10) }
-example: Set ℕ := { n+1 | (n: ℕ) (prop1: n > 5) (prop2: n < 10) }
+example: Set ℕ := { n+1 | (n: ℕ) (_prop: n > 5 ∧ n < 10) }
+example: Set ℕ := { n+1 | (n: ℕ) (_prop1: n > 5) (_prop2: n < 10) }
 example: Set ℕ := { m | ∃ n: ℕ, m = n+1 ∧ n > 5 ∧ n < 10 }
 
 /-
@@ -78,7 +78,7 @@ example: Set ℕ := { m | ∃ n: ℕ, m = n+1 ∧ n > 5 ∧ n < 10 }
 -/
 example: ℕ → Set ℕ := λ a => { n+a | n > 10 }
 -- Alternatively:
-example: ℕ → Set ℕ := λ a => { n+a | (n:ℕ) (prop: n > 10) }
+example: ℕ → Set ℕ := λ a => { n+a | (n:ℕ) (_prop: n > 10) }
 
 /-
   We can also write enumerated sets:
@@ -511,11 +511,8 @@ theorem Finite₁_to_Finite₂ {α: Type} (S: Set α)
       := by
       unfold S'
       intro s
-      simp only [Int.reduceNeg, Int.reduceMul, Int.rawCast.eq_1,
-        Int.cast_eq, Nat.rawCast.eq_1, Nat.cast_id, Int.cast_ofNat_Int,
-        Nat.cast_ofNat, Int.reduceAdd, Int.ofNat_eq_coe, eq_mp_eq_cast,
-        id_eq, Int.natCast_add, exists_prop, Set.union_singleton,
-        Set.mem_insert_iff, Set.mem_setOf_eq]
+      simp only [exists_prop, Set.union_singleton, Set.mem_insert_iff,
+        Set.mem_setOf_eq]
       intro s_in_S
       have ⟨ x , x_lt , f_s ⟩ := f_surj s s_in_S
       have h1: x ≤ n := by linarith
@@ -737,7 +734,7 @@ example (n: Nat)
   := by
   rw [←Finset.Iio_succ_eq_Iic]
   rw [Nat.Iio_eq_range]
-  simp only [Nat.succ_eq_succ, Nat.succ_eq_add_one, mul_one]
+  simp only [Nat.succ_eq_succ, Nat.succ_eq_add_one]
   induction n
   case zero =>
     dsimp

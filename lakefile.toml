@@ -6,6 +6,7 @@ defaultTargets = ["ITPCourse"]
 [leanOptions]
 pp.unicode.fun = true # pretty-prints `fun a ↦ b`
 autoImplicit = false
+warn.sorry = false    # Don't warn for sorry
 
 [[require]]
 name = "mathlib"
