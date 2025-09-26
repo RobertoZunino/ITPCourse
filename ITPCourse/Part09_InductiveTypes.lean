@@ -1,4 +1,6 @@
 
+namespace InductiveTypes
+
 section Inductive_types
 /-
   An inductive type is a type whose values are only those that can be
@@ -693,3 +695,5 @@ def int_add (x y: Int): Int
   := sorry
 
 end Recap_exercises
+
+end InductiveTypes

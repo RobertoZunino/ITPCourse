@@ -1,4 +1,6 @@
 
+namespace ProductTypes
+
 section The_product_type
 /-
   The product type `A × B` is the type of pairs carrying a component of
@@ -402,3 +404,5 @@ section Recap_exercises
   should be self-explanatory.
 -/
 end Recap_exercises
+
+end ProductTypes

@@ -1,4 +1,6 @@
 
+namespace InductiveTypeFamilies
+
 section Inductive_type_families
 /-
   So far, we saw inductive types with _parameters_,
@@ -1097,3 +1099,5 @@ example (τ: Type) (P: τ → Prop)
   := sorry
 
 end Recap_exercises
+
+end InductiveTypeFamilies

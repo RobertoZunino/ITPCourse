@@ -1,6 +1,8 @@
 
 import Batteries.Data.Rat.Basic -- for `ℚ`
 
+namespace DependentSums
+
 section Dependent_sums
 /-
   We have seen dependent products
@@ -249,3 +251,5 @@ def Monoid.prod (m₁ m₂: Monoid): Monoid  -- You can also use `where` here.
 #print Rat
 
 end Recap_exercises
+
+end DependentSums

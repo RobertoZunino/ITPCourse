@@ -3,6 +3,8 @@
   foundations.
 -/
 
+namespace PredicativeUniverses
+
 section Types_as_terms
 /-
   So far, we used Lean _types_ to describe the "nature" of the values which
@@ -383,3 +385,5 @@ section Recap_exercises
   universe-polymorphic.
 -/
 end Recap_exercises
+
+end PredicativeUniverses
