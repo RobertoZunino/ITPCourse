@@ -17,5 +17,7 @@ import ITPCourse.Part13_Arithmetic
 import ITPCourse.Part14_Sets
 import ITPCourse.Part15_Calculus
 import ITPCourse.Part16_ProgrammingLanguages
+import ITPCourse.Part17_Algebra
+import ITPCourse.Part18_Geometry
 
 import ITPCourse.Part99_ExamGuidelines
