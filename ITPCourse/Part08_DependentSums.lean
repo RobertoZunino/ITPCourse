@@ -1,6 +1,4 @@
 
-import Batteries.Data.Rat.Basic -- for `ℚ`
-
 namespace DependentSums
 
 section Dependent_sums
