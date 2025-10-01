@@ -9,7 +9,7 @@
 
 section Getting_started_with_Lean4
 /-
-  To use Lean 4 you have two main options:
+  To use Lean 4 you have three main options:
 
   - For simple tasks, you use an online Lean editor:
 
@@ -40,9 +40,10 @@ section Getting_started_with_Lean4
   In any case, you should now have at your disposal a Visual Studio Code
   editor configured for Lean 4.
 
-  You should now be able to open a ".lean" file (usually Basic.lean) and see
-  an editor pane on your left and a "Lean Infoview" pane on your right. The
-  right pane will guide us with several messages during our Lean work.
+  You should now be able to open a ".lean" file (like the one you are
+  reading right now) and see an editor pane on your left and a
+  "Lean Infoview" pane on your right. The right pane will guide us with
+  several messages during our Lean work.
 -/
 end Getting_started_with_Lean4
 
@@ -247,8 +248,10 @@ def incomplete₂: Nat × String := (Nat.succ sorry, sorry)
 /-
   This has several benefits.
 
-  First, the definition is accepted and only generates a _warning_ instead
-  of an _error_.
+  First, the definition is accepted as an incomplete one, without generating
+  any _error_. We can also ask Lean to generate a _warning_ for each `sorry`
+  so to find them more easily later on (set `warn.sorry = true` in file
+  "lakefile.toml").
 
   Second, when putting the cursor over each occurrence of `sorry`, Lean
   reports what is the expected type of the term that should be written at
@@ -264,7 +267,7 @@ section First_theorems
   "by definition".
 
   The proof for these properties will be `rfl`, claiming that the equation
-  results from the reflexivity of the equal relation (beyond a little
+  results from the reflexivity of the equality relation (beyond a little
   computation that Lean implicitly performs on our definitions).
 
   Here is a simple example:

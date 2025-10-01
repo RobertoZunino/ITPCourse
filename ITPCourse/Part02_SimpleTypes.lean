@@ -125,7 +125,7 @@ def constant_fun₂ (k: Nat) (_n: Nat): Nat := k
 -/
 
 /-
-  Here are some more examples. All of these are equivalent
+  Here are some more examples. All of these are equivalent:
 -/
 def compose₁ (f: Nat → Nat) (g: Nat → Nat): Nat → Nat
   := λ n => f (g n)
@@ -322,8 +322,8 @@ end More_syntax
 
 section The_fundamentals_of_types
 /-
-  Now it is a good time to describe types in more detail. In type theory,
-  a type is characterized by the following rules.
+  This is a good time to describe types in more detail. In type theory, a
+  type is characterized by the following rules.
 
   - __Type formation__
 
@@ -356,7 +356,7 @@ section The_fundamentals_of_types
     This rule explains how to reduce (simplify) an introduction followed by
     an elimination.
 
-    For instance, the term `(λ n => n+n) 5` introduces a functions and then
+    For instance, the term `(λ n => n+n) 5` introduces a function and then
     eliminates it. It β-reduces to `5+5`.
 
     In general, the term `(λ x => e) t` β-reduces to `e` where all* the
@@ -375,7 +375,7 @@ section The_fundamentals_of_types
     This requires the term `f` not to depend on `x`. In other words, `f` can
     be any expression with no occurrences of `x`.
 
-    *Note*: the uniqueness / η is not always applied by Lean.
+    *Note*: the uniqueness / η rule is not always applied by Lean.
 
   The actual theory of Lean is a bit more complicated, but these notions are
   enough to understand its basics.
@@ -385,6 +385,7 @@ section The_fundamentals_of_types
   __Exercise__: We have not yet seen the product type `A × B` in detail, but
   you can probably guess how it should work.
   Try to sketch, in an informal way, the
+    - formation
     - introduction
     - elimination
     - computation / β
