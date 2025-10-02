@@ -124,8 +124,65 @@ def constant_fun₂ (k: Nat) (_n: Nat): Nat := k
   __Exercise__: Try it.
 -/
 
+section Partial_application
 /-
-  Here are some more examples. All of these are equivalent:
+  Thanks to the above notation, there is no real difference between a
+  multiple-arguments function and a "function that returns a function that
+  returns a function that …".
+
+  More precisely, consider the function below, which we can regard as a
+  three-arguments function.
+-/
+def weird₁ (a: Nat) (b: Nat) (c: Nat): Nat
+  := a + 2*b + 3*c
+
+/-
+  When calling function `weird₁`, we can choose to pass zero, one, two, or
+  three arguments. In each case, we get the result as a "function of the
+  other arguments" we chose not to pass.
+
+  This is called "partial application".
+-/
+#check weird₁             -- `Nat → Nat → Nat → Nat`    3 arguments
+#check weird₁ 10          -- `Nat → Nat → Nat`          2 arguments
+#check weird₁ 10 20       -- `Nat → Nat`                1 argument
+#check weird₁ 10 20 30    -- `Nat`                      0 arguments
+
+/-
+  When several consecutive arguments have the same exact type, we can
+  shorten the notation as follows:
+-/
+def weird₂ (a b c: Nat): Nat
+  := a + 2*b + 3*c
+
+#check weird₂             -- `Nat → Nat → Nat → Nat`    3 arguments
+#check weird₂ 10          -- `Nat → Nat → Nat`          2 arguments
+#check weird₂ 10 20       -- `Nat → Nat`                1 argument
+#check weird₂ 10 20 30    -- `Nat`                      0 arguments
+/-
+  Important notes:
+
+  In terms, a repeated application like `a b c d` implicitly associates to
+  the _left_.
+
+  I.e., it means `((a b) c) d`: the result of the application `a b`
+  (which must be a function) is applied to `c`, and the result of that
+  (which must be a function) is applied to `d`.
+
+  In types, a repeated arrow like `α → β → γ → δ`  implicitly associates
+  to the _right_.
+
+  I.e., it means `α → (β → (γ → δ))`: the type of functions having domain
+  `α` returning a function having domain `β` returning a function having
+  domain `γ` returning a value of type `δ`.
+-/
+end Partial_application
+
+/-
+  Here are some more examples, defining function composition.
+
+  All of these are equivalent, and define a `composeᵢ` function of type
+    `(Nat → Nat) → (Nat → Nat) → (Nat → Nat)`
 -/
 def compose₁ (f: Nat → Nat) (g: Nat → Nat): Nat → Nat
   := λ n => f (g n)
@@ -151,60 +208,11 @@ def compose₆ (f: Nat → Nat): (Nat → Nat) → Nat → Nat
   := sorry
 
 /-
-  Important notes:
-
-  In terms, a repeated application like `a b c d e` implicitly associates
-  to the _left_.
-
-  I.e., it means `(((a b) c) d) e`: the result of the application `a b`
-  (which must be a function) is applied to `c`, and the result of that
-  (which must be a function) is applied to `d`, and the result of that
-  (which must be a function) is applied to `e`.
-
-  In types, a repeated arrow like `α → β → γ → δ`  implicitly associates
-  to the _right_.
-
-  I.e., it means `α → (β → (γ → δ))`: the type of functions having domain
-  `α` returning a function having domain `β` returning a function having
-  domain `γ` returning a value of type `δ`.
-
-  We also write `λ a b … => …` for `λ a => λ b => …` as we did for
-  `compose₅` above.
--/
-
-/-
   __Exercise__: Prove that the above composition operators are indeed the
   same. Here is a first step:
 -/
 example: compose₁ = compose₂
   := rfl
-
-section Multiple_arguments_in_functions
-/-
-  Thanks to the convention above, we can express multiple arguments in
-  functions.
--/
-def weird₁ (a: Nat) (b: Nat) (c: Nat): Nat
-  := a + 2*b + 3*c
-
-#check weird₁
-#check weird₁ 10
-#check weird₁ 10 20
-#check weird₁ 10 20 30
-
-/-
-  When several consecutive arguments have the same exact type, we can
-  shorten the notation as follows:
--/
-def weird₂ (a b c: Nat): Nat
-  := a + 2*b + 3*c
-
-#check weird₂
-#check weird₂ 10
-#check weird₂ 10 20
-#check weird₂ 10 20 30
-
-end Multiple_arguments_in_functions
 
 /-
   __Exercise__: Exploiting the previously defined composition operators,
