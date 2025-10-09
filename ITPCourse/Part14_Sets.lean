@@ -746,6 +746,144 @@ example (n: Nat)
     push_cast
     ring
 
+section Terms_of_a_sum_vs_their_average
+/-
+  In this section we prove an intuitive result on finite sums of real
+  numbers, which is however a bit challenging to prove.
+
+  We want to prove that, in a finite sum `∑ i, q i` _either_
+    all the terms `q i` are equal,
+  _or_
+    there is a term `q i₁` _below_ the average and
+    there is another term `q i₂` _above_ the average.
+
+  We proceed by proving several intermediate results, gradually approaching
+  our wanted statement.
+
+  Below, we use `Fin n`, the type of natural numbers less than `n`. Note
+  that it is a structure (a dependent sum), so its values are of the form
+    `⟨ m , proof_of_m_<_n ⟩`
+  and there are exactly `n` such values. Hence, we can use `q: Fin n → ℝ`
+  for a finite sequence of reals to sum. The Lean libraries handle such sums
+  well (search the libraries for `Fin`, `Finset.sum`, `Fintype` if you want
+  to see how).
+-/
+
+/-
+  __Exercise__: (challenging) Try to prove some of these results on your
+  own without peeking at the solutions below. You will need to do some non
+  trivial library searches.
+-/
+
+/-
+  In a finite sum, if a term is above the average, there is another one
+  below average.
+-/
+theorem above_average_to_below
+  {n: ℕ}
+  (q: Fin n → ℝ)
+  (i_above: Fin n)
+  (qi_above: q i_above > (∑ i, q i) / n)
+  : ∃ i_below, q i_below < (∑ i, q i) / n
+  := by
+  let μ := (∑ i, q i) / n
+  by_contra no_below
+  push_neg at no_below
+  cases n
+  case zero =>
+    -- `i_above: Fin 0` is a contradiction
+    exact Fin.elim0 i_above
+  case succ n =>
+    change μ < _ at qi_above
+    -- Find a contradiction via `∑ i, q i < ∑ i, q i`
+    rw [←lt_self_iff_false (∑ i, q i)]
+    calc
+      -- Separate a term from the others (`Fin.sum_univ_succAbove`).
+      -- Note the `succAbove` operation that "skips" over the removed index.
+      _ = q i_above + ∑ j, q (i_above.succAbove j)
+        := by rw [Fin.sum_univ_succAbove q i_above]
+      _ > μ + ∑ j, q (i_above.succAbove j)
+        := by gcongr
+      _ ≥ μ + ∑ j, μ
+        := by gcongr with j h_j ; apply no_below
+      _ = μ * (n+1)
+        := by simp ; ring
+      _ = ∑ i, q i
+        := by unfold μ ; push_cast ; field_simp
+
+/-
+  In a finite sum, if a term is below the average, there is another one
+  above average.
+-/
+theorem below_average_to_above
+  {n: ℕ}
+  (q: Fin n → ℝ)
+  (i_below: Fin n)
+  (qi_below: q i_below < (∑ i, q i) / n)
+  : ∃ i_above, q i_above > (∑ i, q i) / n
+  := by
+  -- We reuse the previous theorem by flipping the signs
+  have q'i_below: (-q) i_below > (∑ i, (-q) i) / n
+    := by
+    simp only [Pi.neg_apply, Finset.sum_neg_distrib, gt_iff_lt]
+    field_simp
+    linarith
+  have ⟨ i_above , qi_above ⟩
+    := above_average_to_below (-q) i_below q'i_below
+  exists i_above
+  simp only [Pi.neg_apply, Finset.sum_neg_distrib] at qi_above
+  field_simp at qi_above
+  linarith
+
+/-
+  In a finite sum, if a term is less than another, then there is a term
+  below average and a term above average.
+-/
+theorem lt_to_below_above
+  {n: ℕ}
+  (q: Fin n → ℝ)
+  : let μ := (∑ i, q i) / n
+    (∀ i₁ i₂,
+    q i₁ < q i₂ →
+    ∃ i_below i_above, q i_below < μ ∧ q i_above > μ)
+  := by
+  intro μ i₁ i₂ qi
+  cases lt_trichotomy (q i₁) μ
+  case inl i₁_below =>
+    have ⟨ i₁' , i₁'_above ⟩ := below_average_to_above q i₁ i₁_below
+    exists i₁ , i₁'
+  case inr i₁_not_below =>
+    have i₂_above : μ < q i₂ := by grind
+    have ⟨ i₂' , i₂'_below ⟩ := above_average_to_below q i₂ i₂_above
+    exists i₂', i₂
+
+/-
+  At last, the main result.
+
+  In a finite sum, either all the terms are equal, or there is a term
+  below average and a term above average.
+-/
+theorem all_average_or_below_above
+  {n: ℕ}
+  (q: Fin n → ℝ)
+  : let μ := (∑ i, q i) / n
+    (∀ i₁ i₂, q i₁ = q i₂) ∨
+    (∃ i_below i_above, q i_below < μ ∧ q i_above > μ)
+  := by
+  intro μ
+  rw [or_iff_not_imp_left]
+  intro not_all_equal
+  push_neg at not_all_equal
+  have ⟨ i₁, i₂, i_neq ⟩ := not_all_equal
+  cases lt_trichotomy (q i₁) (q i₂)
+  case inl i₁_lt_i₂ =>
+    apply lt_to_below_above _ _ _ i₁_lt_i₂
+  case inr i₂_lt_i₁ =>
+    simp [i_neq] at i₂_lt_i₁
+    apply lt_to_below_above _ _ _ i₂_lt_i₁
+
+end Terms_of_a_sum_vs_their_average
+
 end Finite_sums
 
 section Some_famous_results
