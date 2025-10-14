@@ -2,6 +2,8 @@
 import Mathlib.Data.List.Sort   -- For the `List` type
 import Mathlib.Data.Real.Basic  -- For `Real` numbers
 
+namespace TypeClasses
+
 section Type_classes
 /-
   Sometimes we want to add additional information on top of existing types.
@@ -414,3 +416,5 @@ example: testListOp.Sorted LE.le
   := by sorry
 
 end Recap_exercises
+
+end TypeClasses
