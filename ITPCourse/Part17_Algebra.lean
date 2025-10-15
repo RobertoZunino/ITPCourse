@@ -183,6 +183,25 @@ example (α β: MonCat) (iso: α ≅ β)
   : α.carrier ≃* β.carrier
   := iso.monCatIsoToMulEquiv
 
+/-
+  The types for homomorphisms and isomorphisms are structures, whose fields
+  contain the obvious function and properties. Given `f: α →* β` we have:
+    `f.toFun: α → β` the plain function
+    `f.map_one` the property `f 1 = 1`
+    `f.map_mul` the property `f (x * y) = f x * f y`
+  (The additive analogous are similar.)
+
+  Homomorphisms and isomorphisms are automatically converted to the related
+  function upon application.
+-/
+example (f: ℤ →+ ℤ): ℤ := f.toFun 42  -- Explicit hom-to-fun conversion
+example (f: ℤ →+ ℤ): ℤ := f 42        -- Implicit conversion
+
+example (f: AddMonCat.of ℤ ⟶ AddMonCat.of ℤ): ℤ
+  := f.hom.toFun 42 -- Explicit conversion morphism-to-hom-to-fun
+example (f: AddMonCat.of ℤ ⟶ AddMonCat.of ℤ): ℤ
+  := f 42           -- Implicit conversion
+
 end Homomorphisms_and_isomorphisms
 
 end On_library_conventions
