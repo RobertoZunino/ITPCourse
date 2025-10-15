@@ -270,6 +270,27 @@ example
     _ = 2                   := by rfl
     _ ≠ 0                   := by intro h ; cases h
 
+/-
+  The same result above, but using category-theoretic notation.
+
+  Below, `iso ≫ osi` is `osi ∘ iso`.
+-/
+example
+  (isom: AddGrp.of (ZMod 4) ≅ AddGrp.of (ZMod 2 × ZMod 2))
+  : False
+  := by
+  let iso := isom.hom  -- A name for the forward morphism
+  let osi := isom.inv  -- A name for the inverse morphism
+  suffices 0 ≠ (0: ZMod 4) by contradiction
+  calc (0: ZMod 4)  -- A short computation in ℤ₄
+    _ = osi 0                := by rw [map_zero]
+    _ = osi (iso 1 + iso 1)  := by rw [ℤ₂_ℤ₂_plus_self]
+    _ = osi (iso (1 + 1))    := by rw [←map_add]
+    _ = (iso ≫ osi) (1 + 1) := by simp
+    _ = 1 + 1                := by rw [isom.hom_inv_id] ; simp
+    _ = 2                    := by rfl
+    _ ≠ 0                    := by intro h ; cases h
+
 end Basic_examples_on_cyclic_groups
 
 section Recap_exercises
