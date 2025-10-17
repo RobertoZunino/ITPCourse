@@ -276,7 +276,7 @@ example
   Below, `iso ≫ osi` is `osi ∘ iso`.
 -/
 example
-  (isom: AddGrp.of (ZMod 4) ≅ AddGrp.of (ZMod 2 × ZMod 2))
+  (isom: AddGrpCat.of (ZMod 4) ≅ AddGrpCat.of (ZMod 2 × ZMod 2))
   : False
   := by
   let iso := isom.hom  -- A name for the forward morphism

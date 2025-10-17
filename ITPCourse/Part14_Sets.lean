@@ -1,7 +1,6 @@
 
 import Mathlib.Data.Real.Basic
 import Mathlib.Data.Real.Sqrt
-import Mathlib.Data.Real.Irrational
 import Mathlib.Data.Nat.SuccPred
 import Mathlib.Data.Set.Basic
 import Mathlib.Data.Finite.Defs
@@ -9,6 +8,7 @@ import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 import Mathlib.RingTheory.Int.Basic
 import Mathlib.Order.Interval.Finset.Nat
 import Mathlib.Order.SetNotation
+import Mathlib.NumberTheory.Real.Irrational
 import Mathlib.Topology.Separation.Hausdorff
 import Mathlib.Tactic.Ring.Basic
 import Mathlib.Tactic.Ring
