@@ -38,7 +38,7 @@ each month (more if you become a verified student). (Note that saved but
 _uncommitted_ changes will be lost if a codespace is inactive for more than
 30 days.)
 
-  [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/codespaces/new?repo=RobertoZunino/ITPCourse)
+  [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/RobertoZunino/ITPCourse?quickstart=1)
 
 [lean4web]: https://live.lean-lang.org/
 [localInstall]: https://lean-lang.org/install/
