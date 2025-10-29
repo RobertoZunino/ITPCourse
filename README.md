@@ -4,8 +4,9 @@ This is a course on Interactive Theorem Proving with Lean 4.
 
 ## Main features
 
-- Our main focus is on the _foundations_ of Lean. We discuss the key ideas of
-the underlying type theory in a semi-formal way, aiming to provide some intuition on the inner workings.
+- Our main focus is on the _foundations_ of Lean. We discuss the key ideas
+of the underlying type theory in a semi-formal way, aiming to provide some
+intuition on the inner workings.
 
 - We follow a _bottom-up_ approach, aiming to introduce each feature of Lean
 before using it. We make a few exceptions in our examples when we feel that
@@ -36,6 +37,8 @@ installation. Currently (in 2025) GitHub gives you 60 server hours for free
 each month (more if you become a verified student). (Note that saved but
 _uncommitted_ changes will be lost if a codespace is inactive for more than
 30 days.)
+
+  [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/codespaces/new?repo=RobertoZunino/ITPCourse)
 
 [lean4web]: https://live.lean-lang.org/
 [localInstall]: https://lean-lang.org/install/
