@@ -3,8 +3,11 @@ import Mathlib.Data.Set.Basic
 import Mathlib.Data.ZMod.Defs
 import Mathlib.Algebra.Category.MonCat.Basic
 import Mathlib.Algebra.Category.Grp.Basic
+import Mathlib.Algebra.Category.Grp.Limits
+import Mathlib.Algebra.Category.Grp.CartesianMonoidal
 import Mathlib.Algebra.BigOperators.Group.List.Basic
 import Mathlib.CategoryTheory.Limits.Shapes.BinaryProducts
+
 
 open CategoryTheory
 
@@ -170,7 +173,7 @@ section Homomorphisms_and_isomorphisms
 
   When using categories, we instead have
     `α β: MonCat`
-    `α ⟶ β` as generic category morphism
+    `α ⟶ β` as generic category morphism (`⟶` is not `→`)
     `α ≅ β` as generic category isomorphism
 
   Il the library, there are suitable "bridge" results between the variants.
@@ -256,7 +259,7 @@ theorem ℤ₂_ℤ₂_plus_self
     `ZMod 4` and `ZMod 2 × ZMod 2`
   are _not_ isomorphic.
 -/
-example
+theorem ℤ₄_not_ℤ₂ℤ₂
   (iso: ZMod 4 ≃+ ZMod 2 × ZMod 2)
   : False
   := by
@@ -275,7 +278,7 @@ example
 
   Below, `iso ≫ osi` is `osi ∘ iso`.
 -/
-example
+theorem ℤ₄_not_ℤ₂ℤ₂_cat
   (isom: AddGrpCat.of (ZMod 4) ≅ AddGrpCat.of (ZMod 2 × ZMod 2))
   : False
   := by
@@ -290,6 +293,27 @@ example
     _ = 1 + 1                := by rw [isom.hom_inv_id] ; simp
     _ = 2                    := by rfl
     _ ≠ 0                    := by intro h ; cases h
+
+/-
+  Once more the result above, using category-theoretic notation, but now
+  with an explicit categorical product.
+  (Note: `⨯` is not the same symbol as `×`.)
+-/
+example
+  (isom: AddGrpCat.of (ZMod 4)
+       ≅ AddGrpCat.of (ZMod 2) ⨯ AddGrpCat.of (ZMod 2))
+  : False
+  := by
+  let ℤ₄ := AddGrpCat.of (ZMod 4)
+  let ℤ₂ := AddGrpCat.of (ZMod 2)
+  -- Reuse previous proof.
+  apply ℤ₄_not_ℤ₂ℤ₂_cat
+  calc
+    ℤ₄ ≅ ℤ₂ ⨯ ℤ₂ := isom
+    _  ≅ AddGrpCat.of (ZMod 2 × ZMod 2) := by
+      -- Categorical product for groups is direct product.
+      rw [← AddGrpCat.binaryProductLimitCone_cone_pt ℤ₂ ℤ₂]
+      exact Limits.limit.isoLimitCone _
 
 end Basic_examples_on_cyclic_groups
 
