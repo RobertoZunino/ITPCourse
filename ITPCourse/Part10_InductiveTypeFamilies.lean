@@ -1069,8 +1069,8 @@ def list_sum (xs: List Nat): Nat
 /-
   __Exercise__: Define a relation `Augments` between two lists of `Nat`,
   holding when the first list is obtained from the second by replacing each
-  number with a larger-or-equal one, ad possibly adding elements at the end.
-  For instance,
+  number with a larger-or-equal one, and possibly adding elements at the
+  end. For instance,
     `Augments [5,4,10,2,0] [3,4,5]`
   must hold
 -/
@@ -1089,13 +1089,25 @@ example (xs ys: List Nat) (h: Augments xs ys)
   := sorry
 
 /-
-  __Exercise__: Prove the equivalence between the two following definitions
-  of "there exists a unique …".
+  __Exercise__: Prove the following properties of equality.
+  Feel free to use tactics, as needed.
 -/
-example (τ: Type) (P: τ → Prop)
-  : ((∃t, P t) ∧ (∀t₁ t₂, P t₁ → P t₂ → t₁ = t₂))
-    ↔
-    (∃a, ∀ t, P t ↔ t = a)
+example (α: Type) (P: α → Prop) (a: α)
+  : P a ↔ (∀ x, x = a → P x)
+  := sorry
+
+example (α: Type) (P: α → Prop) (a: α)
+  : P a ↔ (∃ x, x = a ∧ P x)
+  := sorry
+
+/-
+  __Exercise__: Prove the equivalence between the following definitions for
+  "there is a unique `x` such that `P x`".
+  Feel free to use tactics, as needed.
+-/
+example (α: Type) (P: α → Prop)
+  : (∃ a, P a) ∧ (∀ a₁ a₂, P a₁ → P a₂ → a₁ = a₂)
+  ↔ (∃ a, ∀ x, P x ↔ x = a)
   := sorry
 
 end Recap_exercises
