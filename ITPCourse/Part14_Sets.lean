@@ -946,7 +946,7 @@ theorem Tarski_fixed_point
     exact Eq.subset h
 
 /-
-  The Schröder-Bernstein theorem statesthat, if there are two injections
+  The Schröder-Bernstein theorem states that, if there are two injections
     `a: α → β`
     `b: β → α`
   then there is also a bijection `a ≃ b`.
@@ -1197,5 +1197,24 @@ noncomputable example
   : α ≃ Set.range f
   := by
   sorry
+
+/-
+  __Exercise__: Prove that an involutive function `f` that maps elements of
+  a finite set with odd cardinality to the same set must have a fixed point.
+
+  Proceed by induction on `n` where `2n+1` is the cardinality. Search the
+  libraries for useful results and constructions such as
+  `Finset.mem_singleton` and `Finset.erase`. Feel free to exploit powerful
+  tactics like `classical` and `grind` as needed.
+-/
+example
+  (α: Type)
+  {s: Finset α}
+  (s_odd: Odd s.card)
+  {f : α → α}
+  (f_on_s: ∀ x ∈ s, f x ∈ s) -- `f` maps `s` to `s`
+  (f_involutive: ∀ x ∈ s, f (f x) = x)
+  : ∃ x ∈ s, f x = x
+  := sorry
 
 end Recap_exercises
