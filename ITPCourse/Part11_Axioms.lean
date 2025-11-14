@@ -287,6 +287,12 @@ def QuotientAB := Quotient AB_setoid
 def qstr_hello: QuotientAB := Quotient.mk AB_setoid "hello"
 def qstr_a: QuotientAB     := Quotient.mk AB_setoid "a"
 def qstr_b: QuotientAB     := Quotient.mk AB_setoid "b"
+/-
+  When the quotient type is clear from the context the equivalence class can
+  also be introduced with the `⟦ … ⟧` notation.
+-/
+def qstr_c: QuotientAB     := ⟦ "c" ⟧
+
 
 /-
   Elimination is done via `lift`, as for `Quot`.
@@ -412,10 +418,23 @@ theorem Rtc_idempotent {α: Type} (r: α → α → Prop)
 #print Equiv
 
 /-
-  __Exercise__: Take `Nat × Nat` and identify `(a,b) = (c,d)` when
-  `a+d = c+b`, using a quotient. Then prove there is a bijection from that
-  to the integer type, `Int`.
-  You will likely need `Quotient.lift`, `Quotient.ind`, `Quotient.sound`,
-  beyond others.
+  __Exercise__: Take `Nat × Nat` and identify `(a,b) = (b,a)`, so obtaining
+  the "unordered" pairs. Define a function `order` mapping each unordered
+  pair `(a,b)` to the ordered pair `(min a b, max a b)`.
+  You will need to prove that the definition is well-formed.
 -/
+def up_to_order: Setoid (Nat × Nat) where
+  r x y := sorry
+  iseqv := sorry
+
+def UnorderedPair: Type := Quotient up_to_order
+
+def order (p: UnorderedPair): Nat × Nat
+  := sorry
+
+example: order (⟦ (1,2) ⟧ : UnorderedPair) = (1,2)
+  := sorry -- `rfl` should suffice
+example: order (⟦ (2,1) ⟧ : UnorderedPair) = (1,2)
+  := sorry -- `rfl` should suffice
+
 end Recap_exercises
