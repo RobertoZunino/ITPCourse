@@ -65,7 +65,7 @@ example
   let F': ι ⊕ Unit → Set α
     | .inl i  => F i
     | .inr () => Xᶜ
-  -- U' is still an open covering
+  -- F' is still a family of open sets
   have F'_are_open:  ∀ j, IsOpen (F' j)
     := by
     intro j
@@ -95,8 +95,10 @@ example
       simp
       right
       exists ()
+  -- Extract a finite covering of K from F'
+  -- Here, t' is a finite set of indices for F'
   have ⟨ t' , t'_covers ⟩ := K_compact F' F'_are_open F'_coversK
-  -- Discard from t' the Unit values, hence obatining a finite set of ι
+  -- Discard from t' the Unit values, hence obtaining a finite set of ι
   let t: Finset ι := t'.toLeft
   exists t
   intro x x_X
