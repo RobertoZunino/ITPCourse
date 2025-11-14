@@ -115,7 +115,7 @@ example (a b c: ℝ)
   : 1 + c + 5*(c + a + c) ≤ 1 + c + 5*(c + b + c)
   := by
   gcongr
-  case bc.h.bc.bc =>
+  case bc.hbc.bc.bc =>
     linarith
 
 /-

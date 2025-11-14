@@ -661,7 +661,7 @@ def Set_to_Finset {τ: Type}: (S: Set τ) → S.Finite → Finset τ :=
   intro S h
   exact Set.Finite.toFinset h
 
-def Finset_to_Set {τ: Type}: Finset τ → Set τ := Finset.toSet
+def Finset_to_Set {τ: Type}: Finset τ → Set τ := SetLike.coe
 
 /-
   __Exercise__: Prove these conversions are inverses, completing the proofs
