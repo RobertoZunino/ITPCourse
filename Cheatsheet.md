@@ -62,13 +62,15 @@ For numerical equations, you might want to try:
 A few more automatic tools:
 
 - `exact?`, `apply?` suggest known lemmas
-- `aesop` try some complex heuristics
+- `grind`, `aesop` try some complex heuristics
 - `tauto` solve propositional tautologies
 - `simp` general simplification
 
-Searching on [Loogle][loogle] is also very useful.
+Searching on [Loogle][loogle] and [LeanSearch][leanSearch] is also very
+useful.
 
 [loogle]: https://loogle.lean-lang.org/
+[leanSearch]: https://leansearch.net/
 
 ## Beyond the basics
 
@@ -76,4 +78,4 @@ The above list of terms and tactics is _not_ meant to be exhaustive.
 
 You can find more tactics by accessing the [Lean 4 Language Reference][leanRef].
 
-[leanRef]:[https://lean-lang.org/doc/reference/latest/]
+[leanRef]: https://lean-lang.org/doc/reference/latest/
