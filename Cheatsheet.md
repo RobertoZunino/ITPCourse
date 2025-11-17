@@ -3,7 +3,7 @@
 Below you can find a summary of the syntax of the most common Lean 4 terms
 and tactics.
 
-Remember you can use `by` and `exists` to switch between the two styles as
+Remember you can use `by` and `exact` to switch between the two styles as
 needed.
 
 | Formula | as thesis <br> (term-style) | as thesis <br> (tactic-style) | as hypothesis <br> (term-style) | as hypothesis <br> (tactic-style) |
