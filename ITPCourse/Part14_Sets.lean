@@ -144,7 +144,6 @@ example
   case mp =>
     intro h
     simp at h
-    linarith
   case mpr =>
     intro h
     contradiction
