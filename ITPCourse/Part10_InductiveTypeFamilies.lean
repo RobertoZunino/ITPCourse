@@ -120,7 +120,20 @@ inductive Collatz: Nat → Nat → Prop
 | base1: Collatz 1 0
 | stepEven: {n k: Nat} → Collatz (n+1) k    → Collatz (2*n+2) k.succ
 | stepOdd : {n k: Nat} → Collatz (6*n+10) k → Collatz (2*n+3) k.succ
--- Note: we could have used "> 1" to simplify the last two cases.
+/-
+  Note: we could have exploited the standard libraries to simplify the last
+  two cases, writing them in a more natural way as shown below. On the other
+  hand, the above formulation avoids adding dependencies.
+  ```
+  inductive Collatz₂: Nat → Nat → Prop
+  | base0: Collatz₂ 0 0
+  | base1: Collatz₂ 1 0
+  | stepEven: {n k: Nat} → n > 1 → Even n
+    → Collatz₂ (n/2)   k → Collatz₂ n k.succ
+  | stepOdd : {n k: Nat} → n > 1 → Odd n
+    → Collatz₂ (3*n+1) k → Collatz₂ n k.succ
+  ```
+-/
 
 example: Collatz 5 5
   := by
@@ -220,6 +233,44 @@ example: "abc" = "abc"  := Eq.refl "abc"
 example: "abc" = "abc"  := Eq.refl _        -- inferred
 
 /-
+  The standard library also has a simple substutition principle `Eq.subst`,
+  which is similar to our `Equal.subst` but only works on `Prop`.
+-/
+#check Eq.subst
+
+/-
+  The more general macro `… ▸ …` can handle substitution on all universes,
+  even those beyond `Prop`.
+  More specifically, `equality_proof ▸ value` changes the type of `value`,
+  exploiting the `equality_proof`.
+-/
+def another_Eq_subst.{u} {τ: Type} (motive: τ → Sort u)
+  {x y: τ}
+  (eq: x = y)
+  : motive x → motive y
+  := λ h => eq ▸ h
+/-
+  Above, `h` has type `motive x` but since `eq: x = y` we can also obtain a
+  term of type `motive y` by writing `eq ▸ h`.
+-/
+
+/-
+  __Example__: Replace the `sorry` below with `b a₂`, then fix the type
+  error that will arise. Note that `b a₁` and `b a₂` have different types,
+  but we can exploit `ha` to overcome that issue.
+-/
+example
+  (α: Type)
+  (β: α → Type)
+  (a₁ a₂: α) (ha: a₁ = a₂)
+  (b: (a: α) → β a)
+  (P: ∀ {τ}, τ → τ → Type)  -- Arguments must be of the same type `τ`
+  : Type
+  := P (b a₁) sorry
+
+/-
+  We now discuss the (important) tactics for equality.
+
   When eliminating an assumption `h: x = y`, we can use the same tactics
   we use for inductive types (`cases`, `induction`), but we also have a few
   specific ones for equality.
@@ -396,36 +447,50 @@ example
   := by
   sorry
 
--- TODO more exercises
+/-
+  __Exercise__: In a monoid, if an element has a left and right inverses
+  then they must be the same. Prove it.
+-/
+example
+  (α: Type)
+  (e: α) (op: α → α → α)
+  (e_op: ∀a, op e a = a)
+  (op_e: ∀a, op a e = a)
+  (op_assoc: ∀a b c, op (op a b) c = op a (op b c))
+  (x xL xR: α)
+  (hL: op xL x = e)
+  (hR: op x xR = e)
+  : xL = xR
+  := by
+  sorry
 
 section A_frequent_error_message
--- TODO convert this to `=` ?
 /-
   A counter-intuitive fact is that by using the recursor or substitution
-  principle on `h: Equal x y` we can _not_ always change `x` into `y` inside
-  an arbitrary expression.
+  principle on `h: x = y` we can _not_ always change `x` into `y` inside an
+  arbitrary expression.
 
   More precisely, this fails when dependent products are involved.
 
   Consider this complex context:
     `x y: τ`
-    `h: Equal x y`
+    `h: x = y`
     `α: τ → Type`
     `w: α x`
     `P: (t: τ) → α t → Prop`
     `k: P x w`
   Here, we can not replace `x` with `y` in `k` and simply obtain
-    `k': P y w`
+    `k₂: P y w`
   since the term `P y w` is _ill-typed_: `w` has type `α x`, not `α y`.
 
   Formally, if we try to apply substitution we can not choose
     `motive := λ a => P a w`
-  but that is ill-typed (`w` has not type `α a`).
+  since that is ill-typed (`w` has not type `α a`).
 
-  When dealing with standard equality, attempting to use `rw [ h ] at k`
-  fails with an error "motive is ill-typed" for the reason above.
-  `subst` does not have the same issue since it replaces a variable
-  _everywhere_.
+  When using the `rw` tactics, attempting to use `rw [ h ] at k` fails with
+  the error _"motive is ill-typed"_ for the reason above.
+  By contrast, `subst` does not have the same issue since it replaces a
+  variable _everywhere_.
 -/
 
 /-
