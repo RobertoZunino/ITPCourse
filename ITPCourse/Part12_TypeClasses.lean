@@ -408,11 +408,11 @@ def testListOp: List (Opposite ℕ)
   := testList.reverse.map (λ x => {t := x})
 
 -- `testList` is sorted (using the standard ordering)
-example: testList.Sorted LE.le
+example: testList.SortedLE
   := by sorry
 
 -- `testListOp` is also sorted (using our ordering)
-example: testListOp.Sorted LE.le
+example: testListOp.SortedLE
   := by sorry
 
 end Recap_exercises
