@@ -809,7 +809,7 @@ example
   limits. We suggest to start from this:
 -/
 example
-  : Filter.Tendsto (λ x => Real.sin x / x) (𝓝[≠] 0) (𝓝 0)
+  : Filter.Tendsto (λ x => Real.sin x / x) (𝓝[≠] 0) (𝓝 1)
   := by
   sorry
 
