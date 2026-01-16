@@ -134,8 +134,8 @@ section Telescopes
   Finally, note that when defining a function we can normally reorder its
   arguments as we please, but in the presence of dependent types, the non
   dependent arguments must come earlier than the arguments whose type
-  depend on them. In an extreme case like the telescope above, no reordering
-  is possible at all.
+  depend on them. In the extreme case of a telescope like the one above, no
+  reordering is possible at all.
 -/
 end Telescopes
 
@@ -175,8 +175,8 @@ example := identity₁ _ true      -- `_` inferred as `Bool`.
 -/
 
 /-
-  When defining a function, if you expect that one of the arguments will
-  almost invariable be `_` at each function call site, then you can declare
+  When defining a function, if we expect that one of the arguments will
+  almost invariably be `_` at each function call site, then we can declare
   the argument to be _implicit_, as follows.
 -/
 def swapPair₁ (α β: Type) (p: α×β): β×α

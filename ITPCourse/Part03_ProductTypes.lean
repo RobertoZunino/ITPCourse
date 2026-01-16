@@ -333,7 +333,7 @@ def makeOlder₂ (p: Person): Person :=
     }
 
 /-
-  Instead, we can use the _record update_ syntax.
+  Instead, we can use the _record-update_ syntax.
 -/
 def makeOlder₃ (p: Person): Person :=
   { p with            -- "like `p` except for the mentioned fields below"

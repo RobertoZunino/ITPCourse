@@ -40,8 +40,8 @@ example
   exact Classical.choose_spec (h x)
 /-
   Note that we do not need to use choice to extract a witness when we do so
-  to construct another _proof_ (i.e., a value inside some `p: Prop`). We can
-  use plain elimination for that.
+  in order to construct another _proof_ (i.e., a value inside some
+  `p: Prop`). We can use plain elimination for that.
   We need choice when we need to use the witness to construct a non-proof
   (a value inside some `σ: Type`).
 -/
@@ -58,7 +58,7 @@ example
   exact px
 /-
   In a sense, the axiom of classical choice can be used as a "workaround"
-  for the limitation that we can not eliminate a proof to construct a
+  for the limitation that we cannot eliminate a proof to construct a
   non-proof.
 
   Note however that using axioms, like excluded middle and choice, prevents
@@ -74,7 +74,7 @@ theorem easy
   case pos =>
     exists 0
     left
-    trivial -- USe assumptions and trivial properties
+    trivial -- Use assumptions and trivial properties
   case neg =>
     exists 1
     right

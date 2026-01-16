@@ -99,9 +99,9 @@ section Girard's_paradox
 
   Alas, this breaks the foundations of the type system, allowing one to
   define a term of type `Empty`, exploiting the so called Girard's paradox.
-  If we want to use Lean to do mathematics, we can not allow that since it
-  would make our logical system inconsistent, i.e. being able to prove any
-  statement and its negation as well.
+  If we want to use Lean to do mathematics, we cannot allow that since it
+  would make our logical system inconsistent, i.e. we would be able to prove
+  any statement (and its negation).
 
   We will not discuss Girard's paradox further in this course, but feel free
   to look it up it you are curious. (For a simpler version, you can also
@@ -112,7 +112,7 @@ end Girard's_paradox
 /-
   These "types of types" of the form `Type u` types are called _universes_.
 
-  The `Type u` universes are called _predicative_ because of the actual type
+  The `Type u` universes are called _predicative_ because of the type
   formation rule for functions. Previously we have seen that
     if   `α` is a type
     and  `β` is a type,

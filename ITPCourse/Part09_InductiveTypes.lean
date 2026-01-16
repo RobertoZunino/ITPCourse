@@ -216,8 +216,8 @@ section A_theoretical_remark
   "recursive type equation". (In category theory, this is referred to as an
   "initial F-algebra".)
 
-  In a sense, the recursor makes `ℕ` to be the "smallest", the "least" type
-  which admits introductions `.zero` and `.succ`. Indeed, any other type `α`
+  In a sense, the recursor makes `ℕ` the "smallest", the "least" type which
+  admits introductions `.zero` and `.succ`. Indeed, any other type `α`
   admitting those would satisfy the base case and induction case above, so
   we get an inclusion function `ℕ → α` trough `ℕ.rec`.
 -/

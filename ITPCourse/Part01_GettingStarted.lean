@@ -165,7 +165,7 @@ def n: Nat := 42
 def m: Nat := n + 1
 
 /-
-  Since `n` is a `Nat`, the expression `n + 1` is valid since addition can
+  Since `n` is a `Nat`, the expression `n + 1` is valid because addition can
   be performed on a `Nat`.
 
   Lean expressions are also called _terms_.
@@ -309,7 +309,7 @@ example: Nat
 
 /-
   We can even omit the type (and the colon `:`) if we only want to check
-  that the definition is well-formed without using a query like `#check`.
+  that the definition is well-formed without using a query such as `#check`.
 -/
 example := m + m
 

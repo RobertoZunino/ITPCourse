@@ -196,7 +196,7 @@ section The_empty_sum
   By contrast, the "sum of zero types" is a type named `Empty` which admits
   no values at all. It is similar to the empty set in this regard.
 
-  `Empty` has no introduction form, consequently.
+  Consequently, `Empty` has no introduction form.
 
   `Empty` can be eliminated by pattern matching. Since it has no values,
   we have exactly "zero cases" to handle, and so the pattern matching is
@@ -271,7 +271,7 @@ section Dealing_with_partial_functions
   - Enlarge the codomain with a special value representing the "undefined"
     value. This can be done using `… ⊕ Unit`.
 
-  Each approach has its own pros and conses.
+  Each approach has its own advantages and disadvantages.
 -/
 
 /-

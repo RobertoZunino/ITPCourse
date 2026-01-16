@@ -36,7 +36,7 @@ def orderProduct {τ σ: Type} (oτ: OrderOn τ) (oσ: OrderOn σ)
   … and so on for other types.
 
   Using this approach can be cumbersome, though, since we have to manually
-  construct the order associated to a type every single time.
+  construct the order associated with a type every single time.
   Below, we check if a `List` (a type from the library) is ordered.
 -/
 def orderedList {τ: Type} (oτ: OrderOn τ): List τ → Prop
@@ -55,7 +55,7 @@ example
 
 /-
   Type classes provide an automated way to construct the additional
-  information associated to a type, such as the order as done above.
+  information associated with a type, such as the order as done above.
 
   A `class` is similar to a `structure` with (at least) one parameter.
 -/
@@ -204,8 +204,8 @@ example (x y z: Nat): Decidable (x+y ≤ z)
   Intuitively, this is because to check `∀ n: Nat, P n` sometimes we do
   not really have an algorithm. Note that we can not actually check
     `P 0`, `P 1`, `P 2`, …
-  because when no counterexample exists that would take infinite time, so we
-  would not be able to that `∀ n: Nat, P n` is true.
+  because, when no counterexample exists, that would take infinite time, so
+  we would not be able to verify that `∀ n: Nat, P n` is true.
 
   [ Note: the general absence of an algorithm can actually be proved with
     tools from _computability theory_ (also known as _recursion theory_). ]
@@ -232,8 +232,8 @@ def half_parabola₁ (x: Int): Int
   else x^2
 
 /-
-  Lean prods ourselves to use `Decidable` properties as much as possible
-  since it helps automating simplification steps in proofs.
+  Lean encourages us to use `Decidable` properties when possible since it
+  helps automating simplification steps in proofs.
 
   Sometimes, though, this `Decidable` restriction in `if … ` is simply too
   strong. Working with real numbers, for instance, requires us to use many

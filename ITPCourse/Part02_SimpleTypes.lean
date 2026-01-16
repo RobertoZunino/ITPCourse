@@ -84,7 +84,7 @@ end The_function_type
 
 section Higher_order_functions
 /-
-  In Lean, functions values can be passed to other functions as parameters:
+  In Lean, function values can be passed to other functions as parameters:
 -/
 def apply10 (f: Nat → Nat): Nat
   := f 10
@@ -179,9 +179,10 @@ def weird₂ (a b c: Nat): Nat
 end Partial_application
 
 /-
-  Here are some more examples, defining function composition.
+  Here are some more examples. We now define function composition.
 
-  All of these are equivalent, and define a `composeᵢ` function of type
+  All of the definitions below are equivalent, and define a `composeᵢ`
+  function of type
     `(Nat → Nat) → (Nat → Nat) → (Nat → Nat)`
 -/
 def compose₁ (f: Nat → Nat) (g: Nat → Nat): Nat → Nat

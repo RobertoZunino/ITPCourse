@@ -153,7 +153,7 @@ theorem Collatz_conjecture: ∀ n, ∃ k, Collatz n k
   increases, but the first index can either increase or decrease.
 
   The inductive definition has no issues with this lack of termination since
-  it defines a relation. In the worst case, is the "recursion" goes on
+  it defines a relation. In the worst case, if the "recursion" goes on
   forever the relation will simply fail to hold.
 
   To stress the point, we now define a predicate which never holds because
@@ -485,7 +485,7 @@ section A_frequent_error_message
 
   Formally, if we try to apply substitution we can not choose
     `motive := λ a => P a w`
-  since that is ill-typed (`w` has not type `α a`).
+  since that is ill-typed (`w` does not have type `α a`).
 
   When using the `rw` tactics, attempting to use `rw [ h ] at k` fails with
   the error _"motive is ill-typed"_ for the reason above.

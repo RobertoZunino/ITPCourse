@@ -164,7 +164,8 @@ example
 -/
 example {τ: Type}: ∅ = { _t: τ | False } := rfl
 /-
-  The "full" set, containing _all_ the values in a type, is `Set.univ`.
+  The "full" set, or "universal" set, containing _all_ the values in a type,
+  is `Set.univ`.
 -/
 example {τ: Type}: Set.univ = { _t: τ | True } := rfl
 
