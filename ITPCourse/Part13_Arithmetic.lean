@@ -430,7 +430,7 @@ example (n: ℕ)
   sorry
 
 /-
-  __Exercise__: Prove the following non-linear systen.
+  __Exercise__: Prove the following non-linear system.
   You can exploit any result from the libraries (search for them!).
   You might need `ne_of_lt`.
 -/

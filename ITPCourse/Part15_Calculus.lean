@@ -33,7 +33,7 @@ section General_note
   and from there simplify the goal so to see the usual `ε` and `δ` property.
 
   Asymptotics (limits, Landau's little-o notation, …) is defined in terms of
-  _filters_: these are families of sets that model "closedness" to a value.
+  _filters_: these are families of sets that model "closeness" to a value.
   For instance the set of all neighborhoods of `x`, written `𝓝 x`, is a
   filter.
 
@@ -179,7 +179,7 @@ section Asymptotics
 section Filters
 /-
   We start with some reasoning on _filters_. Filters are families of sets
-  modelling "closedness" to something, and appear in many places when
+  modelling "closeness" to something, and appear in many places when
   working with calculus (limits, little-o notation, …).
 
   Here are a few examples of filters and what they represent:

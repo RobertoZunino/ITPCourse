@@ -339,7 +339,7 @@ def Endomorphism₂ (τ: Type 2): Type 2 := τ → τ
 def Endomorphism.{u} (τ: Type u): Type u := τ → τ
 
 /-
-  Then `u` is aumatically inferred on use:
+  Then `u` is automatically inferred on use:
 -/
 #reduce (types:=true) Endomorphism String  -- `u = 0`
 #reduce (types:=true) Endomorphism Type    -- `u = 1`
@@ -348,7 +348,7 @@ def Endomorphism.{u} (τ: Type u): Type u := τ → τ
 -/
 
 /-
-  __Exercise__: `structure`s can be universe-polymophic too!
+  __Exercise__: `structure`s can be universe-polymorphic too!
   Try guessing the syntax to generalize `PreIsomorphism` to arbitrary
   universes.
 -/

@@ -86,7 +86,7 @@ theorem triviality: True := True.intro
 -/
 theorem false_identity_for_or (p: Prop) (h: False ∨ p): p
   := match h with
-  | .inl pr_false => pr_false.elim   -- This contradiciton proves anything!
+  | .inl pr_false => pr_false.elim   -- This contradiction proves anything!
   | .inr pr_p     => pr_p
 
 /-

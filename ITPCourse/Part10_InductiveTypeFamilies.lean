@@ -208,7 +208,7 @@ example: Equal "abc" "abc"
 -/
 #check Equal.rec
 
--- The substutition principle in a simpler form
+-- The substitution principle in a simpler form
 def Equal.subst.{u} {τ: Type} (motive: τ → Sort u)
   {x y: τ}
   (eq: Equal x y)
@@ -233,7 +233,7 @@ example: "abc" = "abc"  := Eq.refl "abc"
 example: "abc" = "abc"  := Eq.refl _        -- inferred
 
 /-
-  The standard library also has a simple substutition principle `Eq.subst`,
+  The standard library also has a simple substitution principle `Eq.subst`,
   which is similar to our `Equal.subst` but only works on `Prop`.
 -/
 #check Eq.subst
