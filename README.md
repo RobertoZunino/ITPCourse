@@ -26,9 +26,9 @@ The material in this course can be used in several alternative ways:
 this if you are in a hurry and do not have time to do a proper installation.
 (Remember to save your code locally before closing the web page.)
 
-- Install [Lean 4][localInstall] locally on your computer. Following the
+- Install [Lean 4][localInstall] locally on your own computer. Following the
 instructions requires some time and patience, as well as some free disk
-space (~10GB should be enough). Probably the best choice, once it is set up.
+space (~15GB should be enough). Probably the best choice, once it is set up.
 
 - Use [GitHub codespaces][codespaces] on this repository. A full Lean 4
 remote server will be automatically set up for you, and you will be able to

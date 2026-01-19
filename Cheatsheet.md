@@ -14,7 +14,7 @@ needed.
 | implication `p → q` <br> function `τ → σ` <br> dependent product `(t: τ) → σ t` <br> universal `∀ t, P t` | `λ t => …` | `intro t` | `h …` | `apply h` <br> `have h2 := h …` |
 | unit `Unit` <br> true `True` | `()`, `True.intro` | `trivial` | --- | --- |
 | empty `Empty` <br> false `False` | --- | --- | `nomatch …` | `contradiction` <br> `apply False.elim` |
-| `inductive T` | `T.cᵢ …` | apply `T.cᵢ` | `match h with \| .c₁ … => … \| …` <br> (possibly dependent, with multiple matched terms, and together with recursion) | `cases h`, `induction h` (followed by `case tag x₁ … => `) |
+| `inductive T` | `T.cᵢ …` | `apply T.cᵢ` | `match h with \| .c₁ … => … \| …` <br> (possibly dependent, with multiple matched terms, and together with recursion) | `cases h`, `induction h` (followed by `case tag x₁ … => `) |
 
 ## More formulas
 
