@@ -5,7 +5,9 @@ import Mathlib.Data.Finset.Defs
 import Mathlib.Algebra.Module.Submodule.Defs
 import Mathlib.LinearAlgebra.FiniteDimensional.Lemmas
 import Mathlib.LinearAlgebra.Matrix.ToLinearEquiv
+import Mathlib.LinearAlgebra.Dimension.ErdosKaplansky
 import Mathlib.Topology.Compactness.Compact
+import Mathlib.Tactic.Linarith
 
 
 section Basic_linear_algebra
@@ -179,8 +181,61 @@ def linear_spaces_intersection₂
   := U ⊓ V  -- The infimum
 
 /-
-  We now prove that there are no injective linear functions `U →ₗ V` between
-  when `U` has a higher dimension than `V`.
+  Note that, according to the inclusion ordering on subspaces of `V`, `⊤` is
+  the trivial subspace (`V` itself), while `⊥` is the null subspace (`{0}`).
+-/
+example
+  {K V: Type}
+  [Field K]
+  [AddCommGroup V]
+  [Module K V]
+  : Submodule K V × Submodule K V
+  := ⟨ ⊤, ⊥ ⟩
+
+/-
+  The dimension of a linear (sub-)space is denoted as `Module.rank` or
+  `Module.finrank`, with a subtle difference.
+
+  `Module.rank` provides the dimension as a _cardinal number_, and works
+  even for infinite dimension linear spaces. Instead, `Module.finrank`
+  provides the dimension as a _natural number_, and only works in finite
+  dimension. The `finrank` is defined as _zero_ for infinite-dimension
+  spaces.
+-/
+example
+  {K V: Type}
+  [Field K]
+  [AddCommGroup V]
+  [Module K V]
+  [FiniteDimensional K V]  -- Important assumption!
+  : Module.finrank K V = Module.rank K V
+  := Module.finrank_eq_rank K V
+/-
+  (In the equality above the natural number `finrank` is implicitly coerced
+  to its corresponding cardinal by Lean.)
+-/
+
+/-
+  If `V` has finite dimension, and `W` is a subspace of `V` that has the
+  same dimension as `V`, then `W = ⊤`.
+-/
+example
+  {K V: Type}
+  [Field K]
+  [AddCommGroup V]
+  [Module K V]
+  [FiniteDimensional K V]
+  (W: Submodule K V)
+  (h: Module.finrank K W = Module.finrank K V)
+  : W = ⊤
+  := Submodule.eq_top_of_finrank_eq h
+/-
+  This does not hold in infinite dimension.
+-/
+
+/-
+  We now prove that there are no injective linear functions `U →ₗ V` when
+  `U` has a higher dimension than `V`.
 -/
 example
   (K U V: Type)
@@ -346,6 +401,50 @@ example
 end Basic_topology
 
 section Recap_exercises
+/-
+  __Exercise__:
+  Consider the linear space `V = ℕ → ℝ` of arbitrary functions (sequences).
+  Prove that it is isomorphic to `V × ℝ`.
+
+  Feel free to use all automation (`simp_all`, `grind`, `exact?`, …).
+-/
+example
+  : (ℕ → ℝ) ≃ₗ[ℝ] (ℕ → ℝ) × ℝ
+  := by
+  sorry
+
+/-
+  __Exercise__:
+  Consider the linear space `V = ℕ →₀ ℝ` of functions with finite support.
+  Prove that it is isomorphic to `V × ℝ`.
+
+  This is similar to the exercise above, but a little harder since you will
+  need to prove the finiteness of the support at several points in the
+  proof.
+-/
+noncomputable example
+  : (ℕ →₀ ℝ) ≃ₗ[ℝ] (ℕ →₀ ℝ) × ℝ
+  := by
+  sorry
+
+/-
+  __Exercise__: (challenging)
+  Prove that, when `V` has an infinite dimension, its subspaces with equal
+  dimension are not necessarily `⊤` (i.e., `V` itself).
+
+  The previous exercises might offer some hint.
+-/
+example
+  : ∃ (K: Type) (V: Type)
+    (_: Field K)
+    (_: AddCommGroup V)
+    (_: Module K V)
+    (W: Submodule K V)
+    (_: Module.rank K W = Module.rank K V)
+    , W ≠ ⊤
+  := by
+  sorry
+
 /-
   __Exercise__: _Bilinear_ maps can be equivalently expressed in Lean either
   by using the tensor product `A ⊗[K] B →ₗ …` or by chaining linear maps as
