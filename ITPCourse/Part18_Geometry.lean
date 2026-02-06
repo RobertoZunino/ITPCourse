@@ -104,6 +104,27 @@ example
   constructor <;> simp_all
 
 /-
+  We now show a few basic properties of linear subspaces.
+
+  We start by defining a simple subspace of `ℝ³`.
+-/
+example: Submodule ℝ (Fin 3 → ℝ) where
+  carrier := { ![a, 2*a+b, -3*b] | (a: ℝ) (b: ℝ) }
+  add_mem' := by
+    intro x y ⟨ xa, xb, xh ⟩ ⟨ ya, yb, yh ⟩
+    exists xa+ya , xb+yb
+    subst x y
+    simp
+    constructor <;> linarith
+  zero_mem' := by simp_all
+  smul_mem' := by
+    intro c x ⟨ a, b, h ⟩
+    exists c*a , c*b
+    subst x
+    simp
+    constructor <;> linarith
+
+/-
   If `U` and `V` are linear subspaces of `W`, then `U ∩ V` is still a linear
   subspace.
 -/
@@ -153,6 +174,19 @@ def linear_spaces_intersection₂
   (V: Submodule K W)
   : Submodule K W
   := U ⊓ V  -- The infimum
+
+/-
+  This generalizes to arbitrary families of subspaces.
+-/
+def linear_spaces_intersection_family
+  {K W: Type}
+  [Field K]
+  [AddCommGroup W]
+  [Module K W]
+  (ι: Type)              -- An "index" type iota
+  (F: ι → Submodule K W) -- A family of subspaces
+  : Submodule K W
+  := ⨅ i, F i -- The infimum over the whole family
 
 /-
   Note that, according to the inclusion ordering on subspaces of `V`, `⊤` is
