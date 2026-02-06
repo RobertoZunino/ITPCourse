@@ -104,41 +104,6 @@ example
   constructor <;> simp_all
 
 /-
-  A linear map is injective when it has null kernel.
--/
-example
-  (K U V: Type)
-  [Field K]
-  [AddCommGroup U] [AddCommGroup V]
-  [Module K U] [Module K V]
-  (f: V →ₗ[K] U)
-  (f_null_ker: LinearMap.ker f = ⊥)
-  : (⇑f).Injective
-  := by
-  intro v₁ v₂ eq
-  have diff_in_ker: (v₁ - v₂) ∈ LinearMap.ker f := by
-    rw [LinearMap.mem_ker]
-    calc f (v₁ - v₂)
-    _ = f v₁ - f v₂ := by simp
-    _ = f v₁ - f v₁ := by rw [eq]
-    _ = 0           := by simp
-  rw [f_null_ker, Submodule.mem_bot, sub_eq_zero] at diff_in_ker
-  exact diff_in_ker
-
-/-
-  The same exercise, but exploiting the libraries.
--/
-example
-  (K U V: Type)
-  [Field K]
-  [AddCommGroup U] [AddCommGroup V]
-  [Module K U] [Module K V]
-  (f: V →ₗ[K] U)
-  (f_null_ker: LinearMap.ker f = ⊥)
-  : (⇑f).Injective
-  := LinearMap.ker_eq_bot.mp f_null_ker
-
-/-
   If `U` and `V` are linear subspaces of `W`, then `U ∩ V` is still a linear
   subspace.
 -/
@@ -200,6 +165,41 @@ example
   [Module K V]
   : Submodule K V × Submodule K V
   := ⟨ ⊤, ⊥ ⟩
+
+/-
+  A linear map is injective when it has null kernel.
+-/
+example
+  (K U V: Type)
+  [Field K]
+  [AddCommGroup U] [AddCommGroup V]
+  [Module K U] [Module K V]
+  (f: V →ₗ[K] U)
+  (f_null_ker: LinearMap.ker f = ⊥)
+  : (⇑f).Injective
+  := by
+  intro v₁ v₂ eq
+  have diff_in_ker: (v₁ - v₂) ∈ LinearMap.ker f := by
+    rw [LinearMap.mem_ker]
+    calc f (v₁ - v₂)
+    _ = f v₁ - f v₂ := by simp
+    _ = f v₁ - f v₁ := by rw [eq]
+    _ = 0           := by simp
+  rw [f_null_ker, Submodule.mem_bot, sub_eq_zero] at diff_in_ker
+  exact diff_in_ker
+
+/-
+  The same exercise, but exploiting the libraries.
+-/
+example
+  (K U V: Type)
+  [Field K]
+  [AddCommGroup U] [AddCommGroup V]
+  [Module K U] [Module K V]
+  (f: V →ₗ[K] U)
+  (f_null_ker: LinearMap.ker f = ⊥)
+  : (⇑f).Injective
+  := LinearMap.ker_eq_bot.mp f_null_ker
 
 /-
   The dimension of a linear (sub-)space is denoted as `Module.rank` or
