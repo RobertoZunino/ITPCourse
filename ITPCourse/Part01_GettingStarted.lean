@@ -89,7 +89,7 @@ end Name
   keyword above. You probably need to hover your mouse pointer over it to
   see it. This should "fold" the section, hiding it temporarily.
 
-    80 v   section Name
+    81 v   section Name
        ↑
        here
 -/
