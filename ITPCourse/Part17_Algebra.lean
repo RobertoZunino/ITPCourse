@@ -326,6 +326,23 @@ section Recap_exercises
 -/
 
 /-
+  __Exercise__: Prove the following principle that is the basis for the
+  Fermat's Little Theorem.
+
+  You might want to sketch the proof informally first.
+  Note that `Fintype.card` is the cardinality of a finite type, and that
+  `x ^ n` and `1` follow multiplicative group notation.
+  Exploit the library theorems `Equiv.prod_comp` and
+  `Finset.prod_mul_pow_card`.
+-/
+example
+  (G: Type) [CommGroup G] [Fintype G] -- Abelian finite group.
+  (x: G)
+  : x ^ Fintype.card G = 1
+  := by
+  sorry
+
+/-
   __Exercise__: (challenging) Define the free group over type `α`.
 
   The free group is given by those sequences in `List (Bool × α)` which are
