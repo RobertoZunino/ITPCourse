@@ -23,7 +23,7 @@ import Mathlib.Tactic.Ring
     Lean provides an arsenal of tools to help you, including tactics and
     library theorems. Further, Lean automatically type-checks the answer,
     providing instant feedback in the InfoView window.
-    Mastering the available tools is paramount to success.
+    Mastering the available tools is paramount for success.
     Answers must be precise here, lest they be rejected by Lean.
     The complexity of these questions is tuned considering the weapons at
     your disposal.
@@ -112,7 +112,7 @@ example
   := sorry
 /-
   You could be asked to solve the above using both a term-style and a
-  tactics-style solution.
+  tactic-style solution.
 -/
 end Find_the_term
 
@@ -169,7 +169,7 @@ example
     _ ≤ 1+n'+(n'+n'^2) := by gcongr ; exact Nat.zero_le _
     _ = _ := by ring_nf
 /-
-  A *not* acceptable solution:
+  An *unacceptable* solution:
 -/
 example
   : ∀ n: ℕ, n ≤ n*n
@@ -181,8 +181,8 @@ end Prove_a_statement
 
 section Clarify_how_pattern_matching_works
 /-
-  Given a `match … with` expression, modify it so to expose the underlying
-  details that make Lean accept it.
+  Given a `match … with` expression, modify it so as to expose the
+  underlying details that make Lean accept it.
 
   Checklist:
   - Make the match `motive` explicit.
@@ -258,3 +258,94 @@ example
   | i , .(f i) , .k₂ .(i) => "k₂"
 
 end Clarify_how_pattern_matching_works
+
+section Recommended_topics_priority
+/-
+  The topics in these notes do not have the same importance for the exam.
+  We recommend following the following topic priority in your study.
+
+  - __Tier 1__:
+    Strong theoretical and practical competence is required.
+    It is important to have a solid understanding of these topics, covering
+    almost all their aspects.
+
+    Simple and algebraic types (`→,×,Unit,⊕,Zero`)
+    Dependent products and sums
+    Dependent pattern matching and motives
+    Term-style and tactic-style basic definitions and proofs
+
+  - __Tier 2__:
+    Good theoretical and practical competence is required.
+    The most commonly used aspects of these topics should be understood
+    well, even if their most intricate technical details may not be needed.
+
+    Inductive types and type families
+
+  - __Tier 3__:
+    Basic practical knowledge is required.
+    You should be able to work with these topics when an exercise involves
+    them only tangentially, requiring no deep understanding of their most
+    subtle aspects.
+
+    Axioms
+    Type classes
+    Universes (predicative `Type u` and impredicative `Prop`)
+
+  - __Tier 4__:
+    Minor practical knowledge should suffice.
+    Not as important as the other topics.
+
+    Quotient types
+    Mathlib conventions: notation, theorem names, …
+
+-/
+end Recommended_topics_priority
+
+section About_the_project
+/-
+  Beyond the on-paper/on-Lean test, the exam also requires you to work on a
+  small project, and present it to the class.
+
+  You can propose virtually any Lean-related topic for your project. Your
+  topic must be approved by the course instructor in advance. Here is a
+  _non-exhaustive_ list of possible projects:
+
+  - Choose a theorem within your favorite area of mathematics, whose proof
+    has the "right" level of complexity: not too trivial, not too difficult.
+    Formalize that in Lean.
+
+    (If you choose something that later on turns out to be much harder than
+    it seemed, you can always leave a few `sorry`s around. If the rest of
+    the project already shows enough effort, and you justify the `sorry`s in
+    your presentation, this will not negatively impact your mark.)
+
+  - Choose some area (or sub-area) of mathematics which is not yet addressed
+    in these notes, and formalize in Lean a few basic results from it.
+    You can choose to contribute a small extension to these notes, for
+    instance.
+
+  - Browse Mathlib and find something that catches your interest. Experiment
+    with its definitions and results in Lean. Report on your experience in
+    your presentation.
+
+  For your presentation, we do not require you to write slides. If you must
+  use slides, please keep them short. As a general rule:
+    __Spend your effort on writing good Lean code, not slides__.
+
+  The project is only a part of the exam for a 6 ECTS credits course. Spend
+  a proportionate amount of effort. Do not overdo it -- it is not your
+  Master's thesis.
+
+  Using AI for your project is permitted, provided you disclose how you
+  used it and demonstrate that your use of AI did not trivialize the
+  project.
+
+  Most projects are expected to be individual projects. If you want to
+  propose a larger project for a two-students group, you can do that but you
+  need to clearly identify the responsibilities of each student, so that
+  evaluating individual work is still possible. Your project proposal must
+  therefore include a list of these responsibilities.
+
+  Also see the course syllabus for more information on the exam.
+-/
+end About_the_project
