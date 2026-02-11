@@ -101,7 +101,7 @@ inductive IsTrue: Bool → Prop
 /-
   Here is a more complex example: the Collatz conjecture.
 
-  Given `n: Natural`, repeat these operations:
+  Given `n: Nat`, repeat these operations:
     if `n ≤ 1`, stop
     otherwise, if `n` is even, divide it by two
     otherwise, multiply it by three and add one
@@ -1137,7 +1137,7 @@ def list_sum (xs: List Nat): Nat
   number with a larger-or-equal one, and possibly adding elements at the
   end. For instance,
     `Augments [5,4,10,2,0] [3,4,5]`
-  must hold
+  must hold.
 -/
 inductive Augments: List Nat → List Nat → Prop
   -- Add here your definition
@@ -1152,6 +1152,38 @@ inductive Augments: List Nat → List Nat → Prop
 example (xs ys: List Nat) (h: Augments xs ys)
   : list_sum ys ≤ list_sum xs
   := sorry
+
+/-
+  __Exercise__: Read about the `List.filter` function.
+  Then prove the following.
+  Feel free to use tactics, as needed.
+-/
+#check List.filter
+example (xs: List Nat) (p: Nat → Bool) (f: Nat → Nat)
+  : List.filter p (List.map f xs)
+  = List.map f (List.filter (p ∘ f) xs)
+  := by
+  sorry
+
+/-
+  __Exercise__: Prove the following.
+  Note that `_ && _` is the conjunction of two `Bool`.
+  Feel free to use tactics, as needed.
+-/
+example (xs: List Nat) (p q: Nat → Bool)
+  : List.filter p (List.filter q xs)
+  = List.filter (λ x => p x && q x) xs
+  := by
+  sorry
+
+/-
+  __Exercise__: Prove the following.
+  Feel free to use tactics, as needed.
+-/
+example (xs: List Nat) (f: Nat → Nat)
+  : (List.map f xs).length = xs.length
+  := by
+  sorry
 
 /-
   __Exercise__: Prove the following properties of equality.
