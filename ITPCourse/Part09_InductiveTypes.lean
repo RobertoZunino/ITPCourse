@@ -223,6 +223,41 @@ section A_theoretical_remark
 -/
 end A_theoretical_remark
 
+/-
+  As an example, we study the type `Nat × (Nat × (Nat × ⋯ Unit))` with `n`
+  nested products. In Lean this is printed as `Nat × Nat × Nat × ⋯ × PUnit`.
+-/
+def nested (n: Nat): Type
+  := match n with
+  | .zero    => Unit
+  | .succ n' => Nat × nested n'
+
+#reduce (types:=true) nested 3   -- `Nat × Nat × Nat × PUnit`
+
+/-
+  We can construct a value in the above type by explicit recursion.
+  Below, we make the tuple `(n, (n-1, (n-2, … (1,()))))`.
+  In Lean this is printed as `(n, n-1, n-2, … , ())`.
+-/
+def count (n: Nat): nested n
+  := match n with
+  | .zero    => ()
+  | .succ n' => (n, count n')
+
+#eval count 3     -- `(3, 2, 1, ())`
+
+/-
+  We can also use the recursor instead of explicit recursion.
+  The definition below is equivalent to `count`.
+-/
+def count_with_recursor (n: Nat): nested n
+  := Nat.rec (motive := nested)
+    ()                    -- `: motive .zero`
+    (λ n' c => (n', c))   -- `: (n: Nat) → (c: motive n) → motive n.succ`
+    n
+
+#eval count_with_recursor 3   -- `(3, 2, 1, ())`
+
 end The_recursor
 
 section On_tactics
@@ -539,7 +574,7 @@ subject to the following constraints:
     (It can be a trivial telescope `T a₁ … aₙ` with no arguments. In other
     words, `k` can be zero)
 
-  - The number of constructors `m` can be zero.
+  - The number of constructors `m` can be zero or more.
 
   - Each `σ` must be a (possibly trivial) telescope itself of the form
       `γ₁ → … → γₕ`
@@ -560,7 +595,7 @@ subject to the following constraints:
 end Type_formation
 section Introduction
 /-
-  __Introduction__: Trivially provided by the constructors.
+  Introduction is trivially provided by the constructors.
 -/
 end Introduction
 section Elimination
