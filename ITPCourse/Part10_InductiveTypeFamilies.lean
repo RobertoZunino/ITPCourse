@@ -725,14 +725,13 @@ example
   (h: x = y)
   (z: α x)
   : α y
-  := match (motive := (y: τ) → x = y → α x → α y)
-    y    , h          , z with
-  | .(x) , .refl .(x) , z' => z'
+  := match (motive := (y: τ) → x = y → α y)
+    y    , h          with
+  | .(x) , .refl .(x) => z
 /-
   Recall that in `x = y` we have a _parameter_ `x` and an _index_ `y`.
   By matching against the pattern `.refl` we force the index to be `x`, and
   the inaccessible patterns above reflect that.
-  This also allows `z: α x` to become `z': α y`.
 
   Note how most of the technical parts can be omitted, letting Lean infer
   the rest.
@@ -752,11 +751,34 @@ def dep_match_subst
 -/
 section
 set_option pp.motives.all true
+set_option pp.proofs true
 #print dep_match_subst
 end
 /-
   The type of `z` is also adapted automatically without needing to match
   against a new variable `z'`.
+-/
+
+/-
+  We stress that, in motives, parameters of an inductive type can be
+  arbitrary expressions, while the indices must be distinct variables.
+  The following example clarifies the point:
+-/
+example
+  (P: Nat → Prop)
+  (n m: Nat) (eq: 3*m+1 = 2*n+4)
+  (h: P (3*m+1))
+  : P (2*n+4)
+  := match (motive := ∀ k, 3*m+1 = k → P k)
+    (2*n+4)  , eq with
+  | .(3*m+1) , .refl .(3*m+1) => h
+/-
+  Above, `3*m+1 = …` can appear in the motive even if it is an expression,
+  since it is a parameter. Instead `… = k` is an index so it must be a
+  variable: the motive must deal with arbitrary values for the indices, not
+  just the ones we might want to pick.
+  Arbitrary expressions can also appear, as seen above, inside the matched
+  expressions and the inaccessible patterns.
 -/
 
 /-
@@ -778,6 +800,33 @@ section
 set_option pp.motives.all true
 #print even₂_example
 end
+
+/-
+  __Exercise__: Below, we prove transitivity for `… = …` in two ways.
+  Clarify how the involved pattern matches work.
+  Find the motives and add them explicitly.
+  Add additional matched expressions as needed.
+  Add inaccessible patterns when possible.
+-/
+example (α: Type) (a₁ a₂ a₃: α) (eq₁: a₁ = a₂) (eq₂: a₂ = a₃)
+  : a₁ = a₃
+  := match eq₁ with
+  | .refl _ => eq₂
+
+example (α: Type) (a₁ a₂ a₃: α) (eq₁: a₁ = a₂) (eq₂: a₂ = a₃)
+  : a₁ = a₃
+  := match eq₁ , eq₂ with
+  | .refl _ , .refl _ => .refl _
+
+/-
+  __Exercise__: Below, we prove symmetry for `… = …`.
+  Clarify how the involved pattern matches work, as done in the previous
+  exercise.
+-/
+example (α: Type) (a₁ a₂: α) (eq: a₁ = a₂)
+  : a₁ = a₂
+  := match eq with
+  | .refl _ => .refl _
 
 end Patterns_affect_what_comes_before
 
@@ -1206,6 +1255,44 @@ example (α: Type) (P: α → Prop)
   : (∃ a, P a) ∧ (∀ a₁ a₂, P a₁ → P a₂ → a₁ = a₂)
   ↔ (∃ a, ∀ x, P x ↔ x = a)
   := sorry
+
+/-
+  __Exercise__: Recall the `TreeOf` type from the previous part on inductive
+  types, and the `TreeOf.mirror` exercise (a function which swaps the left
+  and right subtrees).
+
+  Prove that the `TreeOf.mirror` function is involutive (its own inverse).
+  (Write a suitable statement on your own.)
+-/
+inductive TreeOf (τ: Type)
+| leaf: τ → TreeOf τ
+| branch: TreeOf τ → TreeOf τ → TreeOf τ
+
+def TreeOf.mirror {τ: Type} (t: TreeOf τ): TreeOf τ
+  := sorry
+
+/-
+  __Exercise__: (continues the above exercise)
+  Define a `TreeOf.map` function, analogously to `List.map`.
+  Prove that `TreeOf.map` and `TreeOf.mirror` commute.
+-/
+
+/-
+  __Exercise__: (continues the above exercise)
+  Define a `TreeOf.sum` function, analogously to `List.sum`.
+  Prove that the tree sum is not affected by `TreeOf.mirror`.
+  Assume the needed standard arithmetic facts.
+-/
+#check Nat.add_comm
+
+/-
+  __Exercise__: (continues the above exercise)
+  Define a `TreeOf.height` function, exploiting `Nat.max`.
+  Prove that the tree height is not affected by `TreeOf.mirror`.
+  Assume the needed standard arithmetic facts.
+-/
+#check Nat.max
+#check Nat.max_comm
 
 end Recap_exercises
 
