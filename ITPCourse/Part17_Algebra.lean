@@ -332,13 +332,30 @@ section Recap_exercises
   You might want to sketch the proof informally first.
   Note that `Fintype.card` is the cardinality of a finite type, and that
   `x ^ n` and `1` follow multiplicative group notation.
-  Exploit the library theorems `Equiv.prod_comp` and
-  `Finset.prod_mul_pow_card`.
+  Exploit the library theorems mentioned below.
 -/
+#check Equiv.prod_comp
+#check Finset.prod_mul_pow_card
 example
   (G: Type) [CommGroup G] [Fintype G] -- Abelian finite group.
   (x: G)
   : x ^ Fintype.card G = 1
+  := by
+  sorry
+
+/-
+  __Exercise__: Prove the following.
+
+  You might want to sketch the proof informally first.
+  Exploit the library theorems mentioned below.
+-/
+#check Equiv.prod_comp          -- Either this…
+#check Fintype.prod_equiv       -- …or this
+#check Finset.prod_inv_distrib
+example
+  (G: Type) [CommGroup G] [Fintype G] -- Abelian finite group.
+  (h: ∀ g: G, g*g = 1 → g = 1)
+  : ∏ (g: G), g = 1
   := by
   sorry
 
