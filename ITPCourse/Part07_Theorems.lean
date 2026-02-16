@@ -907,6 +907,26 @@ example
  : ((p → q) → (p → (p ∧ q))) ∧ (p → (p ∧ q)) → p → q
  := by tauto
 
+example
+  (p q r s: Prop)
+  : (p → (q ∧ (p → (q ∨ r) → r))) → (r → s) → (p ∨ s) → s
+  := by tauto
+
+example
+  (p q r s: Prop)
+  : ((p → (q ∧ r)) → s) → (p → q) → ((p → r) ∨ s) → s
+  := by tauto
+
+example
+  (p q r s t: Prop)
+  : (p → (q ∧ r)) → ((s ∨ r) → t) → (p ∨ s) → (q ∨ t)
+  := by tauto
+
+example
+  (p q r: Prop)
+  : (p → q) → (q → r) → ((r → p) → ((p → q) ∧ (q → p)))
+  := by tauto
+
 /-
   __Exercise__: Prove Cantor's theorem.
   There is no surjective function from `τ` to `τ → Prop`.
