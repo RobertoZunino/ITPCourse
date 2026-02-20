@@ -748,6 +748,92 @@ example:
 
 end Integrals
 
+section Series
+/-
+  Here we prove a classic result, namely the closed form for the partial
+  sums of the geometric series.
+
+  Recall that `∑` denotes sums over finitely many terms.
+-/
+theorem partial_sum_geometric_series
+  (x: ℝ) (x_not1: x ≠ 1) (k: ℕ)
+  : (∑ n < k, x ^ n) = (1 - x^k) / (1 - x)
+  := by
+  -- We use `range` instead of `Iio` which has more results in the
+  --  libraries.
+  have eq_range: Finset.Iio k = Finset.range k
+    := by grind
+  rw [eq_range]
+  clear eq_range
+  -- We now proceed by induction
+  induction k
+  case zero =>
+    -- The trivial sum is zero
+    simp
+  case succ n ih =>
+    -- We isolate the last term in the sum, apply `ih`, and simplify
+    rw [Finset.sum_range_succ]
+    rw [ih]
+    grind
+
+/-
+  We generalize the finite sum above to its limit, so obtaining a closed
+  form for the geometric series.
+
+  The notation `∑'` denotes "unconditional" infinite sums, i.e., those whose
+  limit does not depend on the order of terms. (`∑'` is defined as zero when
+  the limit does not exists.) Since our geometric series below only involves
+  nonnegative terms, the order is irrelevant.
+
+  In (very) technical terms, a function is "unconditionally summable" iff
+  its partial sums over finite subsets converge as the finite subset
+  becomes larger (i.e., with respect to the `atTop` filter).
+-/
+theorem geometric_series
+  (x: ℝ) (x_nneg: 0 ≤ x) (x_bound: x < 1)
+  : ∑' (n: ℕ), x^n = 1 / (1 - x)
+  := by
+  -- We switch to the `HasSum` relation
+  apply HasSum.tsum_eq _
+  -- Since the sum has nonnegative terms, we can prove a limit instead
+  rw [hasSum_iff_tendsto_nat_of_nonneg]
+  case hf =>
+    -- Terms are indeed nonnegative
+    intro i
+    positivity
+  -- Now we rewrite each partial sum exploiting the previous theorem
+  have eq_range (k: ℕ): Finset.Iio k = Finset.range k
+    := by grind
+  conv =>
+    arg 1
+    intro n
+    conv =>
+      arg 1
+      rw [← eq_range]
+    rw [partial_sum_geometric_series x x_bound.ne]
+  clear eq_range
+  -- We now reduce the limit to the limit of x^n, by exploiting
+  -- "congruence" results for limits.
+  apply Filter.Tendsto.div
+  case hy =>
+    linarith
+  case hg =>
+    exact tendsto_const_nhds
+  case hf =>
+    have eq: (1: ℝ) = 1-0 := by simp
+    conv =>
+      arg 3
+      rw [eq]
+    clear eq
+    apply Filter.Tendsto.sub
+    case hf =>
+      exact tendsto_const_nhds
+    case hg =>
+      -- Finally, the limit ox x^n is 0
+      exact tendsto_pow_atTop_nhds_zero_of_lt_one x_nneg x_bound
+
+end Series
+
 section Recap_exercises
 /-
   __Exercise__: Prove the following.
