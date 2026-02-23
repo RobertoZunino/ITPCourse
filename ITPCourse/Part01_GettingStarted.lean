@@ -11,21 +11,29 @@ section Getting_started_with_Lean4
 /-
   To use Lean 4 you have three main options:
 
-  - For simple tasks, you use an online Lean editor:
+  - For simple tasks, you can use a web Lean server ("lean4web"):
 
     https://live.lean-lang.org/
 
-    Warning: remember to download your files before closing the browser!
+    On GitHub, you can select a Lean file from this repository, show it in
+    its "raw" form, and copy-paste its text into lean4web.
+
+    Warning: closing the browser will erase your work! If you want to keep
+    it remember to save it locally first!
 
   - For a more thorough experience, install Lean 4 on your computer.
 
     https://docs.lean-lang.org/lean4/doc/quickstart.html
 
-    Once Lean 4 is installed, to create an empty Lean project it should be
-    enough to create a new folder and run `lake init` in it.
+    Once Lean 4 is installed, you can download this whole repository from
+    GitHub (either as a single ZIP file, or using `git clone`) and open it
+    directly.
+
+    (If you instead prefer to create an empty Lean project it should be
+    enough to create a new folder and run `lake init` in it.)
 
   - As a further alternative to installing Lean 4 on your computer, you can
-    use _Github codespaces_, which effectively allow one to run Lean 4 on a
+    use _Github codespaces_, which effectively allow you to run Lean 4 on a
     remote server, storing all your files on a remote repository as well.
 
     https://github.com/codespaces/
@@ -89,9 +97,11 @@ end Name
   keyword above. You probably need to hover your mouse pointer over it to
   see it. This should "fold" the section, hiding it temporarily.
 
-    81 v   section Name
+    89 v   section Name
        ↑
        here
+
+  (Note: on lean4web this feature is not available.)
 -/
 end Sections
 
