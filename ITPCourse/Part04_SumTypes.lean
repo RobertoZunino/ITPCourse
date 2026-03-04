@@ -225,7 +225,7 @@ section Type_isomorphisms
     `α × (β ⊕ γ) ≅ (α × β) ⊕ (α × γ)` (distributivity)
 
   The other is the absorption law:
-    `α × Zero ≅ Zero`
+    `α × Empty ≅ Empty`
 
   In general, `×, Unit, ⊕, Empty` types form an _abelian semiring_,
   when taken up to isomorphism.
@@ -243,7 +243,7 @@ section Type_isomorphisms
 
 /-
   Finally, sum and function types also satisfy a few "power laws":
-    `A⁰ ≅ 1` i.e. `Zero → α ≅ Unit`
+    `A⁰ ≅ 1` i.e. `Empty → α ≅ Unit`
     `Cᴬ⁺ᴮ ≅ Cᴬ × Cᴮ` i.e. `(α ⊕ β) → γ ≅ (α → γ) × (β → γ)`
 
   Note that `0ᴬ ≅ 0` is __not__ true in general: a simple counterexample

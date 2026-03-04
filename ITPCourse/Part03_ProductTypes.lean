@@ -197,7 +197,7 @@ end Type_isomorphisms
 section Currying
 /-
   We saw that multiple-argument functions in Lean are usually represented
-  with a type such as `A₁ → A₂→ ⋯ → Aₙ → B`.
+  with a type such as `A₁ → A₂ → ⋯ → Aₙ → B`.
 
   Of course, we can also use tuples and use instead the alternative type
   `(A₁ × A₂ × ⋯ × Aₙ) → B`.
