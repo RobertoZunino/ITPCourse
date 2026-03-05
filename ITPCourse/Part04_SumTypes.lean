@@ -47,7 +47,7 @@ section Simple_pattern_matching
   only discuss the basics of _simple pattern matching_, which mandates that
   a `match` term like
     ```
-    match e where
+    match e with
     | pat₁ => e₁
     ⋮
     | patₙ => eₙ
