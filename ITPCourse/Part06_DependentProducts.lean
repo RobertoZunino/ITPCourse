@@ -77,6 +77,8 @@ def identity₂ (τ: Type) (x: τ): τ
 
 #check identity₁
 #check identity₂
+#check identity₂ Nat
+#check identity₂ Nat 42
 
 example: Nat    := identity₁ Nat 42
 example: String := identity₁ String "hello"
