@@ -325,6 +325,58 @@ def extractString₂
   It is equivalent to:
     `(λ x => … (λ y => y+y) … )`
 -/
+
+/-
+  We will return on the formal rules for dependent pattern matching later
+  on in the course.
+-/
 end A_glimpse_at_dependent_pattern_matching
 
 end Dependent_products
+
+section Recap_exercises
+/-
+  __Exercise__: Consider the following "polymorphic" function composition
+  operator. Generalize it so to compose dependent products as well.
+
+  This can gen generalized in several ways. Try the one you believe to be
+  the most natural to you.
+-/
+def compose
+  {α: Type}
+  {β: Type}
+  {γ: Type}
+  (f: α → β)
+  (g: β → γ)
+  :  α → γ
+  := λ a => g (f a)
+
+/-
+  __Exercise__: Complete the definitions below.
+
+  A few of them involve dependent matches, but you should be able to
+  complete them anyway.
+-/
+example
+  {α β: Type}
+  (f: α × β → Type)
+  (h: (a: α) → (b: β) → f (a, b))
+  : (p: α × β) → f p
+  := sorry -- Recall that `p` and `(p.1, p.2)` are definitionally equal.
+
+example
+  (f: Bool → Type)
+  (hT: f true)
+  (hF: f false)
+  : (b: Bool) → f b
+  := sorry -- You might need a dependent `match`.
+
+example
+  {α β: Type}
+  (f: α ⊕ β → Type)
+  (hL: (a: α) → f (.inl a))
+  (hR: (b: β) → f (.inr b))
+  : (x: α ⊕ β) → f x
+  := sorry -- You might need a dependent `match`.
+
+end Recap_exercises
