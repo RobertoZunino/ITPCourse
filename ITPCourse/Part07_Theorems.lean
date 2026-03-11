@@ -82,11 +82,16 @@ theorem or_idempot (p: Prop) (h: p ∨ p): p
 theorem triviality: True := True.intro
 
 /-
-  `False` elimination is done by `False.elim`
+  `False` elimination is done by `nomatch` or `False.elim`.
 -/
 theorem false_identity_for_or (p: Prop) (h: False ∨ p): p
   := match h with
-  | .inl pr_false => pr_false.elim   -- This contradiction proves anything!
+  | .inl pr_false => nomatch pr_false -- This contradiction proves anything!
+  | .inr pr_p     => pr_p
+
+theorem false_identity_for_or₂ (p: Prop) (h: False ∨ p): p
+  := match h with
+  | .inl pr_false => pr_false.elim
   | .inr pr_p     => pr_p
 
 /-
