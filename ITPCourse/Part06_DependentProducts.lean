@@ -348,7 +348,7 @@ def compose
   {γ: Type}
   (f: α → β)
   (g: β → γ)
-  :  α → γ
+  : α → γ
   := λ a => g (f a)
 
 /-
@@ -357,6 +357,42 @@ def compose
   A few of them involve dependent matches, but you should be able to
   complete them anyway.
 -/
+example
+  (α: Type)
+  (β γ: α → Type)
+  (h: (a: α) → β a × γ a)
+  : ((a: α) → β a) × ((a: α) → γ a)
+  := sorry
+
+example
+  (α: Type)
+  (β γ: α → Type)
+  (h: ((a: α) → β a) × ((a: α) → γ a))
+  : (a: α) → β a × γ a
+  := sorry
+
+example
+  (α: Type)
+  (β γ: α → Type)
+  (h: ((a: α) → β a) ⊕ ((a: α) → γ a))
+  : (a: α) → β a ⊕ γ a
+  := sorry
+
+example
+  (α: Type)
+  (β: α → Type)
+  (h: (a₁ a₂: α) → β a₁ ⊕ β a₂)
+  : (a: α) → β a
+  := sorry
+
+example
+  (α: Type)
+  (f: α → α)
+  (β: α → Type)
+  (h: (a: α) → β a → β (f a))
+  : (a: α) → β a → β (f (f a))
+  := sorry
+
 example
   {α β: Type}
   (f: α × β → Type)
