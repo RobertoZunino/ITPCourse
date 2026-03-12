@@ -219,6 +219,53 @@ def divides (n m: Nat): Prop
 def prime (n: Nat): Prop
   := n > 1 ∧ sorry
 
+section On_impredicativity
+/-
+  Consider a proof of an existential property:
+-/
+theorem solution_exists: ∃ n, n = 5 ∨ n = 7 := ⟨ 5 , .inl rfl ⟩
+/-
+  Recall that it is impossible to eliminate a proof of a proposition
+  (in `Prop`) to construct a non-proof, a value of a type (in `Type`).
+
+  In other words, this is not allowed:
+    ```
+    def solution: Nat := solution_exists.1
+    ```
+  Even if `solution_exists` is a pair, we can not project its first
+  component and build a `Nat` value. This is because
+  `solution_exists : ∃ n, … : Prop`, so it is a proof of a proposition, but
+  the result type is `Nat : Type` which is not a proposition.
+
+  We will be able to partially circumvent this using the axiom of choice
+  `Classical.choose`:
+-/
+noncomputable def solution: Nat := Classical.choose solution_exists
+/-
+  Note that `solution` is an unknown value which depends on an axiom, and
+  as such it can not be evaluated (e.g., using `#eval`). That's why we had
+  to mark the `def` as `noncomputable`.
+
+  It is _not_ defined as `5`, even if `h` uses `5`.
+
+  Indeed, since impredicativity causes _proof irrelevance_, the choice axiom
+  not convey any more information about the solution it picks, since it must
+  pick the same solution when used on _any_ proof, as shown below:
+-/
+-- An apparently different proof.
+theorem solution_exists₂: ∃ n, n = 5 ∨ n = 7 := ⟨ 7 , .inr rfl ⟩
+-- By proof irrelevance, it is actually definitionally equal.
+theorem same_proof: solution_exists = solution_exists₂ := rfl
+-- Hence, the axiom of choice must pick the same solution in both cases.
+theorem same_choice:
+  Classical.choose solution_exists = Classical.choose solution_exists₂
+  := rfl
+
+/-
+  We will return on the axiom of choice in the future.
+-/
+end On_impredicativity
+
 end Existential_quantification
 
 section Recap_exercises
