@@ -174,7 +174,7 @@ example (p q: Prop): ¬ q → (p ∨ q) → p
   := sorry
 
 /-
-  If-and-only-if `p ↔ q` is similar to `(p → q) ∧ (q → q)`.
+  If-and-only-if `p ↔ q` is similar to `(p → q) ∧ (q → p)`.
 
   Check out `Iff.intro` and `Iff.elim` to understand how to use it.
   Alternatively, use the notation `⟨ … , … ⟩`, which works on all
