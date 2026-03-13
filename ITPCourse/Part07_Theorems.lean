@@ -366,10 +366,10 @@ section Why_predicativity?
   Counterpoint: if impredicativity is good to have, why don't we make `Type`
   impredicative like `Prop`?
 
-  The issue is that impredicativity comes at a cost: in the presence of a
+  The issue is that impredicativity comes at a cost. In the presence of a
   few axioms like excluded middle and choice, it causes _proof irrelevance_:
-  any two proofs `pr₁ pr₂: p` of the same theorem `p: Prop` are necessarily
-  equal: `pr₁ = pr₂`. This is known as the Barbanera-Berardi paradox.
+  any two proofs `pr₁ pr₂: p` of the same theorem `p: Prop` become equal,
+  .i.e., `pr₁ = pr₂`. This is known as the Barbanera-Berardi paradox.
 
   This is not a significant issue in `Prop`, since when dealing with
   propositions we care only about whether a proof exists or not -- whether
