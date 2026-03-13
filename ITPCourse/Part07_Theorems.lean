@@ -460,7 +460,7 @@ section The_general_dependent_product_type_formation_rule
 
     if  `x: τ` where `τ: Sort u`
     and `f: τ → Sort v`
-    then `(x: τ) → P t` is a type living in universe `Sort (imax u v)`
+    then `(x: τ) → f t` is a type living in universe `Sort (imax u v)`
     where `imax u v` is `0` if `v = 0` and `max u v` otherwise.
 
   You can then obtain the predicative and impredicative type formation rules
