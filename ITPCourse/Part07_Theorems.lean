@@ -205,7 +205,7 @@ example: False ↔ (∀ q: Prop, q)
 example: True ↔ (∀ q: Prop, q → q)
   := sorry
 example (p q: Prop)
-  : p ∧ q ↔ (∀ r: Prop, p → q → r)
+  : p ∧ q ↔ (∀ r: Prop, (p → q → r) → r)
   := sorry
 example (p q: Prop)
   : p ∨ q ↔ (∀ r: Prop, (p → r) → (q → r) → r)
