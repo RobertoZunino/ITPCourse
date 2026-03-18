@@ -295,6 +295,37 @@ def Monoid.prod (m₁ m₂: Monoid): Monoid  -- You can also use `where` here.
 -/
 #print Rat
 
+/-
+  __Exercise__:  Prove the following statements.
+-/
+example (τ σ: Type) (P: τ → σ → Prop)
+  : (∃ x y, P x y) → ∃ y x, P x y
+  := sorry
+
+example (τ: Type) (P: τ → Prop) (q: Prop)
+  : (∃ x, P x ∧ q) ↔ (∃ x, P x) ∧ q
+  := sorry
+
+example (τ: Type) (P: τ → Prop) (q: Prop)
+  (t: τ) -- You will need this additional non-emptiness assumption.
+  : (∃ x, P x ∨ q) ↔ (∃ x, P x) ∨ q
+  := sorry
+
+example (τ: Type) (P: τ → Prop) (q: Prop)
+  : (∀ x, q → P x) ↔ (q → ∀ x, P x)
+  := sorry
+
+example (τ: Type) (P: τ → Prop) (q: Prop)
+  : (∀ x, P x → q) ↔ ((∃ x, P x) → q)
+  := sorry
+
+/-
+  __Exercise__: Formalize and prove the following statement, known as the
+  "driker's lemma". The proof requires the use of `Classical.em`.
+
+  In any non-empty bar, there is at least a person `p` such that, if `p`
+  drinks, then _every person_ in the bar drinks.
+-/
 end Recap_exercises
 
 end DependentSums
