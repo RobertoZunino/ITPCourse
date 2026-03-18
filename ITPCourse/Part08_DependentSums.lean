@@ -312,10 +312,6 @@ example (τ: Type) (P: τ → Prop) (q: Prop)
   := sorry
 
 example (τ: Type) (P: τ → Prop) (q: Prop)
-  : (∀ x, q → P x) ↔ (q → ∀ x, P x)
-  := sorry
-
-example (τ: Type) (P: τ → Prop) (q: Prop)
   : (∀ x, P x → q) ↔ ((∃ x, P x) → q)
   := sorry
 

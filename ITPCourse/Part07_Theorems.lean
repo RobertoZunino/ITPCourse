@@ -932,4 +932,26 @@ example
   : (p → q) → (q → r) → ((r → p) → ((p → q) ∧ (q → p)))
   := by tauto
 
+/-
+  __Exercise__: Prove the following.
+
+  You might need, in certain cases, `Classical.em`.
+-/
+example (τ σ: Type) (P: τ → σ → Prop)
+  : (∀ x y, P x y) → ∀ y x, P x y
+  := sorry
+
+example (τ: Type) (P: τ → Prop) (q: Prop)
+  (t: τ) -- You will need this additional non-emptiness assumption.
+  : (∀ x, P x ∧ q) ↔ (∀ x, P x) ∧ q
+  := sorry
+
+example (τ: Type) (P: τ → Prop) (q: Prop)
+  : (∀ x, P x ∨ q) ↔ (∀ x, P x) ∨ q
+  := sorry
+
+example (τ: Type) (P: τ → Prop) (q: Prop)
+  : (∀ x, q → P x) ↔ (q → ∀ x, P x)
+  := sorry
+
 end Recap_exercises
