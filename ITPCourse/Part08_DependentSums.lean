@@ -317,7 +317,7 @@ example (τ: Type) (P: τ → Prop) (q: Prop)
 
 /-
   __Exercise__: Formalize and prove the following statement, known as the
-  "driker's lemma". The proof requires the use of `Classical.em`.
+  "drinker's lemma". The proof requires the use of `Classical.em`.
 
   In any non-empty bar, there is at least a person `p` such that, if `p`
   drinks, then _every person_ in the bar drinks.
