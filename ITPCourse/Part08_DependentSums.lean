@@ -172,9 +172,69 @@ section Existential_quantification
   The Curry-Howard correspondent of a dependent sum is an existentially
   quantified proposition
     `(a: α) × β a` ↔ `∃ a: α, β a`
+
+  With terms, introduction and elimination is done as with pairs.
 -/
 example (τ: Type): ∀ x: τ, ∃ y: τ, y = x
   := λ x => ⟨ x, rfl ⟩
+
+example (τ: Type): (∃ x: τ, x = x) → (∃ _x: τ, True)
+  := λ h => match h with
+            | ⟨ x , _hx ⟩ => ⟨ x , True.intro ⟩
+-- or, using a shorthand:
+example (τ: Type): (∃ x: τ, x = x) → (∃ _x: τ, True)
+  := λ ⟨ x , _hx ⟩ => ⟨ x , True.intro ⟩
+/-
+  Note: above, the arguably simpler term `λ h => ⟨ h.1 , True.intro ⟩` is
+  _not_ accepted because of impredicativity. The issue is that `h.1` tries
+  to eliminate a proof (`h`) to construct a non-proof. We will return on
+  this point below.
+-/
+
+/-
+  Using tactics, we can use `exists` and `have ⟨… , …⟩ := …` to perform
+  introduction and elimination.
+-/
+example (τ: Type): (∃ x: τ, x = x) → (∃ _x: τ, True)
+  := by
+  intro p
+  have ⟨ x , hx ⟩ := p  -- Elimination.
+  exists x              -- Introduction. (Also solves trivial subgoals)
+
+example: ∀ n: Nat, ∃ m: Nat, n < m
+  := by
+  intro n
+  exists (n+1)
+  exact Nat.lt_add_one n -- A theorem from the library
+
+/-
+  The De Morgan law.
+-/
+example (τ: Type) (P: τ → Prop)
+  : (∃ x, P x) ↔ (¬ ∀ x, ¬ P x)
+  := by simp
+
+-- The same law, but with less automation.
+example (τ: Type) (P: τ → Prop)
+  : (∃ x, P x) ↔ (¬ ∀ x, ¬ P x)
+  := by
+  constructor
+  case mp =>
+    intro h
+    have ⟨ x , hx ⟩ := h
+    intro h2
+    exact h2 x hx
+  case mpr =>
+    intro h
+    cases Classical.em (∃ x, P x)
+    case inl h2 =>
+      exact h2
+    case inr h2 =>
+      exfalso
+      apply h
+      intro x hx
+      apply h2
+      exists x
 
 /-
   A more complex example: if `R` is a symmetric and transitive relation
