@@ -555,7 +555,7 @@ section Foundations
   The actual rules for type formation, introduction, elimination, and
   computation are rather complex.
 
-  Below, we only provide an semi-formal discussion.
+  Below, we only provide a semi-formal discussion.
 -/
 section Type_formation
 /-
