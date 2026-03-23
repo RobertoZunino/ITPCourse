@@ -170,10 +170,12 @@ end Extensionality
 section Existential_quantification
 /-
   The Curry-Howard correspondent of a dependent sum is an existentially
-  quantified proposition
+  quantified proposition:
     `(a: α) × β a` ↔ `∃ a: α, β a`
+  Concretely, a proof for an existential property must include a witness
+  value for `a`, and a proof that the chosen witness indeed satisfies `β`.
 
-  With terms, introduction and elimination is done as with pairs.
+  In terms, introduction and elimination is done as with regular pairs.
 -/
 example (τ: Type): ∀ x: τ, ∃ y: τ, y = x
   := λ x => ⟨ x, rfl ⟩
@@ -246,15 +248,18 @@ def Symmetric {τ: Type} (R: τ → τ → Prop)
   := ∀ {x y}, R x y → R y x
 def Transitive {τ: Type} (R: τ → τ → Prop)
   := ∀ {x y z}, R x y → R y z → R x z
+def Connected {τ: Type} (R: τ → τ → Prop)
+  := ∀ x, ∃ y, R x y
 
 example (τ: Type) (R: τ → τ → Prop)
   (symm: Symmetric R)
   (tran: Transitive R)
-  (conn: ∀ x, ∃ y, R x y)
+  (conn: Connected R)
   : Reflexive R
   := by
-  unfold Reflexive -- Not needed, but expends the definition for clarity
+  unfold Reflexive -- Optional, but expands the definition for clarity
   intro x
+  unfold Connected at conn  -- Optional
   have h4: ∃ y, R x y := conn x
   have ⟨ y , h5 ⟩ := h4  -- Eliminating the `∃`
   have h6: R y x := symm h5
