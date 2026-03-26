@@ -210,6 +210,15 @@ example: ∀ n: Nat, ∃ m: Nat, n < m
   exact Nat.lt_add_one n -- A theorem from the library
 
 /-
+  __Exercise__: Prove the following.
+-/
+example
+  (τ: Type) (P Q: τ → Prop)
+  (h: ∀ t, P t → Q t)
+  : (∃ a, P a) → (∃ a, Q a)
+  := by sorry
+
+/-
   The De Morgan law.
 -/
 example (τ: Type) (P: τ → Prop)
