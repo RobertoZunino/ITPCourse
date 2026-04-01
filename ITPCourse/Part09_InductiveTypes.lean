@@ -721,17 +721,6 @@ example {τ: Type} (P: τ → Prop) (f: τ → τ) (n: Nat)
   sorry
 
 /-
-  __Exercise__: After having solved the previous `TreeOf.mirror` exercise,
-  prove that mirroring is an involution.
-  Proceed by induction on trees.
-  To handle definitions and equalities (such as those occurring as induction
-  hypotheses) you can use `simp [def1, def2, equation1, equation2]`.
--/
-example {τ: Type} (t: TreeOf τ)
-  : t.mirror.mirror = t
-  := by sorry
-
-/-
   __Exercise__: Observe how the type of integers `Int` is defined in the
   libraries.
 -/
