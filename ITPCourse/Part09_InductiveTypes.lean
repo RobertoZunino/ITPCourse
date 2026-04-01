@@ -252,8 +252,8 @@ def count (n: Nat): nested n
 -/
 def count_with_recursor (n: Nat): nested n
   := Nat.rec (motive := nested)
-    ()                    -- `: motive .zero`
-    (λ n' c => (n', c))   -- `: (n: Nat) → (c: motive n) → motive n.succ`
+    ()                       -- `: motive .zero`
+    (λ n' c => (n'.succ, c)) -- `: (n: Nat) → (c: motive n) → motive n.succ`
     n
 
 #eval count_with_recursor 3   -- `(3, 2, 1, ())`
@@ -496,6 +496,9 @@ inductive Expr
 | add: Expr → Expr → Expr
   -- Multiplication
 | mul: Expr → Expr → Expr
+
+example: Expr
+  := .add (.lit 4) (.mul (.lit 6) (.lit 10))
 
 /-
   The evaluation function (the "semantics").
