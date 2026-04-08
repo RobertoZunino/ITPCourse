@@ -824,7 +824,7 @@ example (α: Type) (a₁ a₂ a₃: α) (eq₁: a₁ = a₂) (eq₂: a₂ = a₃
   exercise.
 -/
 example (α: Type) (a₁ a₂: α) (eq: a₁ = a₂)
-  : a₁ = a₂
+  : a₂ = a₁
   := match eq with
   | .refl _ => .refl _
 
