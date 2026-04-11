@@ -754,10 +754,6 @@ set_option pp.motives.all true
 set_option pp.proofs true
 #print dep_match_subst
 end
-/-
-  The type of `z` is also adapted automatically without needing to match
-  against a new variable `z'`.
--/
 
 /-
   We stress that, in motives, parameters of an inductive type can be
@@ -788,13 +784,13 @@ inductive Even₂: Nat → Prop
 | intro: (n: Nat) → Even₂ (2*n)
 
 def even₂_example
-  (n: Nat)
+  (m: Nat)
   (P: Nat → Prop)
-  (h1: Even₂ n)
+  (h1: Even₂ m)
   (h2: ∀ k, P (2*k))
-  : P n
-  := match n , h1 with
-  | .(2*y) , .intro y => h2 y
+  : P m
+  := match m , h1 with
+  | .(2*n) , .intro n => h2 n
 
 section
 set_option pp.motives.all true
@@ -961,7 +957,7 @@ section In_the_library
 #print Nat
 
 /-
-  Observe how `<` and `≤` are defined on naturals in the library.
+  Observe how `≤` and `<` are defined on naturals in the library.
 -/
 #print Nat.le
 #print Nat.lt
