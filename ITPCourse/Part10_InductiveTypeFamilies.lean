@@ -1053,17 +1053,17 @@ example
 example
   : (Expr.add
       (.π₁ (.pair (.lit 42) (.lit 43)))
-      (.lit 1)
+      (.lit 1000)
     ).semantics
     =
-    .some (Value.nat 43)
+    .some (Value.nat 1042)
   := rfl
 
 -- Adding pairs fails.
 example
   : (Expr.add
       (.pair (.lit 42) (.lit 43))
-      (.lit 1)
+      (.lit 1000)
     ).semantics
     = .none
   := rfl
@@ -1085,7 +1085,7 @@ inductive Ty
   We can map `Ty` "types" into actual Lean types:
 -/
 def Ty.semantics: Ty → Type
-| nat       => Nat
+| .nat      => Nat
 | .prod α β => α.semantics × β.semantics
 
 /-
@@ -1132,10 +1132,10 @@ example
 example
   : (TExpr.add
       (.π₁ (.pair (.lit 42) (.lit 43)))
-      (.lit 1)
+      (.lit 1000)
     ).semantics
     =
-    (43: Nat)
+    (1042: Nat)
   := rfl
 
 end A_simple_language_semantics_example
