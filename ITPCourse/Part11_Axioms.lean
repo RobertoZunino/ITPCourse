@@ -137,6 +137,44 @@ example: ("hello" = "hello") = True
 example (p: Prop): p = True ∨ p = False
   := sorry
 
+/-
+  Together with `funext`, the`propext` axiom allows us to "pretend" that
+  functions of type `τ → Prop` are effectively _sets_, while functions of
+  type `τ → σ → Prop` are effectively _relations_.
+
+  Indeed, if `P Q: τ → Prop`, we have
+    `P = Q`          if and only if (by functional extensionality)
+    `∀ x, P x = Q x` if and only if (by propositional extensionality)
+    `∀ x, P x ↔ Q x`
+
+  Hence, `P` and `Q` are equal iff they are satisfied by the same values.
+  This is the _set extensionality_ principle.  We can then truly regard `P`
+  and `Q` as sets. A similar property holds for relations.
+-/
+theorem set_extensionality
+  (τ: Type)
+  (P Q: τ → Prop)
+  : P = Q
+  ↔ (∀ x, P x ↔ Q x)
+  := by
+  constructor
+  case mp =>
+    -- This direction obviously needs no axioms
+    intro eq x
+    subst P
+    constructor
+    case mp =>
+      intro h
+      exact h
+    case mpr =>
+      intro h
+      exact h
+  case mpr =>
+    intro h
+    funext x        -- Exploit axiom `funext`
+    apply propext   -- Exploit axiom `propext`
+    apply h
+
 end Propositional_extensionality
 
 end Axioms
@@ -346,8 +384,6 @@ example: qstr_a = qstr_b
       seq_converges: ∀ …   -- property of seq
     ```
   Then take a suitable quotient.
-  Note: you might want to require an exponentially fast convergence. This is
-  convenient if you then want to define, say, addition.
 -/
 end Quotient_types
 
