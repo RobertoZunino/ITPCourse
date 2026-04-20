@@ -1147,6 +1147,8 @@ section Recap_exercises
   You can write a term involving a (dependent) pattern match, or use tactics
   instead. Try both styles.
 -/
+#print Option
+
 example (τ: Type) (x: Option τ) (h: x ≠ .none)
   : τ
   := sorry
@@ -1204,6 +1206,8 @@ example (xs ys: List Nat) (h: Augments xs ys)
   Feel free to use tactics, as needed.
 -/
 #check List.filter
+#eval List.filter (λ n => n > 10) [34,6,23,7,8,64]
+
 example (xs: List Nat) (p: Nat → Bool) (f: Nat → Nat)
   : List.filter p (List.map f xs)
   = List.map f (List.filter (p ∘ f) xs)
