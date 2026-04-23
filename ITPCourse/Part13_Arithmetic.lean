@@ -1,4 +1,6 @@
 import Mathlib.Data.Real.Basic
+import Mathlib.Data.Real.Archimedean
+import Mathlib.Algebra.Order.Floor.Defs
 import Mathlib.Algebra.Order.GroupWithZero.Unbundled.Basic
 import Mathlib.Data.Complex.Basic
 import Mathlib.Tactic.Ring
@@ -209,21 +211,21 @@ example (x y: ℝ)
   You will likely only need basic tactics, and `simp` to simplify a few
   sums.
 -/
-theorem forall_x_y_h
+theorem forall_x_y_δ
   (P: ℝ → ℝ → Prop)
-  : (∀ x y, P x y) ↔ (∀ x h, P x (x+h))
+  : (∀ x y, P x y) ↔ (∀ x δ, P x (x+δ))
   := sorry
 
-theorem forall_x_y_h_left
+theorem forall_x_y_δ_left
   (P: ℝ → ℝ → Prop)
-  : (∀ x h, P x (x+h)) → (∀ x y, P x y)
-  := (forall_x_y_h P).mpr
+  : (∀ x δ, P x (x+δ)) → (∀ x y, P x y)
+  := (forall_x_y_δ P).mpr
 
 /-
   __Exercise__: Prove the following.
   You might want to use:
   - Tactics `linarith`, `let`, `unfold`, `constructor`
-  - `lt_or_le`
+  - `le_or_gt`
 -/
 theorem forall_ε (a b: ℝ)
   : (a ≤ b) ↔ (∀ ε>0, a ≤ b + ε)
@@ -389,7 +391,6 @@ example (a b c: ℤ)
 -/
 theorem archimedes (a b: ℝ)
   (h1: 0 < a)
-  (h2: a ≤ b)
   : ∃ n: ℕ, n * a > b
   := sorry
 
@@ -430,7 +431,8 @@ example (n: ℕ)
   sorry
 
 /-
-  __Exercise__: Prove the following non-linear system.
+  __Exercise__: (challenging)
+  Prove the following non-linear system.
   You can exploit any result from the libraries (search for them!).
   You might need `ne_of_lt`.
 -/

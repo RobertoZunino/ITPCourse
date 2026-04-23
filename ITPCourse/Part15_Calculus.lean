@@ -677,7 +677,7 @@ theorem deriv_x_cubed
     intro y h_dist
     simp_all [ dist ]
     revert h_dist x y
-    apply forall_x_y_h_left
+    apply forall_x_y_δ_left
     intro x h h_dist
     simp at h_dist
     have ⟨ h1, h2 ⟩ := h_dist
