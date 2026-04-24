@@ -59,7 +59,7 @@ _uncommitted_ changes will be lost if a codespace is inactive for more than
   on _natural language_.
 - [Cheatsheet][cheatsheet] -- a summary of the most common terms and tactics.
 - [100 theorems][th100list] -- a list of famous results.
-
+- [Lean Game Server][leanGames] -- browser games involving Lean proofs.
 
 [lean4ref]: https://lean-lang.org/doc/reference/latest/
 [mathlibDoc]: https://leanprover-community.github.io/mathlib4_docs/
@@ -69,3 +69,4 @@ _uncommitted_ changes will be lost if a codespace is inactive for more than
 [leansearch]: https://leansearch.net/
 [cheatsheet]: Cheatsheet.md
 [th100list]: https://leanprover-community.github.io/100.html
+[leanGames]: https://adam.math.hhu.de/
