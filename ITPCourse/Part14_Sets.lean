@@ -56,8 +56,6 @@ example: Set (Set ℕ) := { s | ∀ n ∈ s, 1 ≤ n ∧ n ≤ 20 }
 example: Set (Set ℕ) := { {n, n+1} | n: ℕ }
 example: Set (Set ℕ) := { {n, n+1} | (n: ℕ) (_prop: n > 20) }
 
-example: Set ℕ := { n | n > 5 ∧ n < 10 }
-
 /-
   Not all "reasonable" notations are accepted: for instance, these are
   allowed
