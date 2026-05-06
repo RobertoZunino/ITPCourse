@@ -638,7 +638,8 @@ theorem Finite₂_iff_Finite₁ {α: Type} (S: Set α)
   by checking out how `Set.Finite` is defined.
   For a challenge, prove the next statement.
 -/
-#check Set.Finite
+#print Set.Finite
+#print Finite
 
 example {α: Type} (S: Set α)
   : Finite₁ S ↔ Set.Finite S
