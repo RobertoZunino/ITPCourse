@@ -360,7 +360,7 @@ example
 
 /-
   The domain of a function `f: α → β` is simply `Set.univ: Set α`.
-  The domain is then `Set.univ: Set β`.
+  The codomain is then `Set.univ: Set β`.
   The range of a function is instead `Set.range f`.
 -/
 example
