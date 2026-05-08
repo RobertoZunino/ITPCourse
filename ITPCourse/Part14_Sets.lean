@@ -435,8 +435,13 @@ example (x y: ℝ) (h: x < y)
 /-
   __Exercise__: Intersect the family of open real intervals `(x-ε,x+ε)`
   for all `ε>0`, and prove that the result is `{x}`.
+  You will likely need `lt_trichotomy` on real numbers.
+-/
+#check lt_trichotomy
 
-  __Exercise__: Do the same with closed intervals.
+/-
+  __Exercise__: Repeat the above exercise, but with closed intervals
+  instead.
 -/
 end Intervals
 
@@ -640,6 +645,7 @@ theorem Finite₂_iff_Finite₁ {α: Type} (S: Set α)
 -/
 #print Set.Finite
 #print Finite
+#print Fin
 
 example {α: Type} (S: Set α)
   : Finite₁ S ↔ Set.Finite S
@@ -714,7 +720,7 @@ example: (∑ i < 11, i) = 55
   Below, we show how `Finset.sum_range_succ` can be used to isolate a term
   in the sum.
 -/
-example (k: Nat) (f: Nat → Nat)
+example (k: ℕ) (f: ℕ → ℕ)
   : (∑ n < k+1 , f n)
   = (∑ n < k , f n) + f k
   := by
@@ -724,12 +730,12 @@ example (k: Nat) (f: Nat → Nat)
 /-
   Here is the classic inductive proof of the formula for 1+2+…+n.
 
-  Note that we cast numbers to `Rat`, so that `/ 2` is the actual division
-  and not the quotient. In this way we can use `ring` to close some subgoals
+  Note that we cast numbers to `ℚ`, so that `/ 2` is the actual division and
+  not the quotient. In this way we can use `ring` to close some subgoals
   more easily.
 -/
-example (n: Nat)
-  : (∑ i ≤ n, i: Rat) = n * (n+1) / 2
+example (n: ℕ)
+  : (∑ i ≤ n, i: ℚ) = n * (n+1) / 2
   := by
   rw [←Finset.Iio_succ_eq_Iic]
   rw [Nat.Iio_eq_range]
