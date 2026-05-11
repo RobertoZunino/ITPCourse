@@ -954,7 +954,7 @@ theorem Tarski_fixed_point
   The Schröder-Bernstein theorem states that, if there are two injections
     `a: α → β`
     `b: β → α`
-  then there is also a bijection `a ≃ b`.
+  then there is also a bijection `α ≃ β`.
   That is, `α` and `β` must have the same cardinality.
 
   This can be proved exploiting Tarki's fixed point theorem.
