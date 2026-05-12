@@ -27,10 +27,10 @@ section General_note
   Note, however, that the definitions found in the libraries might be more
   general than the ones you expect. Much more general.
 
-  Continuity for a basic function `f: Real → Real`, for instance, is
-  defined in terms of _topology_. A few theorems from the library must then
-  be used to restate continuity in terms of distance in a _metric space_,
-  and from there simplify the goal so to see the usual `ε` and `δ` property.
+  Continuity for a basic function `f: ℝ → ℝ`, for instance, is defined in
+  terms of _topology_. A few theorems from the library must then be used to
+  restate continuity in terms of distance in a _metric space_, and from
+  there simplify the goal so to see the usual `ε` and `δ` property.
 
   Asymptotics (limits, Landau's little-o notation, …) is defined in terms of
   _filters_: these are families of sets that model "closeness" to a value.
@@ -69,7 +69,7 @@ example (α β: ℝ) : Continuous (λ x => α*x + β)
 theorem line_cont (α β: ℝ) : Continuous (λ x => α*x + β)
   := by
   -- This lemma provides the usual "ε and δ" criterion for continuity.
-  apply Metric.continuous_iff.mpr
+  rw [Metric.continuous_iff]
   intro x ε εpos
   by_cases α = 0
   case pos αzero =>
@@ -119,7 +119,7 @@ theorem add_cont
   (g_cont: Continuous g)
 : Continuous (f + g)
   := by
-  apply Metric.continuous_iff.mpr
+  rw [Metric.continuous_iff]
   intro x ε εpos
   have ⟨ δf , ⟨ δf_pos , h_f ⟩ ⟩
     := Metric.continuous_iff.mp f_cont x (ε / 2) (half_pos εpos)
@@ -191,7 +191,7 @@ section Filters
 
   Note that `𝓝[≠] x` is defined as `𝓝[{x}ᶜ] x`:
 -/
-example (x: Real)
+example (x: ℝ)
   : 𝓝[≠] x = 𝓝[{x}ᶜ] x
   := rfl
 /-
@@ -212,7 +212,7 @@ example (x: Real)
   than `1`"
 -/
 example
-  : ∀ᶠ x: Real in 𝓝 0 , x < 1
+  : ∀ᶠ x: ℝ in 𝓝 0 , x < 1
   := by
   apply eventually_lt_nhds
   simp only [zero_lt_one]
@@ -242,11 +242,11 @@ example
   We start by proving the first inequality:
 -/
 theorem nhdsNE_le_nhdsWithinIoo
-  (ε: Real)
+  (ε: ℝ)
   (ε_pos: ε > 0)
   : 𝓝[≠] 0 ≤ 𝓝[ Set.Ioo (-ε) ε \ {0} ] 0
   := by
-  apply nhdsWithin_le_iff.mpr
+  rw [nhdsWithin_le_iff]
   simp [ nhdsWithin , min ]
   exists Set.Ioo (-ε) ε
   constructor
@@ -263,7 +263,7 @@ theorem nhdsNE_le_nhdsWithinIoo
   The equality of filters then follows by antisymmetry and a library lemma.
 -/
 theorem nhdsNE_eq_nhdsWithinIoo
-  (ε: Real)
+  (ε: ℝ)
   (ε_pos: ε > 0)
   : 𝓝[≠] 0 = 𝓝[ Set.Ioo (-ε) ε \ {0} ] 0
   := by
@@ -279,7 +279,7 @@ theorem nhdsNE_eq_nhdsWithinIoo
   from the right implies approaching `0`, but not vice versa.
 -/
 example
-  : 𝓝[ Set.Ioi 0 ] 0 < 𝓝[≠] (0: Real)
+  : 𝓝[ Set.Ioi 0 ] 0 < 𝓝[≠] (0: ℝ)
   := by
   apply lt_of_le_not_ge
   case hab =>
@@ -287,7 +287,7 @@ example
     simp only [Set.subset_compl_singleton_iff, Set.mem_Ioi,
       lt_self_iff_false, not_false_eq_true]
   case hba =>
-    apply Filter.not_le.mpr
+    rw [Filter.not_le]
     exists Set.Ioi 0
     constructor
     case left =>
@@ -359,11 +359,11 @@ example
   tends to is instead `+∞`, i.e. the filter `Filter.atTop`.
 -/
 theorem abs_diverges₁
-  : Filter.Tendsto (λ x: Real => 1 / |x|) (𝓝[≠] 0) Filter.atTop
+  : Filter.Tendsto (λ x: ℝ => 1 / |x|) (𝓝[≠] 0) Filter.atTop
   := by
   -- We reduce to a set property: for all `s` close to `+∞`, we have to find
   -- a close enough argument to `0` so that the result is in `s`.
-  apply Filter.tendsto_iff_forall_eventually_mem.mpr
+  rw [Filter.tendsto_iff_forall_eventually_mem]
   intro s h1
   -- The set `s` contains all the points larger than a given `a`.
   simp only [Filter.mem_atTop_sets, ge_iff_le] at h1
@@ -395,7 +395,7 @@ theorem abs_diverges₁
       ring_nf
       have abs_x_pos: 0 < |x| := by positivity
       have abs_r_pos: 0 < |r| := by positivity
-      apply (inv_le_inv₀ abs_r_pos abs_x_pos).mpr
+      rw [inv_le_inv₀ abs_r_pos abs_x_pos]
       apply abs_le_abs
       . linarith
       . linarith
@@ -404,9 +404,9 @@ theorem abs_diverges₁
   An alternative proof, involving our lemma `nhdsNE_eq_nhdsWithinIoo`.
 -/
 theorem abs_diverges₂
-  : Filter.Tendsto (λ x: Real => 1 / |x|) (𝓝[≠] 0) Filter.atTop
+  : Filter.Tendsto (λ x: ℝ => 1 / |x|) (𝓝[≠] 0) Filter.atTop
   := by
-  apply Filter.tendsto_iff_forall_eventually_mem.mpr
+  rw [Filter.tendsto_iff_forall_eventually_mem]
   intro s h1
   simp only [Filter.mem_atTop_sets, ge_iff_le] at h1
   replace ⟨ a , h1 ⟩ := h1
@@ -418,36 +418,21 @@ theorem abs_diverges₂
     simp at h_y
     have ⟨ ⟨ y_gt , y_lt ⟩  , y_nonzero ⟩ := h_y
     clear h_y
-    have y_pos: |y| > 0 := by positivity
-    calc a
-    _ ≤ |a| := by exact le_abs_self a
+    field_simp
+    calc a * |y|
+    _ ≤ |a| * |y|
+      := by gcongr ; exact le_abs_self a
+    _ ≤ |a| * (|a| + 1)⁻¹
+      := by gcongr ; rw [abs_le] ; exact ⟨ y_gt.le , y_lt.le ⟩
     _ ≤ _
-      := by
-      have y_bound: |y| ≤ (|a|+1)⁻¹
-        := by
-        apply abs_le.mpr
-        constructor
-        case left =>
-          linarith
-        case right =>
-          linarith
-      apply (le_div_iff₀ y_pos).mpr
-      calc |a| * |y|
-      _ ≤ |a| * (|a| + 1)⁻¹ := by gcongr
-      _ ≤ _
-        := by
-        change (|a| / (|a| + 1) ≤ _)
-        apply (le_div_iff₀ _).mp
-        . simp only [div_inv_eq_mul, one_mul, le_add_iff_nonneg_right,
-            zero_le_one]
-        . positivity
+      := by field_simp ; linarith
 
 /-
   Yet another proof, involving little-o notation, norms, beyond our lemma
   `nhdsNE_eq_nhdsWithinIoo`.
 -/
 theorem abs_diverges₃
-  : Filter.Tendsto (λ x: Real => 1 / |x|) (𝓝[≠] 0) Filter.atTop
+  : Filter.Tendsto (λ x: ℝ => 1 / |x|) (𝓝[≠] 0) Filter.atTop
   := by
   -- We want to introduce the norm to exploit a library theorem
   conv =>
@@ -457,7 +442,7 @@ theorem abs_diverges₃
       change (_ = Norm.norm (1 / |x|))
       simp only [one_div, norm_inv, Real.norm_eq_abs, abs_abs]
   -- We move to little-o notation
-  apply (Asymptotics.isLittleO_one_left_iff Real).mp
+  rw [ ← Asymptotics.isLittleO_one_left_iff ℝ ]
   apply Asymptotics.IsLittleO.of_bound
   case a =>
   intro c c_pos
@@ -468,10 +453,9 @@ theorem abs_diverges₃
   intro x x_gt x_lt x_nonzero
   calc
   _ = c * c⁻¹
-    := by
-    symm ; apply mul_inv_cancel₀ ; exact Ne.symm (ne_of_lt c_pos)
+    := by field_simp
   _ ≤ c * |x|⁻¹
-    := by gcongr ; apply abs_le.mpr ; constructor <;> linarith
+    := by gcongr ; rw [ abs_le ] ; constructor <;> linarith
 
 end Limits
 
@@ -484,23 +468,23 @@ section LittleO
   when the argument approaches `0`.
 -/
 theorem exp_is_faster_than_square
-  : (λ x: Real => Real.exp (- 1 / |x|)) =o[𝓝[≠] 0] λ x: Real => x^2
+  : (λ x: ℝ => Real.exp (- 1 / |x|)) =o[𝓝[≠] 0] λ x: ℝ => x^2
   := by
-  have h1: (λ x => Real.exp (-1 * x)) =o[Filter.atTop] λ x => x ^ (-2: Real)
+  have h1: (λ x => Real.exp (-1 * x)) =o[Filter.atTop] λ x => x ^ (-2: ℝ)
     := isLittleO_exp_neg_mul_rpow_atTop (a := 1) (by positivity) (-2)
 
   have h2:
     ((λ x => Real.exp (-1 * x)) ∘ λ x => 1 / |x|)
     =o[𝓝[≠] 0]
-    ((λ x => x ^ (-2: Real)) ∘ λ x => 1 / |x|)
+    ((λ x => x ^ (-2: ℝ)) ∘ λ x => 1 / |x|)
     :=
     Asymptotics.IsLittleO.comp_tendsto
       h1
-      (k := λ x: Real => 1 / |x|) (l' := 𝓝[≠] 0) (l := Filter.atTop)
+      (k := λ x: ℝ => 1 / |x|) (l' := 𝓝[≠] 0) (l := Filter.atTop)
       abs_diverges₁
 
   simp only [neg_mul, one_mul] at h2
-  have h6 : ∀ x: Real, (1 / |x|) ^ (- 2: Real) = x^2
+  have h6 : ∀ x: ℝ, (1 / |x|) ^ (- 2: ℝ) = x^2
     := by
     intro x
     simp_all only [neg_mul, one_mul, one_div, inv_nonneg, abs_nonneg,
@@ -520,9 +504,9 @@ theorem exp_is_faster_than_square
   Here is another example of the little-o notation.
 -/
 example
-  : (λ x: Real => x^2 + Real.exp (- 1/x^2))
+  : (λ x: ℝ => x^2 + Real.exp (- 1/x^2))
     =o[𝓝[≠] 0]
-    (λ x: Real => x)
+    (λ x: ℝ => x)
   := by
   apply Asymptotics.IsLittleO.add
   case h₁ =>
@@ -532,18 +516,18 @@ example
       . intro x ; tactic => change (_ = x*x) ; ring
       . intro x ; tactic => change (_ = 1*x) ; ring
     apply Asymptotics.IsLittleO.mul_isBigO
-    . apply (Asymptotics.isLittleO_one_iff ℝ).mpr
+    . rw [ Asymptotics.isLittleO_one_iff ℝ ]
       apply tendsto_nhdsWithin_of_tendsto_nhds
       exact λ ⦃U⦄ a => a
     . exact Asymptotics.isBigO_refl _ _
   case h₂ =>
     calc
-      _ =O[𝓝[≠] 0] (λ x: Real => Real.exp (-1 / |x|))
+      _ =O[𝓝[≠] 0] (λ x: ℝ => Real.exp (-1 / |x|))
         := by
-        apply Real.isBigO_exp_comp_exp_comp.mpr
+        rw [ Real.isBigO_exp_comp_exp_comp ]
         apply Filter.isBoundedUnder_of_eventually_le (a := 0)
         dsimp
-        have h_filter : 𝓝[≠] (0: Real) ≤ 𝓝[ Set.Ioo (-1) 1 \ {0} ] 0
+        have h_filter : 𝓝[≠] (0: ℝ) ≤ 𝓝[ Set.Ioo (-1) 1 \ {0} ] 0
           := nhdsNE_le_nhdsWithinIoo 1 (by positivity)
         apply Filter.Eventually.filter_mono h_filter
         apply eventually_nhdsWithin_of_forall
@@ -551,9 +535,9 @@ example
           and_imp]
         intro x x_gt x_lt x_nonzero
         simp only [tsub_le_iff_right, zero_add]
-        apply (div_le_div_iff₀ _ _).mpr
+        rw [ div_le_div_iff₀ ]
         . simp only [neg_mul, one_mul, neg_le_neg_iff]
-          apply le_abs.mpr
+          rw [ le_abs ]
           cases le_total x 0
           case inl x_npos =>
             right
@@ -564,7 +548,7 @@ example
             convert_to ((-x)*(-x) ≤ -x)
             . simp only [mul_neg, neg_mul, neg_neg]
 
-            apply (mul_le_iff_le_one_left mx_pos).mpr
+            rw [ mul_le_iff_le_one_left mx_pos ]
             linarith
           case inr x_nneg =>
             left
@@ -584,7 +568,7 @@ example
           intro x
           rw [← pow_one x]
 
-        have h_filter: 𝓝[≠] (0: Real) ≤ 𝓝 0 := nhdsWithin_le_nhds
+        have h_filter: 𝓝[≠] (0: ℝ) ≤ 𝓝 0 := nhdsWithin_le_nhds
         apply Asymptotics.IsLittleO.mono _ h_filter
         apply Asymptotics.isLittleO_pow_pow (n:=2) (m:=1)
         decide
@@ -601,7 +585,7 @@ section Derivatives
   trivial.
 -/
 theorem deriv_x_squared₁
-  : deriv (λ x: Real => x^2) = λ x => 2*x
+  : deriv (λ x: ℝ => x^2) = λ x => 2*x
   := by
   -- We reduce to `HasDerivAt`
   apply deriv_eq
@@ -622,20 +606,20 @@ theorem deriv_x_squared₁
   derivative of the product.
 -/
 theorem deriv_x_squared₂
-  : deriv (λ x: Real => x^2) = λ x => 2*x
+  : deriv (λ x: ℝ => x^2) = λ x => 2*x
   := by
   -- We reduce to `HasDerivAt`
   apply deriv_eq
   intro x
   -- We reduce to Landau's little-o notation
   -- Here `𝓝 x` is a filter denoting the neighborhoods of `x`
-  apply hasDerivAt_iff_isLittleO.mpr
+  rw [ hasDerivAt_iff_isLittleO ]
   case h =>
   -- We reduce to "for all close enough" quantification `∀ᶠ`
   apply Asymptotics.IsLittleO.of_bound
   intro c c_pos
   -- We finally reduce to norms
-  apply Metric.eventually_nhds_iff.mpr
+  rw [ Metric.eventually_nhds_iff ]
   case a =>
   -- We choose `x` and `y` to have distance `< c`
   exists c
@@ -657,15 +641,15 @@ theorem deriv_x_squared₂
   more challenging.
 -/
 theorem deriv_x_cubed
-  : deriv (λ x: Real => x^3) = λ x => 3*x^2
+  : deriv (λ x: ℝ => x^3) = λ x => 3*x^2
   := by
   apply deriv_eq
   intro x
-  apply hasDerivAt_iff_isLittleO.mpr
+  rw [ hasDerivAt_iff_isLittleO ]
   case h =>
   apply Asymptotics.IsLittleO.of_bound
   intro c c_pos
-  apply Metric.eventually_nhds_iff.mpr
+  rw [ Metric.eventually_nhds_iff ]
   case a =>
   -- We pick the distance between `x` and `y` to be smaller than the
   -- quantities we will meet later on.
