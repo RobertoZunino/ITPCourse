@@ -8,6 +8,8 @@ import Mathlib.Order.Filter.AtTopBot.Basic
 import Mathlib.Order.Filter.AtTopBot.Tendsto
 import Mathlib.Order.Monotone.Defs
 import Mathlib.Analysis.Asymptotics.Defs
+import Mathlib.Analysis.Asymptotics.AsymptoticEquivalent
+import Mathlib.Analysis.Asymptotics.SpecificAsymptotics
 import Mathlib.Analysis.Calculus.Deriv.Basic
 import Mathlib.Analysis.Calculus.Deriv.Mul
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
@@ -573,6 +575,81 @@ example
         apply Asymptotics.isLittleO_pow_pow (n:=2) (m:=1)
         decide
 
+/-
+  We now establish the limit of a fraction between two basic  polynomials,
+  when `x` approaches `+∞`.
+
+  As we know, in this scenario only the terms with the highest degree
+  matter, and everything else is negligible. To follow this intuition, we
+  exploit the asymptotic equivalence notation `f ~[l] g`, claiming that
+  when `x` is close enough according to filter `l`, `f x` and `g x` are
+  similar. Formally, `f - g =o[l] g`. (This is a symmetric relation, even
+  if it is not oviously so.)
+-/
+open Asymptotics in -- for the `~[l]` notation
+example
+  (a b a' b': ℝ)
+  (a_nz: a ≠ 0) (a'_nz: a' ≠ 0)
+  : Filter.Tendsto
+    (λ x: ℝ => (a*x^3 + b*x^2) / (a'*x^3 + b'*x^2))
+    Filter.atTop
+    (𝓝 (a / a'))
+  := by
+  -- We claim that the function is asymptotically equivalent to the simpler
+  -- `a * x^3 / a' * x^3`.
+  rw [Asymptotics.IsEquivalent.tendsto_nhds_iff
+    (v := (λ x: ℝ => (a*x^3) / (a'*x^3)))
+    ?asymp_equiv
+    ]
+  -- We now prove the clained asymptotic equivalence.
+  case asymp_equiv =>
+    -- We change into the form accepted by the library: `(λ …) / (λ …)`.
+    change
+      (λ x: ℝ => a*x^3 + b*x^2) / (λ x: ℝ => a'*x^3 + b'*x^2)
+      ~[Filter.atTop]
+      (λ x: ℝ => a*x^3) / (λ x: ℝ => a'*x^3)
+    -- We reduce to prove numerators and denominators equivalent.
+    apply IsEquivalent.div
+    case htu =>
+      -- We have to prove numerators equivalent.
+      dsimp [IsEquivalent]
+      change (λ x => _) =o[_] _
+      dsimp
+      ring_nf
+      -- Move constants where they must be to apply library results.
+      conv =>
+        left
+        intro x
+        rw [mul_comm]
+      -- Remove constants from both sides of `=o[]`
+      apply Asymptotics.IsLittleO.const_mul_left
+      apply Asymptotics.IsLittleO.const_mul_right
+      . exact a_nz
+      -- `x^2` is little-o of `x^3`
+      apply Asymptotics.isLittleO_pow_pow_atTop_of_lt
+      linarith
+    case hvw =>
+      -- An analogous proof for denominators.
+      dsimp [IsEquivalent]
+      change (λ x => _) =o[_] _
+      dsimp
+      ring_nf
+      conv =>
+        left
+        intro x
+        rw [mul_comm]
+      apply Asymptotics.IsLittleO.const_mul_left
+      apply Asymptotics.IsLittleO.const_mul_right
+      . exact a'_nz
+      apply Asymptotics.isLittleO_pow_pow_atTop_of_lt
+      linarith
+
+  -- Back the main statement.
+  -- Teh function is eventually constant, so that concludes.
+  apply tendsto_atTop_of_eventually_const (i₀ := 1)
+  field_simp
+  grind
+
 end LittleO
 
 end Asymptotics
@@ -745,10 +822,7 @@ theorem partial_sum_geometric_series
   := by
   -- We use `range` instead of `Iio` which has more results in the
   --  libraries.
-  have eq_range: Finset.Iio k = Finset.range k
-    := by grind
-  rw [eq_range]
-  clear eq_range
+  rw [Nat.Iio_eq_range]
   -- We now proceed by induction
   induction k
   case zero =>
@@ -786,16 +860,11 @@ theorem geometric_series
     intro i
     positivity
   -- Now we rewrite each partial sum exploiting the previous theorem
-  have eq_range (k: ℕ): Finset.Iio k = Finset.range k
-    := by grind
   conv =>
     arg 1
     intro n
-    conv =>
-      arg 1
-      rw [← eq_range]
+    rw [← Nat.Iio_eq_range]
     rw [partial_sum_geometric_series x x_bound.ne]
-  clear eq_range
   -- We now reduce the limit to the limit of x^n, by exploiting
   -- "congruence" results for limits.
   apply Filter.Tendsto.div
