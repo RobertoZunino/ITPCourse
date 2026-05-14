@@ -15,6 +15,7 @@ import Mathlib.Analysis.Calculus.Deriv.Mul
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
+import Mathlib.Analysis.Calculus.LHopital
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 
 import ITPCourse.Part13_Arithmetic
@@ -891,7 +892,7 @@ section Recap_exercises
 /-
   __Exercise__: Prove the following.
   You might need the following results from the library:
-  `Filter.tendsto_atTop`, `Filter.eventually_atTop`.
+  `Filter.tendsto_atTop_atTop`.
 -/
 example
   (a b: ℕ → ℝ)
@@ -945,7 +946,10 @@ example
   In the module `Mathlib.Analysis.Calculus.LHopital` you can find
   `deriv.lhopital_zero_nhdsNE` as a basic version of the theorem.
   Exploit that and a few other results from the libraries to prove a few
-  limits. We suggest to start from this:
+  limits. You might need `Continuous.tendsto` and
+  `Filter.Tendsto.mono_left`.
+
+  We suggest to start from the limit below.
 -/
 example
   : Filter.Tendsto (λ x => Real.sin x / x) (𝓝[≠] 0) (𝓝 1)
