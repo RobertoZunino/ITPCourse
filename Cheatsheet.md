@@ -48,12 +48,14 @@ When we want to exploit an equality hypothesis `h: a = b`, we can use:
   choose the rewriting point)
 - `rw [ ←h1 , h2 , ←h3 ] at h4` to chain multiple rewritings, some of them
   backwards (`←`), to be performed on hypothesis `h4`
+- `conv` can also be used to focus on a part of the thesis or hypothesis before the rewriting
 
 For numerical equations, you might want to try:
 
 - `ring`, `ring_nf`
 - `linarith`
 - `simp +arith`, `simp_all`
+- `field_simp`
 - `repeat rw [add_assoc]` to associate all the additions in the same
   direction
 
