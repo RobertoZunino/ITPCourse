@@ -577,7 +577,7 @@ example
         decide
 
 /-
-  We now establish the limit of a fraction between two basic  polynomials,
+  We now establish the limit of a fraction between two basic polynomials,
   when `x` approaches `+∞`.
 
   As we know, in this scenario only the terms with the highest degree
@@ -650,6 +650,67 @@ example
   apply tendsto_atTop_of_eventually_const (i₀ := 1)
   field_simp
   grind
+
+/-
+  An alternative solution to the same exercise.
+
+  We first introduce a lemma which allows us to neglect lower infinities.
+-/
+open Asymptotics in -- for the `~[l]` notation
+theorem higher_inf
+  (a b: ℝ) (ha: a ≠ 0)
+  : (λ x: ℝ => a*x^3 + b*x^2) ~[Filter.atTop] (λ x: ℝ => a*x^3)
+  := by
+  -- Reduce to `f - g =o[_] g`.
+  apply Asymptotics.IsLittleO.isEquivalent
+  -- We craft a chain of `=o` and `=O`.
+  calc
+    _ = λ x:ℝ => b*x^2
+      := by ext x ; dsimp ; ring
+    _ =O[Filter.atTop] λ x:ℝ => x^2
+      := Asymptotics.isBigO_const_mul_self _ _ _
+    _ =o[Filter.atTop] λ x:ℝ => x^3
+      := by
+      apply Asymptotics.isLittleO_pow_pow_atTop_of_lt
+      linarith
+    _ =O[Filter.atTop] λ x:ℝ => a*x^3
+      := by
+      apply Asymptotics.IsBigO.const_mul_right ha
+      exact isBigO_refl _ _
+
+-- Back to the main statement.
+open Asymptotics in
+example
+  (a b a' b': ℝ)
+  (a_nz: a ≠ 0) (a'_nz: a' ≠ 0)
+  : Filter.Tendsto
+    (λ x: ℝ => (a*x^3 + b*x^2) / (a'*x^3 + b'*x^2))
+    Filter.atTop
+    (𝓝 (a / a'))
+  := by
+  -- We craft a chain of `~[]` and `=ᶠ[]`.
+  have eq := calc (λ x: ℝ => (a*x^3 + b*x^2) / (a'*x^3 + b'*x^2))
+    _ = (λ x: ℝ => a*x^3 + b*x^2) / (λ x: ℝ => a'*x^3 + b'*x^2)
+      := rfl
+    _ ~[Filter.atTop] (λ x: ℝ => a*x^3) / (λ x: ℝ => a'*x^3)
+      := by
+      apply IsEquivalent.div
+      . apply higher_inf _ _ a_nz
+      . apply higher_inf _ _ a'_nz
+    _ =ᶠ[Filter.atTop] (λ x: ℝ => a / a')
+      := by
+      apply Filter.eventuallyEq_of_mem (s := Set.Ici 1)
+      case hs =>
+        rw [Filter.mem_atTop_sets]
+        exists 1
+        grind
+      case h =>
+        intro x hx
+        simp at hx
+        dsimp
+        field_simp
+  rw [Asymptotics.IsEquivalent.tendsto_nhds_iff eq]
+  exact tendsto_const_nhds
 
 end LittleO
 
